@@ -1,6 +1,6 @@
 import config from  './config'
 
-const api = {
+const api = apiReset({
   notice: '/notice',
 
   jwVerify: '/jw/verify',
@@ -11,16 +11,22 @@ const api = {
   cardBalance: '/card/balance',
   cardTransaction: '/card/transaction',
 
-  eletricBuyRecord: '/eletric/buy',
-  eletricUsedRecord: '/eletric/used',
+  electricBuyRecord: '/electric/buy',
+  electricUsedRecord: '/electric/used',
 
   libSearch: '/lib/search',
   libBookInfo: '/lib/book_info',
   libBookDetail: '/lib/book_detail',
   libBookCover: '/lib/book_cover',
+})
+
+function apiReset<T>(object: T): T {
+  const type = config.dev ? 'dev': 'prod'
+  const domain = config.domain[type]
+  Object.keys(object).forEach(key => {
+    object[key] = `${domain}${object[key]}`
+  })
+  return object
 }
 
-export default function (k) {
-  const type = config.dev ? 'dev': 'prod'
-  return config.domain[type] + api[k]
-}
+export default api

@@ -24,7 +24,7 @@
 4. 重命名 `src/utils/config.sample.ts` 为 `src/utils/config.ts`
 5. 运行 `npm install`
 6. 运行 `npm run dev:weapp`
-7. 使用 [微信开发者工具]('https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html') 打开本项目
+7. 使用 [微信开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html) 打开本项目
 8. 使用顺手的开发工具，享受编码的乐趣 ( :
 
 ## 功能
@@ -53,11 +53,11 @@
 
 ## 感谢
 
-- [Taro]('https://taro.js.org/')
-- [Iconfont]('http://www.iconfont.cn/')
-- [We川大]('https://github.com/mohuishou/scuplus-wechat')
-- [微吉风]('https://github.com/choyri/WeGifun')
-- [课表]('http://kb.mayuko.cn/')
+- [Taro](https://taro.js.org/)
+- [Iconfont](http://www.iconfont.cn/)
+- [We川大](https://github.com/mohuishou/scuplus-wechat)
+- [微吉风](https://github.com/choyri/WeGifun)
+- [课表](http://kb.mayuko.cn/)
 
 ## 许可
 [WTFPL](https://zh.wikipedia.org/wiki/WTFPL)

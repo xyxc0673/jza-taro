@@ -57,7 +57,7 @@ const proxy = async (params): Promise<any> => {
 
 const notice = (params) => {
   params = {
-    url: api('notice'),
+    url: api.notice,
     quite_mode: true,
   }
   return proxy(params)
@@ -98,18 +98,18 @@ const cardAuth = async (params) => {
 }
 
 const jwVerify = async (params) => {
-  params.url = api('jwVerify')
+  params.url = api.jwVerify
   return authProxy(params)
 }
 
 const cardVerify = async (params) => {
-  params.url = api('cardVerify')
+  params.url = api.cardVerify
   return authProxy(params)
 }
 
 const jwScores = async (year, semester) => {
   let params = {
-    url: api('jwScore'),
+    url: api.jwScore,
     data: {
       year: year,
       semester: semester,
@@ -120,7 +120,7 @@ const jwScores = async (year, semester) => {
 
 const jwSchedule = async (year, semester) => {
   let params = {
-    url: api('jwSchedule'),
+    url: api.jwSchedule,
     data: {
       year: year,
       semester: semester,
@@ -130,13 +130,13 @@ const jwSchedule = async (year, semester) => {
 }
 
 const cardBalance = async (params) => {
-  params.url = api('cardBalance')
+  params.url = api.cardBalance
   return cardAuth(params)
 }
 
 const cardTransaction = async (startDate, endDate) => {
   const params = {
-    url: api('cardTransaction'),
+    url: api.cardTransaction,
     data: {
       startDate: startDate,
       endDate: endDate,
@@ -146,18 +146,18 @@ const cardTransaction = async (startDate, endDate) => {
 }
 
 const electricbuyRecord = async (params) => {
-  params.url = api('libSearch')
+  params.url = api.electricBuyRecord
   return proxy(params)
 }
 
 const electricUsedRecord = async (params) => {
-  params.url = api('electricUsedRecord')
+  params.url = api.electricUsedRecord
   return proxy(params)
 }
 
 const libSearch = async (keyword, page) => {
   let params = {
-    url: api('libSearch'),
+    url: api.libSearch,
     data: {
       keyword: keyword,
       page: page,
@@ -168,7 +168,7 @@ const libSearch = async (keyword, page) => {
 
 const libBookInfo = async (isbn: string, marc_no: string) => {
   let params = {
-    url: api('libBookInfo'),
+    url: api.libBookInfo,
     quite_mode: true,
     data: {
       isbn: isbn,
@@ -180,7 +180,7 @@ const libBookInfo = async (isbn: string, marc_no: string) => {
 
 const libBookDetail = async (isbn: string, marc_no: string) => {
   let params = {
-    url: api('libBookDetail'),
+    url: api.libBookDetail,
     data: {
       isbn: isbn,
       marc_no: marc_no,
@@ -191,7 +191,7 @@ const libBookDetail = async (isbn: string, marc_no: string) => {
 
 const libBookCover = async (url: string) => {
   let params = {
-    url: api('libBookCover'),
+    url: api.libBookCover,
     quite_mode: true,
     data: {
       url: url,
