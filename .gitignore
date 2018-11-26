@@ -1,0 +1,9 @@
+dist/
+.temp/
+.rn_temp/
+node_modules/
+
+project.config.json
+
+src/pages/sample/
+src/utils/config.ts

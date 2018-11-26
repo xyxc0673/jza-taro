@@ -1,0 +1,53 @@
+@import "../../asserts/style/mixins.scss";
+
+$float-layout-timer: 0.5s;
+
+.float-layout {
+
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  z-index: 810;
+  transition: all $float-layout-timer ease;
+  background: rgba(0, 0, 0, 0.5);
+
+  &.active {
+    visibility: visible;
+
+    .container {
+      @include absoulte-center();
+
+      opacity: 1;
+   }
+ }
+
+  .container {
+    padding: 20px 5px 10px;
+    position: fixed;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-height: 10%;
+    max-height: 73%;
+    min-width: 70%;
+
+    opacity: 0;
+
+    background-color: white;
+    z-index: 1;
+
+    transition: all $float-layout-timer ease;
+
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 10px;
+
+    .title {
+      font-size: 36px;
+      padding: 15px 10px 20px;
+      text-align: center;
+    }
+  } 
+}

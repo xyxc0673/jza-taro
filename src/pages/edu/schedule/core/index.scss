@@ -1,0 +1,138 @@
+.header {
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  background: white;
+
+  .dayDate {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .left-block {
+      width: 30px;
+      font-size: 25px;
+      padding: 5px;
+      text-align: center;
+      color: #b0b0b0;
+    }
+
+    &-item {
+      flex: 1;
+      text-align: center;
+
+      &__day {
+        font-size: 30px;
+        color: #838383;
+      }
+
+      &__date {
+        font-size: 20px;
+        color: #b0b0b0;
+      }
+    }
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  padding: 62.3px 0 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+    color: #fff;
+
+    &.title {
+      width: 38px;
+      background-color: white;
+      color: #b0b0b0;
+      margin: 0 5px 0 0;
+    }
+    .row {
+      width: 85px;
+      height: 120px;
+      font-size: 20px;
+      padding: 0 0.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      text-align: center;
+      &.session {
+        width: 100%;
+        padding: 0px;
+      }
+
+      .course-name {
+        font-size: 23px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.label {
+  font-size: 25px;
+  flex:0 0 70px;
+
+  .bold {
+    font-weight: bold;
+  }
+}
+
+.padding20 {
+  padding: 0 20px;
+}
+
+.form-input {
+  padding: 10px 0;
+
+  Input {
+    font-size: 25px;
+  }
+
+  &__placeholder {
+    font-size: 25px;
+  }
+}
+
+.inline {
+  display: flex;
+  flex-wrap: wrap;
+  .btn {
+    margin-top: 0;
+  }
+}
+
+.left {
+  flex: 0 0 66.6667%;
+}
+
+.right {
+  flex-basis: 0;
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.tips {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0px 20px;
+
+  .manage {
+    color: #4e4e4e;
+    font-size: 26px;
+  }
+
+  Image {
+    fill: #b0b0b0;
+    width:32px;
+    height:32px;
+  }
+}

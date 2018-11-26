@@ -1,0 +1,125 @@
+.home-page {
+  background-color: rgba(240, 240, 240, 0.5);
+  padding-top: 20px;
+  height: 100%;
+}
+
+.schedule-btn-group {
+  padding: 10px 0 0;
+}
+
+.bind-tip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 0 40px;
+  font-size: 25px;
+
+  Text {
+    border-bottom: 1px solid #b0b0b0;
+  }
+}
+
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  font-size: 30px;
+
+  &__item {
+    width: 30%;
+    margin: 15px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    Image {
+      width: 64px;
+      height: 64px;
+    }
+
+    Text {
+      margin-top: 5px;
+      color: #888888;
+    }
+  }
+}
+
+.card-schedule {
+  display: flex;
+  flex-direction: column;
+
+  font-size: 25px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 20px 10px;
+
+    &__session {
+      font-size: 32px;
+      flex: 0.6;
+      text-align: center;
+    }
+
+    &__info {
+      font-size: 27px;
+      flex: 2;
+    }
+
+    &__teacher {
+      font-size: 23px;
+      color: #868585;
+    }
+
+    &__location {
+      font-size: 23px;
+      flex: 1;
+    }
+  }
+}
+
+.card-balance {
+  display: flex;
+  height: 150px;
+  justify-content: center;
+  align-items: center;
+
+  &__text {
+    color: #888888;
+    font-size: 64px;
+    font-weight: bold;
+  }
+}
+
+.notice {
+  padding: 0 10px;
+  font-size: 25px;
+  color: #5a5a5a;
+}
+
+.not-bind-tip {
+  font-size: 25px;
+  padding-top: 10px;
+}
+
+.inline {
+  display: flex;
+  flex-wrap: wrap;
+  .btn {
+    margin-top: 0;
+  }
+}
+
+.left {
+  flex: 0 0 66.6667%;
+  margin-right: 10px;
+}
+
+.right {
+  flex-basis: 0;
+  flex-grow: 1;
+}

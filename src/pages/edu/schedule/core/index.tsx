@@ -1,0 +1,409 @@
+import Taro, {Component, Config} from '@tarojs/taro'
+import {View, Form, Image, Button, Picker, Input, Text, ScrollView} from '@tarojs/components'
+
+import FloatLayout from '../../../../components/float-layout'
+
+import './index.scss'
+
+import utils from '../../../../utils/utils'
+import Schedule from '../../../../services/edu/schedule'
+
+const questionUrl = require('../../../../asserts/images/question.svg')
+
+// interface INewCourse {
+//   name: string,
+//   teacher: string,
+//   location: string,
+//   sessionStart: string,
+//   sessionEnd: string,
+//   weekStart: string,
+//   weekEnd: string,
+// }
+
+interface ISchedule {
+  course_name: string,
+  location: string,
+  color: string,
+  teacher: string,
+  flex: number,
+}
+
+interface IState {
+  schedule: Array<Array<ISchedule>>,
+  week: number,
+  month: number,
+  day: number,
+  dayDate: Array<any>,
+  showAddCourseFloatLayout: boolean,
+
+  newCourseName: string,
+  newCourseTeacher: string,
+  newCourseLocation: string,
+  newCourseSessionStart: number,
+  newCourseSessionEnd: number,
+  newCourseWeekStart: number,
+  newCourseWeekEnd: number,
+
+  newCourseDayRange: Array<any>,
+  newCourseDaySelected: number,
+  newCourseDayText: string,
+
+  newCourseOddRange: Array<any>,
+  newCourseOddSelected: number,
+  newCourseOddText: string,
+}
+
+export default class Core extends Component {
+  config: Config = {
+    navigationBarTitleText: '我的课程表'
+  }
+  
+  state: IState = {
+    schedule: [],
+    week: utils.getWeek(),
+    day: new Date().getDay(),
+    month: new Date().getMonth(),
+    dayDate: utils.getDayDate(utils.getWeek()),
+    showAddCourseFloatLayout: false,
+
+    newCourseName: '',
+    newCourseTeacher: '',
+    newCourseLocation: '',
+    newCourseSessionStart: 0,
+    newCourseSessionEnd: 0,
+    newCourseWeekStart: 0,
+    newCourseWeekEnd: 0,
+
+    newCourseDayRange: [
+      {
+        key: '1',
+        name: '一',
+      },
+      {
+        key: '2',
+        name: '二',
+      },
+      {
+        key: '3',
+        name: '三',
+      },
+      {
+        key: '4',
+        name: '四',
+      },
+      {
+        key: '5',
+        name: '五',
+      },
+      {
+        key: '6',
+        name: '六',
+      },
+      {
+        key: '7',
+        name: '日',
+      },
+    ],
+    newCourseDaySelected: 0,
+    newCourseDayText: '一',
+
+    newCourseOddRange: [
+      {
+        key: '0',
+        name: '非单双周',
+      },
+      {
+        key: '1',
+        name: '单周',
+      },
+      {
+        key: '2',
+        name: '双周',
+      }
+    ],
+    newCourseOddSelected: 0,
+    newCourseOddText: '非单双周',
+  }
+
+  async componentWillMount () {
+    const rawSchedule = Schedule.GetFormStorage()
+    const mySchedule = Taro.getStorageSync('mySchedule')
+    const newSchedule = rawSchedule.concat(mySchedule)
+
+    const newState = {}
+    const params = this.$router.params
+
+    if (params && params.from === 'search') {
+      newState['showAddCourseFloatLayout'] = true
+      this.$router.params.from = ''
+    }
+
+    const {week} = this.state
+    newState['schedule'] = Schedule.InitSchedule(newSchedule, week, -1)
+
+    this.setState(newState)
+  }
+
+  componentDidMount () {
+    Taro.eventCenter.on('scheduleCoreRemount', () => {
+      this.componentWillMount()
+    })
+  }
+
+  componentWillUnmount () { }
+
+  componentDidShow () { }
+
+  componentDidHide () { }
+
+  handleInputChange (key, e) {
+    const keys = ['newCourseSessionStart','newCourseSessionEnd', 'newCourseWeekStart', 'newCourseWeekEnd']
+    const value = keys.includes(e.target.dataset.eHandleinputchangeAA) ? parseInt(e.detail.value) : e.detail.value
+    this.setState({[`${key}`]: value})
+  }
+
+  gotoManageCustom () {
+    Taro.navigateTo({url: '/pages/edu/schedule/custom/index?from=core'})
+  }
+
+  handleAddCourseHelp () {
+    Taro.showModal({title: '帮助', content: '目前在自定义课程时，如果新课程与原有课程有时间上的冲突，新课程会覆盖原有课程，删除新课程即可恢复。', showCancel: false})
+  }
+  
+  showAddCourse (value, course) {
+    let newState = {}
+
+    if (course.index) {
+      const courseIndex = course.index
+      newState = {
+        newCourseDay: courseIndex[0],
+        newCourseWeekStart: 2,
+        newCourseWeekEnd: 16,
+        newCourseSessionStart: courseIndex[1],
+        newCourseSessionEnd: courseIndex[1]+1,
+        newCourseDaySelected: courseIndex[0]-1,
+        newCourseDayText: this.state.newCourseDayRange[courseIndex[0]-1].name
+      }
+    }
+
+    newState['showAddCourseFloatLayout'] = value
+
+    this.setState(newState)
+  }
+
+  handleOddChange (e) {
+    this.setState( (prevState: IState) => ({
+      newCourseOddSelected: e.detail.value,
+      newCourseOddText: prevState.newCourseOddRange[e.detail.value].name
+    }))
+  }
+
+  handleDayChange (e) {
+    this.setState( (prevState: IState) => ({
+      newCourseDaySelected: parseInt(e.detail.value),
+      newCourseDayText: prevState.newCourseDayRange[e.detail.value].name
+    }))
+  }
+
+  handleAddCourse () {
+    const {newCourseName, newCourseTeacher, newCourseLocation, newCourseSessionStart, newCourseSessionEnd, newCourseWeekStart, newCourseWeekEnd, newCourseDaySelected, newCourseOddSelected} = this.state
+    let sessionArray: Array<number> = []
+    let weekArray: Array<number> = []
+
+    const checkLength = (fields, length: number = 2) => {
+      let flag = true
+      try {
+        fields.forEach((field) => { 
+          if (field.length < length) { throw Error('') }
+        })
+      } catch (e) {
+        flag = false
+      }
+      return flag
+    }
+
+    const checkBetween = (fields, start, end) => {
+      let flag = true
+      for (let i = 0; i < fields.length; i ++) {
+        const field = parseInt(fields[i])
+        if (isNaN(field)) { flag = false }
+        if (field < start || field > end) { flag = false }
+        if (!flag) { break }
+      }
+
+      if (fields.length === 2) {
+        if (fields[0] > fields[1]) {
+          flag = false
+        }
+      }
+
+      return flag
+    }
+
+    if (!checkLength([newCourseName, newCourseTeacher, newCourseLocation], 1)) {
+      Taro.showToast({title: '所有选项不能为空', icon: 'none'})
+      return
+    } else if (!checkBetween([newCourseSessionStart, newCourseSessionEnd], 1, 12)) {
+      Taro.showModal({title: '提示', content: '节次的取值范围是 1 - 12, 并且起始节数需要小于或等于终止节数', showCancel: false})
+      return
+    } else if (!checkBetween([newCourseWeekStart, newCourseWeekEnd], 1, 22)) {
+      Taro.showModal({title: '提示', content: '周次的取值范围是 1 - 22, 并且起始周数需要小于或等于终止周数', showCancel: false})
+      return
+    }
+
+    for (let i = newCourseSessionStart; i <= newCourseSessionEnd; i ++) {
+      sessionArray.push(i)
+    }
+
+    for (let i = newCourseWeekStart; i <= newCourseWeekEnd; i ++) {
+      weekArray.push(i)
+    }
+
+    const newCourse = {
+      course_name: newCourseName,
+      teacher: newCourseTeacher,
+      location: newCourseLocation,
+      day: newCourseDaySelected + 1,
+      odd_or_even: newCourseOddSelected,
+      session: sessionArray.join(","),
+      during: weekArray.join(","),
+    }
+    
+    const mySchedule = Taro.getStorageSync('mySchedule')
+
+    mySchedule.push(newCourse)
+
+    this.setState({showAddCourseFloatLayout: false, newCourseName: '', newCourseTeacher: '', newCourseLocation: ''})
+    Taro.setStorageSync('mySchedule', mySchedule)
+    
+    Taro.eventCenter.trigger('scheduleCoreRemount')
+    Taro.eventCenter.trigger('indexRemount')
+    Taro.showToast({title: '添加成功', icon: 'none'})
+
+  }
+
+  handleCourseClick (course) {
+    if (!course.course_name) {
+      this.showAddCourse(true, course)
+      return
+    }
+
+    let oddText = ''
+    switch (course.odd_or_even) {
+      case 0:
+        oddText = '非单双周'
+        break
+      case 1:
+        oddText = '单周'
+        break
+      case 2: 
+        oddText = '双周'
+        break
+    }
+
+    const contentArrary = [
+      course.course_name,
+      course.teacher,
+      course.location,
+      course.duringText + ' 周',
+    ]
+
+    if (oddText !== '') {
+      contentArrary.push(oddText)
+    }
+    
+    const content: Array<any> = contentArrary.map((c, index, arrary) => {
+      return index != (arrary.length - 1) ? c + ' \\ ' : c
+    })
+
+    Taro.showModal({title: '', content: content.join(''), showCancel: false})
+  }
+
+  render () {
+    const {schedule, dayDate, day, showAddCourseFloatLayout} = this.state
+
+    // 这里写得好不优雅，要怎么改
+    const container = schedule.map((s, index) => {
+      return (
+        <View className={`col ${ index === 0 ? 'title' : ''}`} key={index}>
+          {
+            index === 0
+            ? s.map((sessionText, sessionIndex) => {
+                return <View className='row session' key={sessionIndex}>{sessionText}</View>
+              })
+            : s.map((course, courseIndex) => {
+                return course.flex != 0
+                  ? (
+                    <View className='row' key={courseIndex} onClick={this.handleCourseClick.bind(this, course)} style={`background-color: ${course.color?course.color: ''};flex: ${course.flex}; margin: ${course.flex}rpx;`}>
+                      <Text className='course-name'>{course.course_name}</Text><Text>{course.location}</Text>
+                    </View>
+                  )
+                  : null
+              })
+          }
+        </View>
+      )
+    })
+
+    return (
+      <View>
+        <View className='header'>
+          <View className='dayDate'>
+            <View className='left-block'>{this.state.week}周</View>
+            {dayDate.map((item, index) => {
+              return (
+                <View className='dayDate-item' key={index}>
+                  <View className='dayDate-item__day' style={`color:${item.dayInt == day ? '#00b26a': ''}`}>{item.day}</View>
+                  <View className='dayDate-item__date' style={`color:${item.dayInt == day ? '#68bb9a': ''}`}>{item.date}</View>
+                </View>
+              )
+            })}
+          </View>
+        </View>
+        <ScrollView scrollX scrollY>
+          <View className='container'>{container}</View>
+        </ScrollView>
+        <FloatLayout title='添加课程' isOpened={showAddCourseFloatLayout} onClose={this.showAddCourse.bind(this, false)}>
+          <View className='padding20'>
+            <Form className='form' onSubmit={this.handleAddCourse}>
+              <View className='form-input'>
+                <Text className='label'>名称</Text><Input value={this.state.newCourseName} onInput={this.handleInputChange.bind(this, 'newCourseName')} placeholder='课程名称' placeholderClass='form-input__placeholder' />
+              </View>
+              <View className='form-input'>
+                <Text className='label'>教师</Text><Input value={this.state.newCourseTeacher} onInput={this.handleInputChange.bind(this, 'newCourseTeacher')} placeholder='任课教师' placeholderClass='form-input__placeholder'></Input>
+              </View>
+              <View className='form-input'>
+                <Text className='label'>地点</Text><Input value={this.state.newCourseLocation} onInput={this.handleInputChange.bind(this, 'newCourseLocation')} placeholder='上课地点' placeholderClass='form-input__placeholder'></Input>
+              </View>
+              <View className='form-input'>
+                <Text className='label'>星期</Text>
+                <Picker mode='selector' range={this.state.newCourseDayRange} rangeKey='name' value ={this.state.newCourseDaySelected} onChange={this.handleDayChange}>
+                  <Input value={`${this.state.newCourseDayText}`} disabled={true} placeholder='星期' placeholderClass='form-input__placeholder'></Input>
+                </Picker>
+              </View>
+              <View className='form-input'>
+                <Text className='label'>节次</Text><Input type='number' value={`${this.state.newCourseSessionStart}`} onInput={this.handleInputChange.bind(this, 'newCourseSessionStart')} placeholder='上课节次' placeholderClass='form-input__placeholder'></Input>
+                <Text className='label'>-</Text><Input type='number' value={`${this.state.newCourseSessionEnd}`} onInput={this.handleInputChange.bind(this, 'newCourseSessionEnd')} placeholder='上课节次' placeholderClass='form-input__placeholder'></Input>
+              </View>
+              <View className='form-input'>
+                <Text className='label'>周次</Text><Input type='number' value={`${this.state.newCourseWeekStart}`} onInput={this.handleInputChange.bind(this, 'newCourseWeekStart')} placeholder='上课周次' placeholderClass='form-input__placeholder'></Input>
+                <Text className='label bold'>-</Text><Input type='number' value={`${this.state.newCourseWeekEnd}`} onInput={this.handleInputChange.bind(this, 'newCourseWeekEnd')} placeholder='上课节次' placeholderClass='form-input__placeholder'></Input>
+              </View>
+              <View className='form-input'>
+                <Text className='label'>单双</Text>
+                <Picker mode='selector' range={this.state.newCourseOddRange} rangeKey='name' value ={this.state.newCourseOddSelected} onChange={this.handleOddChange}>
+                  <Input disabled={true} value={this.state.newCourseOddText} placeholder='单双周' placeholderClass='form-input__placeholder' />
+                </Picker>
+              </View>
+              <View className='tips'>
+                <View className='manage' onClick={this.gotoManageCustom}>管理</View>
+                <Image src={questionUrl} onClick={this.handleAddCourseHelp} />
+              </View>
+              <Button className='btn' formType='submit'>添加</Button>
+            </Form>
+          </View>
+        </FloatLayout>
+      </View>
+    )
+  }
+}

@@ -1,0 +1,171 @@
+@import "../../../asserts/style/default.scss";
+
+$float-layout-timer: 0.8s;
+
+.clear {
+  display: flex;
+  align-items: center;
+
+  &.hide {
+    visibility: hidden;
+  }
+
+  &:focus {
+    color: #787c7b;
+  }
+}
+
+.form {
+  &.hide {
+    height: 0;
+    overflow: hidden;
+    transition: all .8s cubic-bezier(.68, -.55, .27, 1.55);
+  }
+  
+  Button {
+    margin-top: 20px;
+  }
+}
+
+.book-number-tips {
+  margin: 40px 0 20px;
+  font-size: 32px;
+}
+
+.bookScrollView {
+  height: 1000px;
+
+
+}
+
+.book-list {
+  display: flex;
+  flex-direction: column;
+
+  .book-item {
+    display: flex;
+    justify-content: space-between;
+
+    &-right {
+      padding: 0 20;
+    }
+
+    Text {
+      font-size: 25px;
+      display: block;
+    }
+
+    &__image {
+      width: 128px;
+      height: 168px;
+      margin-right: 10px;
+    }
+
+    &__wrap {
+      flex: 1;
+    }
+
+    &__title {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    &__remain {
+      text-align: center;
+    }
+
+    &__call_no {
+      margin-top: 20px;
+    }
+  }
+}
+
+.container {
+  Text {
+    font-size: 25px;
+  }
+
+  Image {
+    width: 128px;
+    height: 168px;
+    z-index: -1;
+  }
+
+  .info {
+    display: block;
+  }
+
+  .summary {
+    font-size: 25px;
+    max-height: 200px;
+  }
+
+  .none-text {
+    font-size: 25px;
+  }
+
+  &-title {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .collection {
+    max-height: 160px;
+    border-radius: 10%;
+
+    &-item {
+      padding: 5px;
+      display: flex;
+      text-align: center;
+
+
+      &:nth-child(odd) {
+        background-color: white;
+      }
+
+      &:nth-child(even) {
+        background-color: rgba(238, 238, 238, 0.5);
+      }
+
+      &.title {
+        background-color: rgba(238, 238, 238, 1);
+      }
+
+      &__first {
+        flex: 1;
+      }
+
+      &__second {
+        flex: 1;
+      }
+
+      &__last {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.float-corner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0 100px 100px 0;
+  padding: 10px;
+  border-radius: 50%;
+  box-shadow: 3px 3px 5px 5px #f0f0f0;
+
+  Image {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.tips {
+  font-size: 30px;
+  padding: 20px 10px;
+  color: #b0b0b0;
+}

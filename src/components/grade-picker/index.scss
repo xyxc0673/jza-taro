@@ -1,0 +1,24 @@
+.form-input {
+
+  border-bottom: 1px solid #eee;
+  padding: 20px 0px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  Label {
+    font-size: 35px;
+    flex-basis: 230px;
+    flex-shrink: 1;
+  }
+
+  Input {
+    flex-shrink: 5;
+    font-size: 35px;
+    width: 100%;
+  }
+
+  &__placeholder {
+    font-size: 35px;
+  }
+}

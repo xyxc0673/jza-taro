@@ -1,0 +1,19 @@
+.list {
+
+  &-tip {
+    padding: 10px 25px;
+    font-size: 27px;
+    color: #b0b0b0;
+  }
+
+  &-item {
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__title {
+      font-size: 36px;
+    }
+  }
+}

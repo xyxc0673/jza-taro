@@ -1,0 +1,37 @@
+.card {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  box-shadow: 0 2px 40px rgba(0, 0, 0, 0.05);
+
+  &:last-child {
+    margin-bottom: 40px;
+  }
+
+  .column {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    justify-content: space-between;
+
+    &:nth-child(n+2) {
+      margin-top: 20px;
+    }
+
+    Text {
+      font-size: 24px;
+    }
+  }
+}
+
+.t-amount {
+  font-size: 48px;
+}
+
+.t-time {
+  color: #b0b0b0;
+}

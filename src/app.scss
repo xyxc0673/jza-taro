@@ -1,0 +1,112 @@
+@import './asserts/style/default.scss';
+
+page {
+  height: 100%;
+}
+
+.padding20 {
+  padding: 20px;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  width: 100%;
+  color: #212121;
+  border: solid 1px #1c1c1c;
+  background-color: white;
+
+  &:focus {
+    color: #787c7b;
+  }
+
+  &:nth-child(n + 2) {
+    margin-top: 20px;
+  }
+}
+
+.page {
+  margin: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 20px;
+  padding: 10px 5px 0;
+
+  &-input {
+
+    border-bottom: 1px solid #eee;
+    padding: 20px 0px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    Label {
+      font-size: 30px;
+      flex-basis: 230px;
+      flex-shrink: 1;
+    }
+
+    Input {
+      flex-shrink: 5;
+      font-size: 35px;
+      width: 100%;
+    }
+
+    &__placeholder {
+      font-size: 30px;
+    }
+  }
+  
+  &-input:nth-last-child(1) {
+    margin-bottom: 20px;
+  }
+}
+
+.card {
+  display: flex;
+  align-items: space-between;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  box-shadow: 0 2px 40px rgba(0, 0, 0, 0.05);
+
+  &:last-child {
+    margin-bottom: 40px;
+  }
+}
+
+.column {
+  display: flex;
+  justify-content: space-between;
+  flex-basis: 100%;
+  align-items: center;
+
+  &:nth-child(n+2) {
+    margin-top: 20px;
+  }
+
+  Text {
+    font-size: 24px;
+  }
+
+  .course-name {
+    font-size: 36px;
+  }
+
+  .score {
+    font-size: 48px;
+  }
+}
+
+.avalible-text {
+  color: #68bb9a;
+}

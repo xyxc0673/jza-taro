@@ -1,0 +1,99 @@
+.user-info {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .avatar {
+    display: block;
+    overflow: hidden;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+  }
+
+  .nickname {
+    color: #b0b0b0;
+  }
+}
+
+$list-item-font-size: 30px;
+
+.list {
+  font-size: $list-item-font-size;
+  padding: 0 10px;
+
+  &-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px 10px;
+
+    .state {
+      font-size: $list-item-font-size;
+      color: #b0b0b0;
+      border-bottom: 1px solid #6190e8;
+    }
+
+    &__hover {
+      transition: all 0.2s;
+      background-color: #f0f0f0!important;
+    }
+  }
+
+  .button {
+    background-color: transparent;
+    text-align: start;
+    line-height: 1.35;
+    font-size: $list-item-font-size;
+
+    &::after {
+      border: none;
+    }
+  }
+
+  &.with-symbol &-item {
+    // &::after {
+    //   border: none;
+    //   content: ">";
+    //   float: right;
+    //   font-size: 30px;
+    //   color: #b0b0b0;
+    //   font-weight: bold;
+    // }
+
+    .symbol {
+      float: right;
+      font-size: 30px;
+      color: #b0b0b0;
+      font-weight: bold;      
+    }
+  }
+}
+
+.none {
+  border: 0;
+}
+
+.grey {
+  color: #b0b0b0;
+}
+
+.danger-cycle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255, 69, 0, 0.7);
+  font-size: 20px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.small {
+  font-size: 26px;
+}
