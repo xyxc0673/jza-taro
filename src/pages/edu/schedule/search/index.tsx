@@ -47,10 +47,8 @@ export default class ScheduleSearch extends Component {
     }
 
     utils.setStorage({'schedule': response.data.data.schedule})
-
+    Taro.eventCenter.trigger('indexRemount')
     Taro.redirectTo({url: '/pages/edu/schedule/core/index'})
-
-    Taro.eventCenter.trigger('renderSchedule', response.data.data.schedule)
   }
 
   handleChange (k, v) {
