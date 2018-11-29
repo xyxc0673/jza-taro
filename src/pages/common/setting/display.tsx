@@ -10,9 +10,23 @@ export default class Card extends Component {
   
   state = {
     cardSetting: Taro.getStorageSync('cardSetting'),
+    displayNextWeekCourse: false,
   }
 
-  componentWillMount () { }
+  componentWillMount () {
+    const allStorageKeys = [
+      'cardSetting',
+      'displayNextWeekCourse',
+    ]
+
+    const newState = {}
+
+    for(let key of allStorageKeys) {
+      newState[key] = Taro.getStorageSync(key)
+    }
+
+    this.setState(newState)
+  }
 
   componentDidMount () { }
 
@@ -22,7 +36,7 @@ export default class Card extends Component {
 
   componentDidHide () { }
 
-  handleChange (key, e) {
+  handleCardChange (key, e) {
     const changeHuman = e.detail.value ? '开启': '关闭'
     const { cardSetting } = this.state
 
@@ -34,20 +48,37 @@ export default class Card extends Component {
     Taro.showToast({title: `${cardSetting[key].title}${changeHuman}显示`, icon: 'none'})
   }
 
+  handleNormalChange (key, name, e) {
+    const changeHuman = e.detail.value ? '开启': '关闭'
+    Taro.setStorageSync(key, e.detail.value)
+    Taro.showToast({title: `${changeHuman} ${name}`, icon: 'none'})
+  }
+
   render () {
-    const { cardSetting } = this.state
+    const { cardSetting, displayNextWeekCourse } = this.state
     return (
       <View className='page'>
         <View className='list'>
-          <View className='list-tip'>选择主页上的卡片是否显示</View>
-          {cardSetting.map((item, index) => {
-            return (
-              <View className='list-item' key={index}>
-                <View className='list-item__title'>{item.title}</View>
-                <Switch checked={item.show} onChange={this.handleChange.bind(this, index)}></Switch>
-              </View>
-            )
-          })}
+          <View className='list-title'>卡片开关</View>
+          <View className='list-container'>
+            {cardSetting.map((item, index) => {
+              return (
+                <View className='list-item' key={index}>
+                  <View className='list-item__title'>{item.title}</View>
+                  <Switch checked={item.show} onChange={this.handleCardChange.bind(this, index)} />
+                </View>
+              )
+            })}
+          </View>
+        </View>
+        <View className='list'>
+          <View className='list-title'>我的课表</View>
+          <View className='list-container'>
+            <View className='list-item'>
+              <View className='list-item__title'>显示下周课程</View>
+              <Switch checked={displayNextWeekCourse || false} onChange={this.handleNormalChange.bind(this, 'displayNextWeekCourse', '下周课程显示')} />
+            </View>
+          </View>
         </View>
       </View>
     )

@@ -1,16 +1,33 @@
-.list {
+.page {
+  background-color: rgba(240, 240, 240, 0.5);
+  margin: 0;
+  height: 100%;
+}
 
-  &-tip {
+.list {
+  margin: 10px;
+
+  &-title {
     padding: 10px 25px;
     font-size: 27px;
+  }
+
+  &-tip {
+    font-size: 25px;
+    margin-bottom: 10px;
     color: #b0b0b0;
   }
 
-  &-item {
+  &-container {
+    background-color: #fff;
     padding: 15px 25px;
+  }
+
+  &-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 15px 0;
 
     &__title {
       font-size: 36px;

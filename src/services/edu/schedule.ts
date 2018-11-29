@@ -26,6 +26,8 @@ class Schedule {
     'rgba(34, 125, 81, 0.5)', // 緑
   ]
 
+  static notCurrentCourseColor = 'rgba(120,125,123, 0.2)' // 素鼠
+
   static async Get (year: number = 0, term: number = 0) {
     if (!year || !term) {
       const ret = account.calYearTerm()
@@ -75,6 +77,7 @@ class Schedule {
   static InitSchedule (rawSchedule: Array<any>, week: number = -1, day: number = -1) {
     const sameScheduleSameColor = {}
     const colorLength = this.colors.length
+    const displayNextWeekCourse = Taro.getStorageSync('displayNextWeekCourse') || false
     let schedule: Array<any> = []
 
     if (day === -1) {
@@ -82,10 +85,13 @@ class Schedule {
     }
     
     let colorIndex = 0
+    let preValidCourseIndex: Array<any> = []
 
     // 初始化课程表
-    for (let s of rawSchedule) {
+    for (let i = 0; i < rawSchedule.length; i ++) {
+      const s = rawSchedule[i]
       let thisWeekCourse = false
+      let nextWeekCourse = false
 
       if (!s.during) {
         continue
@@ -93,37 +99,54 @@ class Schedule {
 
       const allWeek = s.during.split(',')
 
-      // 判断是否为本星期课程
-      allWeek.forEach((w: string) => {
+      // 判断是否为本周课程或下周课程
+      for (let w of allWeek) {
         let wInt = parseInt(w)
         if (wInt == week) {
           thisWeekCourse = true
-          return
+          break
+        } else if (wInt == week + 1) {
+          nextWeekCourse = true
+          break
         }
-      })
+      }
 
-      if (!thisWeekCourse || (day !== -1 && parseInt(s.day) != day)) {
+      // 用于首页今日课表的判断
+      if ((day !== -1 && parseInt(s.day) != day)) {
+        continue
+      }
+
+      if (!thisWeekCourse && (!displayNextWeekCourse || !nextWeekCourse)) {
         continue
       }
 
       s.duringText = allWeek[0] + '-' + allWeek[allWeek.length - 1] // start week to end week
 
-      const sessionArrary = s.session.split(',')
-      s.sessionText = sessionArrary[0] + '-' + sessionArrary[sessionArrary.length - 1] // start seesion to end session
+      // 跳过是下周但是会覆盖当前周的课程
+      if (s.day === preValidCourseIndex[0], s.session === preValidCourseIndex[1]) {
+        continue
+      }
+
+      preValidCourseIndex = [s.day, s.session]
 
       if (day === -1) {
         // 课程块随机上色，并为同一课程上相同色
         const colorBefore = sameScheduleSameColor[s.course_name]
 
-        if (!colorBefore) {
-          s.color = this.colors[(colorIndex++) % colorLength]
-          sameScheduleSameColor[s.course_name] = s.color
+        if (nextWeekCourse) {
+          s.color = this.notCurrentCourseColor
         } else {
-          s.color = colorBefore
+          if (!colorBefore) {
+            s.color = this.colors[(colorIndex++) % colorLength]
+            sameScheduleSameColor[s.course_name] = s.color
+          } else {
+            s.color = colorBefore
+          }
         }
         
         schedule = this.doFlex(schedule, s)
       } else {
+        s.sessionText = this.genStartToEnd(s.session, '-')
         schedule.push(s)
       }
     }
@@ -136,6 +159,7 @@ class Schedule {
     const sessionArray = s.session.split(',')
     const dayInt = parseInt(s.day)
     
+    s.sessionText = sessionArray[0] + '-' + sessionArray[sessionArray.length - 1] // start seesion to end session
     s.flex = sessionArray.length // 用于课程第一个 cell 的 flex 值，予以撑开所占节数
 
     sessionArray.forEach((i) => {
@@ -148,7 +172,10 @@ class Schedule {
     return schedule
   }
 
-
+  static genStartToEnd(text, separator: string = '-') {
+    const textArray = text.split(',')
+    return textArray[0] + separator + textArray[textArray.length - 1]
+  }
 }
 
 export default Schedule
