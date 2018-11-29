@@ -41,8 +41,9 @@ export default class About extends Component {
           </View>
           <Panel title='更新日志' marginBottom={0}>
             <View className='list'>
-              <View className="list-item title">版本: 0.0.1 日期: 2018-11-26</View>
-              <View className='list-item'>小程序初版完成</View>
+              <View className="list-item title">版本: 0.1.1 日期: 2018-11-29</View>
+              <View className='list-item'>新增 显示下周课程及其选项开关</View>
+              <View className='list-item'>修复 获取课表后今日课表不刷新</View>
             </View>
           </Panel>
           <Panel title='开源' marginBottom={0}>
