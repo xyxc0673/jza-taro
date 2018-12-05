@@ -28,14 +28,14 @@ class Schedule {
 
   static notCurrentCourseColor = 'rgba(120,125,123, 0.2)' // 素鼠
 
-  static async Get (year: number = 0, term: number = 0) {
-    if (!year || !term) {
+  static async Get (year: number = 0, semester: number = 0) {
+    if (!year || !semester) {
       const ret = account.calYearTerm()
       year = ret['year']
-      term = ret['term']
+      semester = ret['term']
     }
 
-    const response = await request.jwSchedule(year, term)
+    const response = await request.jwSchedule({year: year, semester: semester})
     if (!response.data || response.data.data.code == -1) {
       return false
     }
@@ -88,8 +88,7 @@ class Schedule {
     let preValidCourseIndex: Array<any> = []
 
     // 初始化课程表
-    for (let i = 0; i < rawSchedule.length; i ++) {
-      const s = rawSchedule[i]
+    for (let s of rawSchedule) {
       let thisWeekCourse = false
       let nextWeekCourse = false
 

@@ -1,4 +1,4 @@
-@import "../../../asserts/style/default.scss";
+@import "../../asserts/style/default.scss";
 
 $float-layout-timer: 0.8s;
 
@@ -20,6 +20,12 @@ $float-layout-timer: 0.8s;
     height: 0;
     overflow: hidden;
     transition: all .8s cubic-bezier(.68, -.55, .27, 1.55);
+  }
+
+  &-input {
+    Label {
+      flex-basis: 160px;
+    }
   }
   
   Button {

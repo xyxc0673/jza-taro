@@ -1,12 +1,12 @@
 import Taro, {Component, Config} from '@tarojs/taro'
 import {View, Form, Button} from '@tarojs/components'
 
-import './index.scss'
+import './setting.scss'
 
-import GradePicker from '../../../../components/grade-picker'
+import GradePicker from '../../../components/grade-picker'
 
-import request from '../../../../utils/request'
-import utils from '../../../../utils/utils';
+import request from '../../../utils/request'
+import utils from '../../../utils/utils'
 
 
 interface IState {
@@ -36,7 +36,7 @@ export default class ScheduleSearch extends Component {
 
   async handleSubmit () {
     const {year, semester} = this.state
-    const response = await request.jwSchedule(year, semester)
+    const response = await request.jwSchedule({year: year, semester: semester})
     
     if (!response || !response.data) {
       return
@@ -48,7 +48,7 @@ export default class ScheduleSearch extends Component {
 
     utils.setStorage({'schedule': response.data.data.schedule})
     Taro.eventCenter.trigger('indexRemount')
-    Taro.redirectTo({url: '/pages/edu/schedule/core/index'})
+    Taro.redirectTo({url: '/pages/edu/schedule/schedule'})
   }
 
   handleChange (k, v) {
@@ -56,7 +56,7 @@ export default class ScheduleSearch extends Component {
   }
 
   gotoCustom () {
-    Taro.navigateTo({url: '/pages/edu/schedule/custom/index?from=search'})
+    Taro.navigateTo({url: '/pages/edu/schedule/custom?from=search'})
   }
 
   render () {

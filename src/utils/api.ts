@@ -18,6 +18,14 @@ const api = apiReset({
   libBookInfo: '/lib/book_info',
   libBookDetail: '/lib/book_detail',
   libBookCover: '/lib/book_cover',
+
+  libReaderLogin: '/lib/reader/login',
+  libReaderCaptcha: '/lib/reader/captcha',
+  libReaderInfo: '/lib/reader/info',
+  libReaderRenew: '/lib/reader/renew',
+  libReaderRenewCheck: '/lib/reader/renew/check',
+  libReaderCurrentCheckout: '/lib/reader/checkout/current',
+  libReaderCheckoutRecord: '/lib/reader/checkout/record',
 })
 
 function apiReset<T>(object: T): T {

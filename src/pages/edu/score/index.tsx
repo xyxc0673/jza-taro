@@ -64,7 +64,7 @@ export default class Score extends Component {
 
   async handleSubmit () {
     const {year, semester} = this.state
-    const response = await request.jwScores(year, semester)
+    const response = await request.jwScores({year: year, semester: semester})
 
     if (!response || !response.data) {
       return

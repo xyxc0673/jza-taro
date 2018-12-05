@@ -84,7 +84,7 @@ export default class Transcation extends Component<IState> {
   }
 
   async handleSubmit () {
-    const response = await request.cardTransaction(this.state.startDate, this.state.endDate)
+    const response = await request.cardTransaction({startDate: this.state.startDate, endDate: this.state.endDate})
 
     if (!response) {
       return

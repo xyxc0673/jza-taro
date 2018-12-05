@@ -17,9 +17,9 @@ const isObj = (obj: any): Boolean => {
   return typeof obj !== "undefined"
 }
 
-const _showModal = (content: string, title?: string) => {
+const _showModal = ({title = '提示', content}) => {
   Taro.showModal({
-    title: title || 'Oops',
+    title: title,
     content: content,
     showCancel: false,
   })
@@ -65,12 +65,12 @@ const getDayDate = (week): Array<any> => {
   const schoolOpenDate: Date = new Date(Taro.getStorageSync('schoolOpenDate'))
   const days: Array<any> = []
 
-  schoolOpenDate.setDate(schoolOpenDate.getDate() + (week) * 7 -1)
+  schoolOpenDate.setDate(schoolOpenDate.getDate() + (week) * 7 - 1)
 
   for (let i = 0; i < 7; i ++) {
     let timestamp = schoolOpenDate.setDate(schoolOpenDate.getDate() + 1)
     let date = new Date(timestamp)
-    days.push({date: date.getMonth() + '-' + date.getDate(), day: '周' + replaceToChinese(date.getDay()), dayInt: date.getDay()})
+    days.push({date: (date.getMonth() + 1) + '-' + date.getDate(), day: '周' + replaceToChinese(date.getDay()), dayInt: date.getDay()})
   }
 
   return days

@@ -15,8 +15,9 @@ export default class Setting extends Component {
   }
   
   state = {
-    account: Account.get(),
-    accountState: {jw: false, card: false},
+    account: Account.Get(),
+    libAccount: Account.GetLib(),
+    accountState: {jw: false, card: false, lib: false,},
     currentSize: 0,
   }
 
@@ -34,7 +35,9 @@ export default class Setting extends Component {
 
   componentWillUnmount () { }
 
-  componentDidShow () { }
+  componentDidShow () {
+    Taro.eventCenter.trigger('settingRemount')
+  }
 
   componentDidHide () { }
 
@@ -42,55 +45,66 @@ export default class Setting extends Component {
     const state = {
       jw: Account.checkBindState('jw'),
       card: Account.checkBindState('card'),
+      lib: Account.checkBindState('lib'),
     }
     this.setState({accountState: state})
   }
 
+  async handleDataClear () {
+    const resp = await Taro.showModal({title: '提示', content: '确定要清除所有数据吗？'})
+    if (resp.cancel) { return }
+    Taro.clearStorageSync()
+
+    init()
+
+    Taro.reLaunch({url: '/pages/index/index'})
+    return
+  }
+
   async handleClick (key) {
-    if (key === 'clear') {
-      const resp = await Taro.showModal({title: '提示', content: '确定要清除所有数据吗？'})
-      if (resp.cancel) { return }
-      Taro.clearStorageSync()
-
-      init()
-      Account.reCache()
-
-      Taro.reLaunch({url: '/pages/index/index'})
-      return
-    }
-
     const routes = {
       bind: '/pages/common/bind/index',
+      libBind: '/pages/library/auth',
       ui: '/pages/common/setting/display',
       about: '/pages/common/setting/about',
     }
+
     Taro.navigateTo({url: routes[key]})
   }
 
   async handleClearClick (type) {
     if (this.state.accountState[type] === false) {
+      if (type === 'lib') {
+        this.handleClick('libBind')
+        return
+      }
+
       this.handleClick('bind')
       return
     }
     
     const _type = {
       jw: '教务',
-      card: '校园卡'
+      card: '校园卡',
+      lib: '图书馆',
     }
     const typeHuman = `解绑${_type[type]}账号`
     const res = await Taro.showModal({title: '提示', content: `你确定要${typeHuman}吗？`})
-
-    let { account } = this.state
 
     if (res.cancel) {
       return
     }
 
-    account = Object.assign({}, account, {[`${type}Password`]: ''})
+    if (type === "lib") {
+      Account.SaveLib({})
+      Taro.setStorageSync('opacToken', '')
+    } else {
+      let { account } = this.state
 
-    Taro.setStorageSync('account', account)
+      account = Object.assign({}, account, {[`${type}Password`]: ''})
 
-    Account.reCache()
+      Account.Save(account)
+    }
 
     Taro.showToast({title: `${typeHuman}成功`, icon: 'none'})
     this.loadBindState()
@@ -98,13 +112,13 @@ export default class Setting extends Component {
   }
 
   render () {
-    const { account, accountState, currentSize } = this.state
+    const { account, libAccount, accountState, currentSize } = this.state
 
     return (
       <View className=''>
         <View className='user-info'>
           <OpenData className='avatar' type='userAvatarUrl' />
-          <View className='nickname'>{account.studentID ? account.studentID: '未绑定'}</View>
+          <View className='nickname'>{account.studentID || libAccount ? account.studentID || libAccount.studentID : '未绑定'}</View>
         </View>
         <Panel title='设置' marginBottom={0}>
           <View className='list with-symbol'>
@@ -118,11 +132,12 @@ export default class Setting extends Component {
           <View className='list'>
             <View className='list-item'>教务 <Text id='jw' className='state' onClick={this.handleClearClick.bind(this, 'jw')}>{accountState.jw == true ? '已': '未'}绑定</Text></View>
             <View className='list-item'>校园卡 <Text id='card' className='state' onClick={this.handleClearClick.bind(this, 'card')}>{accountState.card == true ? '已': '未'}绑定</Text></View>
+            <View className='list-item'>图书馆 <Text id='lib' className='state' onClick={this.handleClearClick.bind(this, 'lib')}>{accountState.lib == true ? '已': '未'}绑定</Text></View>
           </View>
         </Panel>
         <Panel title='缓存' marginBottom={0}>
           <View className='list with-symbol'>
-            <View className='list-item' hoverClass='list-item__hover' onClick={this.handleClick.bind(this, 'clear')}>
+            <View className='list-item' hoverClass='list-item__hover' onClick={this.handleDataClear}>
             <View>
               清除数据<Text className='small grey'>(占用储存空间：{currentSize} kb)</Text>
             </View>

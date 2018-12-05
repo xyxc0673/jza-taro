@@ -23,6 +23,7 @@ interface ISchedule {
 interface IState {
   showJWFloatLayout: boolean,
   showCardFloatLayout: boolean,
+  showLibFloatLayout: boolean,
 
   balance: number,
   showBalance: boolean,
@@ -36,6 +37,8 @@ interface IState {
 
   notice: string,
   showNotice: boolean,
+
+  showHelloWorld: boolean,
 }
 
 export default class Index extends Component<{}, IState> {
@@ -49,27 +52,27 @@ export default class Index extends Component<{}, IState> {
    */
   config: Config = {
     navigationBarTitleText: '吉珠小助手',
+    enablePullDownRefresh: true,
+    backgroundTextStyle: "dark",
   }
   
   gridItems = [
     {
-      id: '0',
       title: '教务系统',
       pageUrl: '',
       bindState: 'showJWFloatLayout',
       imageUrl: require('../../asserts/images/grid_schedule.svg')
     },
     {
-      id: '1',
       title: '校园卡',
       pageUrl: '',
       bindState: 'showCardFloatLayout',
       imageUrl: require('../../asserts/images/grid_card.svg')
     },
     {
-      id: '2',
-      title: '图书查询',
-      pageUrl: '/pages/library/search/index',
+      title: '图书馆',
+      pageUrl: '',
+      bindState: 'showLibFloatLayout',
       imageUrl: require('../../asserts/images/grid_book.svg')
     },
     // {
@@ -79,7 +82,6 @@ export default class Index extends Component<{}, IState> {
     //   imageUrl: require('../../asserts/images/grid_calendar.svg')
     // },
     {
-      id: '4',
       title: '设置',
       pageUrl: '/pages/common/setting/index',
       imageUrl: require('../../asserts/images/grid_settings.svg')
@@ -89,6 +91,7 @@ export default class Index extends Component<{}, IState> {
   state: IState = {
     showJWFloatLayout: false,
     showCardFloatLayout: false,
+    showLibFloatLayout: false,
 
     balance: 0,
     showBalance: false,
@@ -102,9 +105,44 @@ export default class Index extends Component<{}, IState> {
 
     notice: '谢谢你使用吉珠小助手。\n欢迎通过 设置-反馈 提交建议和问题，谢谢！\n另外，通知卡片可以在 设置-界面 里关闭。',
     showNotice: false,
+
+    showHelloWorld: false,
   }
 
   componentWillMount () {
+    this.init()
+  }
+  
+  componentDidMount () {
+    Taro.eventCenter.on('indexRemount', async () => {
+      console.log('Page Index Remount')
+      this.setState({balance: 0, schedule: []}, () => {
+        this.init()
+      })
+    })
+   }
+
+  componentWillUnmount () { }
+
+  componentDidShow () { }
+
+  componentDidHide () { }
+
+  onShareAppMessage () {
+    let path = '/pages/index/index'
+    return {title: '不负时光', path: path}
+  }
+
+  onPullDownRefresh () {
+    this.init()
+    Taro.stopPullDownRefresh()
+
+    setTimeout(() => {
+      Taro.showToast({title: '刷新成功', icon: 'none'})
+    }, 300)
+  }
+  
+  init () {
     const cardSetting = Taro.getStorageSync('cardSetting')
     let state = {}
     
@@ -124,8 +162,9 @@ export default class Index extends Component<{}, IState> {
       } else if (item.showKey === 'showSchedule') {
         this.getSchedule()
       } 
-
     }
+
+    state['showHelloWorld'] = !state['jwVerified'] && !state['cardVerified'] && !Account.checkBindState('lib')
 
     this.setState(state, () => {
       const updateManager = Taro.getUpdateManager()
@@ -137,26 +176,6 @@ export default class Index extends Component<{}, IState> {
         }
       })
     })
-  }
-  
-  componentDidMount () {
-    Taro.eventCenter.on('indexRemount', async () => {
-      console.log('Page Index Remount')
-      this.setState({balance: 0, schedule: []}, () => {
-        this.componentWillMount()
-      })
-    })
-   }
-
-  componentWillUnmount () { }
-
-  componentDidShow () { }
-
-  componentDidHide () { }
-
-  onShareAppMessage () {
-    let path = '/pages/index/index'
-    return {title: '吉珠小助手', path: path, imageUrl: '../../asserts/images/robot.svg'}
   }
 
   goto(url: string) {
@@ -180,7 +199,7 @@ export default class Index extends Component<{}, IState> {
   }
 
   async getBalance (quite_mode: boolean = true) {
-    const account:IAccount = Account.get()
+    const account:IAccount = Account.Get()
 
     if (!account || !Account.checkBindState('card')) {
       return
@@ -236,16 +255,30 @@ export default class Index extends Component<{}, IState> {
   handleRightTipClick (type) {
     const actions = {
       feedback: '/pages/common/setting/index',
-      schedule: '/pages/edu/schedule/core/index',
+      schedule: '/pages/edu/schedule/schedule',
       transaction: '/pages/card/transaction/index'
     }
     Taro.navigateTo({url: actions[type]})
   }
 
   render () {
-    const {balance, showBalanceLoading, showBalance, schedule, showSchedule, jwVerified, cardVerified, showJWFloatLayout, showCardFloatLayout, notice, showNotice} = this.state
+    const {
+      balance,
+      showBalanceLoading,
+      showBalance,
+      schedule,
+      showSchedule,
+      jwVerified,
+      cardVerified,
+      showJWFloatLayout,
+      showCardFloatLayout,
+      showLibFloatLayout,
+      notice,
+      showNotice,
+      showHelloWorld,
+    } = this.state
 
-    const helloPanel = (!jwVerified && !cardVerified) ? (
+    const helloPanel = (showHelloWorld) ? (
       <Panel title='你好，世界' none={false} nonText={`感谢参与 吉珠课表 的内测`}>
         <View className='bind-tip' onClick={this.goto.bind(this, '/pages/common/bind/index')}><Text>点击绑定以启用更多服务</Text></View>
       </Panel>
@@ -289,9 +322,9 @@ export default class Index extends Component<{}, IState> {
     ) : null
 
     const gridItems = this.gridItems
-    const gridItemMap = gridItems.map((gridItem) => {
+    const gridItemMap = gridItems.map((gridItem, index) => {
       return (
-        <View key={gridItem.id} className='grid__item' onClick={this.gridGotoPage.bind(this, gridItem)}>
+        <View key={index} className='grid__item' onClick={this.gridGotoPage.bind(this, gridItem)}>
           <Image src={gridItem.imageUrl} />
           <Text>{gridItem.title}</Text>
         </View>
@@ -315,31 +348,39 @@ export default class Index extends Component<{}, IState> {
           {gridPanel}
         </View>
         <FloatLayot title='教务' isOpened={showJWFloatLayout} onClose={this.handleClose.bind(this, 'showJWFloatLayout')}>
-            <Panel title='功能' marginBottom={0} padding='20rpx 20rpx 30rpx;'>
-              <View className='schedule-btn-group'>
+          <Panel title='功能' marginBottom={0} padding='20rpx 20rpx 30rpx;'>
+            <View className='btn-group'>
               <View className='inline'>
-                <Button className='btn left' onClick={this.goto.bind(this, '/pages/edu/schedule/core/index')}>课程表</Button>
-                <Button className='btn right' onClick={this.goto.bind(this, '/pages/edu/schedule/search/index')}>设置</Button>
+                <Button className='btn left' onClick={this.goto.bind(this, '/pages/edu/schedule/schedule')}>课程表</Button>
+                <Button className='btn right' onClick={this.goto.bind(this, '/pages/edu/schedule/setting')}>设置</Button>
               </View>
-                <Button className='btn' onClick={this.goto.bind(this, '/pages/edu/score/index')}>教务成绩</Button>
+              <Button className='btn' onClick={this.goto.bind(this, '/pages/edu/score/index')}>教务成绩</Button>
+            </View>
+          </Panel>
+        </FloatLayot>
+        <FloatLayot title='校园卡' isOpened={showCardFloatLayout} onClose={this.handleClose.bind(this, 'showCardFloatLayout')}>
+          <View>
+            <Panel title='余额' marginBottom={0} rightTip={`${cardVerified ? '刷新': ''}`} onRightTipClick={this.getBalance.bind(this, false)}>
+              <View className='flex-center'>
+              {cardVerified
+                ? <Text className='card-balance__text'>￥{balance}</Text>
+                : <Text className='not-bind-tip'>还未绑定校园卡账号</Text>
+              }
               </View>
             </Panel>
-          </FloatLayot>
-          <FloatLayot title='校园卡' isOpened={showCardFloatLayout} onClose={this.handleClose.bind(this, 'showCardFloatLayout')}>
-            <View>
-              <Panel title='余额' marginBottom={0} rightTip={`${cardVerified ? '刷新': ''}`} onRightTipClick={this.getBalance.bind(this, false)}>
-                <View className='flex-center'>
-                {cardVerified
-                  ? <Text className='card-balance__text'>￥{balance}</Text>
-                  : <Text className='not-bind-tip'>还未绑定校园卡账号</Text>
-                }
-                </View>
-              </Panel>
-              <Panel title='功能' marginBottom={0} padding='20rpx 20rpx 30rpx;'>
-                <Button className='btn' onClick={this.goto.bind(this, '/pages/card/transaction/index')}>查询消费记录</Button>
-              </Panel>
+            <Panel title='功能' marginBottom={0} padding='20rpx 20rpx 30rpx;'>
+              <Button className='btn' onClick={this.goto.bind(this, '/pages/card/transaction/index')}>查询消费记录</Button>
+            </Panel>
+          </View>
+        </FloatLayot>
+        <FloatLayot title='图书馆' isOpened={showLibFloatLayout} onClose={this.handleClose.bind(this, 'showLibFloatLayout')}>
+          <Panel title='功能' marginBottom={0} padding='20rpx 20rpx 30rpx;'>
+            <View className='btn-group'>
+              <Button className='btn' onClick={this.goto.bind(this, '/pages/library/search')}>书目检索</Button>
+              <Button className='btn' onClick={this.goto.bind(this, '/pages/library/reader')}>个人中心</Button>    
             </View>
-          </FloatLayot>
+          </Panel>
+        </FloatLayot>
       </View>
     )
   }

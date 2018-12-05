@@ -1,12 +1,16 @@
 class Cache {
   static _Cache = {}
 
-  static set (key, value) {
+  static Set (key, value) {
     this._Cache[key] = value
   }
 
-  static get (key) {
+  static Get (key) {
     return this._Cache[key]
+  }
+
+  static Clear () {
+    this._Cache = {}
   }
 }
 

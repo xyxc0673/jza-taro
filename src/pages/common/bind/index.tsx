@@ -24,7 +24,7 @@ export default class Index extends Component<{}, IState> {
   }
 
   state: IState = {
-    account: Account.get() as IAccount,
+    account: Account.Get() as IAccount,
     openHelpFloatLayout: false,
   }
 
@@ -69,7 +69,7 @@ export default class Index extends Component<{}, IState> {
 
   async onSubmit() {
     const {studentID = '', jwPassword = '', cardPassword = ''} = this.state.account
-    const acc = Account.get()
+    const acc = Account.Get()
 
     const changedValidation = (): Boolean => {
       return acc.studentID !== studentID
@@ -88,13 +88,13 @@ export default class Index extends Component<{}, IState> {
     }
 
     if (!studentIDValidation(studentID)) {
-      return utils._showModal('Student ID shoule be 8 numbers')
+      return utils._showModal({content: 'Student ID shoule be 8 numbers'})
     }
 
     const passwordCheck = jwPasswordValidation(jwPassword) || cardPasswordValidation(cardPassword)
 
     if (!passwordCheck) {
-      return utils._showModal('Please check password')
+      return utils._showModal({content: 'Please check password'})
     }
 
     let params = {
@@ -149,7 +149,7 @@ export default class Index extends Component<{}, IState> {
     }
 
     utils.setStorage({account: _account})
-    Account.reCache() // 重新设置缓存
+    Account.Save(_account)
 
     if (jwVerified) {
       const res = await Taro.showModal({title: '提示', content: '认证成功，是否要同步获取本学期课表？'})
@@ -193,12 +193,12 @@ export default class Index extends Component<{}, IState> {
           <View>
             <Panel title="说明" marginBottom={0}>
               <View className="help-text">
-                绑定账号后，修改原有信息提交即可重新绑定
+                绑定账号后，修改原有信息提交即可重新绑定。
               </View>  
             </Panel>
             <Panel title="隐私" marginBottom={0}>
               <View className="help-text">
-                所有账号密码均保存在微信小程序内部储存中,并在每次请求服务时,通过一定的加密,在请求中带上。
+                所有账号密码均保存在微信小程序内部储存中，服务器只作中转作用。
               </View>
             </Panel>
           </View>

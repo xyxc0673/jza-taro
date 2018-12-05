@@ -20,7 +20,9 @@ class App extends Component {
     pages: [
       'pages/index/index',
 
-      'pages/library/search/index',
+      'pages/library/reader',
+      'pages/library/auth',
+      'pages/library/search',
 
       'pages/common/bind/index',
       'pages/common/setting/index',
@@ -30,9 +32,9 @@ class App extends Component {
       'pages/card/transaction/index',
 
       'pages/edu/score/index',
-      'pages/edu/schedule/search/index',
-      'pages/edu/schedule/core/index',
-      'pages/edu/schedule/custom/index',
+      'pages/edu/schedule/setting',
+      'pages/edu/schedule/schedule',
+      'pages/edu/schedule/custom',
     ],
     window: {
       backgroundTextStyle: 'light',

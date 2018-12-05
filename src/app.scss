@@ -40,11 +40,10 @@ page {
   padding: 10px 5px 0;
 
   &-input {
-
+    width: 100%;
+    height: 90px;
     border-bottom: 1px solid #eee;
-    padding: 20px 0px;
     display: flex;
-    justify-content: flex-start;
     align-items: center;
 
     Label {
@@ -67,6 +66,17 @@ page {
   &-input:nth-last-child(1) {
     margin-bottom: 20px;
   }
+
+  .tips {
+    Image {
+      width:48px;
+      height:48px;
+    }
+  }
+}
+
+.help-text {
+  font-size: 26px;
 }
 
 .card {

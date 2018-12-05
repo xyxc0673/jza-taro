@@ -1,14 +1,14 @@
 import Taro, {Component, Config} from '@tarojs/taro'
 import {View, Form, Image, Button, Picker, Input, Text, ScrollView} from '@tarojs/components'
 
-import FloatLayout from '../../../../components/float-layout'
+import FloatLayout from '../../../components/float-layout'
 
-import './index.scss'
+import './schedule.scss'
 
-import utils from '../../../../utils/utils'
-import Schedule from '../../../../services/edu/schedule'
+import utils from '../../../utils/utils'
+import Schedule from '../../../services/edu/schedule'
 
-const questionUrl = require('../../../../asserts/images/question.svg')
+const questionUrl = require('../../../asserts/images/question.svg')
 
 // interface INewCourse {
 //   name: string,
@@ -36,6 +36,8 @@ interface IState {
   dayDate: Array<any>,
   showAddCourseFloatLayout: boolean,
 
+  startX: number,
+
   newCourseName: string,
   newCourseTeacher: string,
   newCourseLocation: string,
@@ -60,11 +62,13 @@ export default class Core extends Component {
   
   state: IState = {
     schedule: [],
-    week: utils.getWeek(),
-    day: new Date().getDay(),
-    month: new Date().getMonth(),
-    dayDate: utils.getDayDate(utils.getWeek()),
+    week: 0,
+    day: 0,
+    month: 0,
+    dayDate: [],
     showAddCourseFloatLayout: false,
+
+    startX: 0,
 
     newCourseName: '',
     newCourseTeacher: '',
@@ -126,22 +130,7 @@ export default class Core extends Component {
   }
 
   async componentWillMount () {
-    const rawSchedule = Schedule.GetFormStorage()
-    const mySchedule = Taro.getStorageSync('mySchedule')
-    const newSchedule = rawSchedule.concat(mySchedule)
-
-    const newState = {}
-    const params = this.$router.params
-
-    if (params && params.from === 'search') {
-      newState['showAddCourseFloatLayout'] = true
-      this.$router.params.from = ''
-    }
-
-    const {week} = this.state
-    newState['schedule'] = Schedule.InitSchedule(newSchedule, week, -1)
-
-    this.setState(newState)
+    this.init(utils.getWeek())    
   }
 
   componentDidMount () {
@@ -156,6 +145,29 @@ export default class Core extends Component {
 
   componentDidHide () { }
 
+  init (week: number) {
+    const rawSchedule = Schedule.GetFormStorage()
+    const mySchedule = Taro.getStorageSync('mySchedule')
+    const newSchedule = rawSchedule.concat(mySchedule)
+
+    const newState = {}
+    const params = this.$router.params
+
+    if (params && params.from === 'search') {
+      newState['showAddCourseFloatLayout'] = true
+      this.$router.params.from = ''
+    }
+
+    newState['schedule'] = Schedule.InitSchedule(newSchedule, week, -1)
+
+    newState['week'] = week
+    newState['day'] = new Date().getDay(),
+    newState['month'] = new Date().getMonth(),
+    newState['dayDate'] = utils.getDayDate(week),
+
+    this.setState(newState)
+  }
+
   handleInputChange (key, e) {
     const keys = ['newCourseSessionStart','newCourseSessionEnd', 'newCourseWeekStart', 'newCourseWeekEnd']
     const value = keys.includes(e.target.dataset.eHandleinputchangeAA) ? parseInt(e.detail.value) : e.detail.value
@@ -163,11 +175,33 @@ export default class Core extends Component {
   }
 
   gotoManageCustom () {
-    Taro.navigateTo({url: '/pages/edu/schedule/custom/index?from=core'})
+    Taro.navigateTo({url: '/pages/edu/schedule/custom?from=core'})
   }
 
   handleAddCourseHelp () {
     Taro.showModal({title: '帮助', content: '目前在自定义课程时，如果新课程与原有课程有时间上的冲突，新课程会覆盖原有课程，删除新课程即可恢复。', showCancel: false})
+  }
+
+  handleTouchStart (e) {
+    this.setState({
+      startX: e.changedTouches[0].clientX,
+      startY: e.changedTouches[0].clientY,
+    })
+  }
+
+  handleTouchEnd (e) {
+    const { week, startX } = this.state
+    const touchMoveX = e.changedTouches[0].clientX
+
+    if (Math.abs(touchMoveX - startX) < 20) {
+      return
+    }
+
+    if (touchMoveX < startX) {
+      this.init(week + 1)
+    } else if (touchMoveX > startX) {
+      this.init(week - 1)
+    }
   }
   
   showAddCourse (value, course) {
@@ -361,7 +395,7 @@ export default class Core extends Component {
           </View>
         </View>
         <ScrollView scrollX scrollY>
-          <View className='container'>{container}</View>
+          <View className='container' onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd}>{container}</View>
         </ScrollView>
         <FloatLayout title='添加课程' isOpened={showAddCourseFloatLayout} onClose={this.showAddCourse.bind(this, false)}>
           <View className='padding20'>

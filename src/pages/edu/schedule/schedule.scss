@@ -12,7 +12,6 @@
     .left-block {
       width: 30px;
       font-size: 25px;
-      padding: 5px;
       text-align: center;
       color: #b0b0b0;
     }
@@ -90,6 +89,7 @@
 }
 
 .form-input {
+  height: 50px;
   padding: 10px 0;
 
   Input {
@@ -132,7 +132,7 @@
 
   Image {
     fill: #b0b0b0;
-    width:32px;
-    height:32px;
+    width:32px!important;
+    height:32px!important;
   }
 }

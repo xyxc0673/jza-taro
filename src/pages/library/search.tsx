@@ -1,12 +1,12 @@
 import Taro, {Component, Config} from '@tarojs/taro'
 import { View, ScrollView, Label, Text, Input, Button, Form, Image, Icon } from '@tarojs/components'
-import './index.scss'
+import './search.scss'
 
-import FloatLayout from '../../../components/float-layout/index'
-import Panel from '../../../components/panel/index'
+import FloatLayout from '../../components/float-layout'
+import Panel from '../../components/panel/index'
 
-import utils from '../../../utils/utils'
-import request from '../../../utils/request'
+import utils from '../../utils/utils'
+import request from '../../utils/request'
 
 interface IBook {
   title: string,
@@ -51,7 +51,7 @@ interface IState {
 
 export default class Index extends Component<{IState}, {}> {
   config: Config = {
-    navigationBarTitleText: '图书查询'
+    navigationBarTitleText: '书目检索'
   }
 
   state: IState = {
@@ -138,7 +138,7 @@ export default class Index extends Component<{IState}, {}> {
   }
 
   async onOpenDetial (bookItem: IBook) {
-    let response = await request.libBookDetail(bookItem.isbn, bookItem.marc_no)
+    let response = await request.libBookDetail({isbn: bookItem.isbn, marc_no: bookItem.marc_no})
     if (!response) {
       return
     }
@@ -153,13 +153,13 @@ export default class Index extends Component<{IState}, {}> {
       return
     }
 
-    let page = 0
+    let page = 1
 
     if (!start && this.state.nextPage) {
       page = this.state.nextPage
     }
 
-    let response = await request.libSearch(this.state.keyword, page)
+    let response = await request.libSearch({keyword: this.state.keyword, page: page})
     
     if (!utils.isObj(response.data.data) && response.data.data.count === 0) {
       return
@@ -170,6 +170,11 @@ export default class Index extends Component<{IState}, {}> {
 
   async setResponse(response, start) {
     let books = response.data.data.books
+
+    if (books.length === 0) {
+      Taro.showToast({title: '没有更多记录了', icon: 'none'})
+      return
+    }
 
     if (!start && this.state.books) {
       books = this.state.books.concat(books)
@@ -200,7 +205,7 @@ export default class Index extends Component<{IState}, {}> {
   }
 
   async getBookInfo (isbn: string, marc_no: string) {
-    let response = await request.libBookInfo(isbn, marc_no)
+    let response = await request.libBookInfo({isbn: isbn, marc_no: marc_no})
     
     if (!utils.isObj(response.data) && response.data.code === -1) {
       return
@@ -224,7 +229,7 @@ export default class Index extends Component<{IState}, {}> {
     if (this.state.books) {
       bookItemsView = this.state.books.map((bookItem) => {
         
-        let imageElem = require('../../../asserts/images/default_book.svg')
+        let imageElem = require('../../asserts/images/default_book.svg')
         
         return (
           <View className='card book-item' key={bookItem.marc_no} onClick={this.onOpenDetial.bind(this, bookItem)}>
@@ -275,7 +280,7 @@ export default class Index extends Component<{IState}, {}> {
             <Input id='keyword' value={this.state.keyword} onInput={this.onInput} placeholder='请输入关键词' focus={this.state.searchInputFocus} onBlur={this.handleBlur} onConfirm={this.handleSubmit}></Input>
             <Icon className={`clear ${this.state.keyword === '' ? 'hide' : ''}`} type='clear' size='20' onClick={this.handleClearClick}/>
           </View>
-          <Button className='btn' formType='submit'>查找</Button>
+          <Button className='btn' formType='submit'>检索</Button>
         </Form>
         {!this.state.startSearch
           ? (
@@ -286,7 +291,7 @@ export default class Index extends Component<{IState}, {}> {
           : null
         }
         <View className='float-corner' onClick={this.handleSearchFocus}>
-          <Image src={require('../../../asserts/images/search.svg')} />
+          <Image src={require('../../asserts/images/search.svg')} />
         </View>
 
         <FloatLayout title={this.state.bookDetail.title} isOpened={this.state.showDetailCard} onClose={this.closeDetailCard}>

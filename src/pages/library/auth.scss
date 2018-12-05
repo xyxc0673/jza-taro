@@ -1,0 +1,27 @@
+.captcha {
+  width: 320px;
+  height: 90%;
+}
+
+.form-input {
+  Label {
+    flex-basis: 160px;
+  }
+
+  &.captcha-input {
+    padding: 0;
+  }
+
+  &__left {
+    padding: 20px 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.tips {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}

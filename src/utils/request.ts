@@ -18,7 +18,7 @@ const proxy = async (params): Promise<any> => {
   
   try {
     const response = await Taro.request(params)
-
+    
     if (!params.quite_mode) {
       Taro.hideLoading()
     }
@@ -31,6 +31,14 @@ const proxy = async (params): Promise<any> => {
       throw Error('服务器错误')
     }
 
+    if (response.data.data === "缓存不存在或已过期" || response.data.data === "未登录") {
+      return response
+    }
+
+    if (response.data.code == -1 && !params.quite_mode) {
+      utils._showModal({title: response.data.msg, content: response.data.data})
+    }
+
     if (response.data.code == 1) {
       return response
     }
@@ -40,15 +48,11 @@ const proxy = async (params): Promise<any> => {
       console.warn('Request error: ', response.data.msg)
     }
 
-    if (response.data.code == -1 && !params.quite_mode) {
-      utils._showModal(response.data.msg)
-    }
-
     return response
   } catch(e) {
     if (!params.quite_mode) {
       Taro.hideLoading()
-      utils._showModal('服务器暂时出了点问题')
+      utils._showModal({title: '提示', content: '服务器暂时出了点问题'})
     } else {
       Taro.showToast({title: '服务器暂时出了点问题', icon: 'none'})
     }
@@ -65,20 +69,26 @@ const notice = (params) => {
 
 const authProxy = async (params) => {
   params.header = params.header || {}
+  
+  if (params.type && params.type === 'lib') {
+    params.header.Token = params.opacToken || Taro.getStorageSync('opacToken')
+  }
+
   params.header.Authorization = genAuth(params.studentID, params.password)
+  
   return proxy(params)
 }
 
 const _getAuth = () => {
-  let account = global.cache.get('account')
+  let account = global.cache.Get('account')
   if (!account) {
-    account = Account.get()
+    account = Account.Get()
   }
   return account
 }
 
 const jwAuth = async (params) => {
-  let account = _getAuth()
+  const account = _getAuth()
   if (!account.jwPassword) {
     Taro.showModal({title: '提示', content: '还未绑定教务账号', showCancel: false})
     return
@@ -88,7 +98,7 @@ const jwAuth = async (params) => {
 }
 
 const cardAuth = async (params) => {
-  let account = _getAuth()
+  const account = _getAuth()
   if (!account.cardPassword) {
     Taro.showModal({title: '提示', content: '还未绑定校园卡账号', showCancel: false})
     return
@@ -107,7 +117,7 @@ const cardVerify = async (params) => {
   return authProxy(params)
 }
 
-const jwScores = async (year, semester) => {
+const jwScores = async ({year, semester}) => {
   let params = {
     url: api.jwScore,
     data: {
@@ -118,7 +128,7 @@ const jwScores = async (year, semester) => {
   return jwAuth(params)
 }
 
-const jwSchedule = async (year, semester) => {
+const jwSchedule = async ({year, semester}) => {
   let params = {
     url: api.jwSchedule,
     data: {
@@ -134,7 +144,7 @@ const cardBalance = async (params) => {
   return cardAuth(params)
 }
 
-const cardTransaction = async (startDate, endDate) => {
+const cardTransaction = async ({startDate, endDate}) => {
   const params = {
     url: api.cardTransaction,
     data: {
@@ -155,7 +165,7 @@ const electricUsedRecord = async (params) => {
   return proxy(params)
 }
 
-const libSearch = async (keyword, page) => {
+const libSearch = async ({keyword, page}) => {
   let params = {
     url: api.libSearch,
     data: {
@@ -166,7 +176,7 @@ const libSearch = async (keyword, page) => {
   return proxy(params)
 }
 
-const libBookInfo = async (isbn: string, marc_no: string) => {
+const libBookInfo = async ({isbn, marc_no}) => {
   let params = {
     url: api.libBookInfo,
     quite_mode: true,
@@ -178,7 +188,7 @@ const libBookInfo = async (isbn: string, marc_no: string) => {
   return proxy(params)
 }
 
-const libBookDetail = async (isbn: string, marc_no: string) => {
+const libBookDetail = async ({isbn, marc_no}) => {
   let params = {
     url: api.libBookDetail,
     data: {
@@ -200,6 +210,75 @@ const libBookCover = async (url: string) => {
   return proxy(params)
 }
 
+const libReaderCaptcha = async ({opacToken}) => {
+  let params = {
+    opacToken: opacToken,
+    header: {Token: opacToken},
+    url: api.libReaderCaptcha,
+  }
+  return proxy(params)
+}
+
+const libReaderLogin = async ({studentID, password, captcha, opacToken}) => {
+  let params = {
+    type: 'lib',
+    url: api.libReaderLogin,
+    studentID: studentID,
+    password: password,
+    opacToken: opacToken,
+    data: {
+      captcha: captcha,
+    }
+  }
+  return authProxy(params)
+}
+
+const libReaderInfo = async ({quite_mode}) => {
+  let params = {
+    type: 'lib',
+    quite_mode: quite_mode,
+    url: api.libReaderInfo,
+  }
+  return authProxy(params)
+}
+
+const libReaderRenew = async ({captcha, barcode, check}) => {
+  let params = {
+    type: 'lib',
+    data: { captcha, barcode, check },
+    url: api.libReaderRenew,
+  }
+  return authProxy(params)
+}
+
+const libReaderRenewCheck = async ({barcode, quite_mode}) => {
+  let params = {
+    type: 'lib',
+    data: { barcode },
+    quite_mode: quite_mode,
+    url: api.libReaderRenewCheck,
+  }
+  return authProxy(params)
+}
+
+const libReaderCurrentCheckout = async ({quite_mode}) => {
+  let params = {
+    type: 'lib',
+    quite_mode: quite_mode,
+    url: api.libReaderCurrentCheckout,
+  }
+  return authProxy(params)
+}
+
+const libReaderCheckoutRecord = async ({quite_mode}) => {
+  let params = {
+    type: 'lib',
+    quite_mode: quite_mode,
+    url: api.libReaderCheckoutRecord,
+  }
+  return authProxy(params)
+}
+
 export default {
   notice,
 
@@ -218,4 +297,12 @@ export default {
   libBookInfo,
   libBookDetail,
   libBookCover,
+
+  libReaderCaptcha,
+  libReaderLogin,
+  libReaderInfo,
+  libReaderRenew,
+  libReaderRenewCheck,
+  libReaderCurrentCheckout,
+  libReaderCheckoutRecord,
 }

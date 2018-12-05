@@ -32,7 +32,7 @@ export default class GradePicker extends Component<IProps, {}> {
       yearRange.unshift({key: '', name: '全部'})
       semesterRange.unshift({key: '', name: '全部'})
 
-      this.setState({yearRange: yearRange})
+      this.setState({yearRange: yearRange, semesterRange: semesterRange})
     }
   }
 
@@ -49,18 +49,34 @@ export default class GradePicker extends Component<IProps, {}> {
   }
 
   componentWillMount () {
-    const fourYears = Account.calFourYears()
+    const schoolYears = Account.calSchoolYears()
     const {year, term} = Account.calYearTerm()
-    const {yearRange, semesterRange} = this.state
+    const { semesterRange } = this.state
     
-    if (fourYears.length === 0) {
+    if (schoolYears.length === 0) {
       return
+    }
+
+    const yearRange = [] as Array<any>
+    const _strings = ["一", "二", "三", "四", "五"]
+
+    if (this.props.showTotal) {
+      yearRange.push({key: '', name: '全部'})
+    }
+
+    for(let i = 0; i < schoolYears.length; i ++) {
+      yearRange.push(
+        {
+          key: '',
+          name: '大' + _strings[i],
+        }
+      )
     }
 
     let yearSelected, semesterSelected
 
-    fourYears.forEach((item, index) => {
-      const realIndex = this.props.showTotal ? index+1 : index
+    schoolYears.forEach((item, index) => {
+      const realIndex = this.props.showTotal ? index + 1 : index
 
       yearRange[realIndex].key = item
 

@@ -1,7 +1,9 @@
 import Taro, {Component, Config} from '@tarojs/taro'
 import {View, Button} from '@tarojs/components'
 
-import './index.scss'
+import './custom.scss'
+
+import utils from '../../../utils/utils'
 
 interface ISchedule {
   course_name: string,
@@ -23,7 +25,6 @@ export default class Sample extends Component {
   state = {
     schedule: [] as ISchedule[],
     startX: 0,
-    startY: 0,
     from: '',
   }
 
@@ -50,7 +51,7 @@ export default class Sample extends Component {
   handleManualAdd () {
     const { from } = this.state
     if (from === 'core') { Taro.navigateBack() }
-    else if (from === 'search') {Taro.navigateTo({url: '/pages/edu/schedule/core/index?from=search'})}
+    else if (from === 'search') {Taro.navigateTo({url: '/pages/edu/schedule/schedule?from=search'})}
   }
 
   handleTouchStart (e) {
@@ -71,15 +72,12 @@ export default class Sample extends Component {
   }
 
   handleTouchEnd (e) {
-    const { schedule, startX, startY } = this.state
+    const { schedule, startX } = this.state
     const index = e.currentTarget.dataset.index
     const touchMoveX = e.changedTouches[0].clientX
-    const touchMoveY = e.changedTouches[0].clientY
-    const angle = this.angle({startX, startY}, {touchMoveX, touchMoveY})
 
     schedule.forEach((item, i) => {
       item.isTouchMove = false
-      if (Math.abs(angle) > 30) { return }
       if (i !== index) { return }
       if (touchMoveX > startX) {
         item.isTouchMove = false
@@ -89,12 +87,6 @@ export default class Sample extends Component {
     })
 
     this.setState({schedule: schedule})
-  }
-
-  angle (start, end) {
-    const deltaX = end.X - start.X
-    const deltaY = end.Y - start.Y
-    return 360 * Math.atan(deltaY/deltaX) / (2 * Math.PI)
   }
 
   parseText (str) {
