@@ -5,6 +5,7 @@ import './index.scss'
 import IAccount from '../../../interfaces/account'
 import request from '../../../utils/request'
 import utils from '../../../utils/utils'
+import global from '../../../utils/global'
 import Account from '../../../services/edu/account';
 import Schedule from '../../../services/edu/schedule';
 
@@ -166,6 +167,13 @@ export default class Index extends Component<{}, IState> {
 
     Taro.eventCenter.trigger('indexRemount')
     Taro.eventCenter.trigger('settingRemount')
+
+    if (this.$router.params.from === 'requestAuth') {
+      global.cache.Set('from', 'bind')
+      Taro.navigateBack()
+      return
+    }
+
     Taro.navigateTo({url: '/pages/index/index'})
   }
 
@@ -187,7 +195,7 @@ export default class Index extends Component<{}, IState> {
             <Input id='cardPassword' password={true} type='number' value={this.state.account.cardPassword} onInput={this.onInput} placeholder='请输入校园卡密码'  placeholderClass='form-input__placeholder'></Input>
           </View>
           <View className='tips' onClick={this.handleAnalysisHelp.bind(this, true)}><Image src={questionUrl}/></View>
-          <Button className='btn' formType='submit'>绑定</Button>
+          <Button className='btn' formType='submit'>确定</Button>
         </Form>
         <FloatLayout title="帮助" isOpened={this.state.openHelpFloatLayout} onClose={this.handleAnalysisHelp.bind(this, false)}>
           <View>

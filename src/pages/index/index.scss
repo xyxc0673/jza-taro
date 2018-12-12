@@ -24,16 +24,26 @@
 .grid {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   padding-top: 10px;
-  font-size: 30px;
+  font-size: 28px;
 
-  &__item {
+  &.small {
+    padding: 10px 0;
+  }
+
+  &-item {
     width: 30%;
     margin: 15px 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    &.small {
+      width: 28%;
+      font-size: 26px;
+    }
 
     Image {
       width: 64px;

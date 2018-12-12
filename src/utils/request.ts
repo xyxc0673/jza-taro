@@ -36,6 +36,10 @@ const proxy = async (params): Promise<any> => {
     }
 
     if (response.data.code == -1 && !params.quite_mode) {
+      if (!response.data.data) {
+        utils._showModal({title: "提示", content: response.data.msg})
+        return
+      }
       utils._showModal({title: response.data.msg, content: response.data.data})
     }
 
@@ -50,6 +54,7 @@ const proxy = async (params): Promise<any> => {
 
     return response
   } catch(e) {
+    console.error('Request error: ', e)
     if (!params.quite_mode) {
       Taro.hideLoading()
       utils._showModal({title: '提示', content: '服务器暂时出了点问题'})
@@ -70,8 +75,8 @@ const notice = (params) => {
 const authProxy = async (params) => {
   params.header = params.header || {}
   
-  if (params.type && params.type === 'lib') {
-    params.header.Token = params.opacToken || Taro.getStorageSync('opacToken')
+  if (utils.isObj(params.tokenKey) && params.tokenKey !== "") {
+    params.header.Token = params[params.tokenKey] || Taro.getStorageSync(params.tokenKey)
   }
 
   params.header.Authorization = genAuth(params.studentID, params.password)
@@ -90,7 +95,7 @@ const _getAuth = () => {
 const jwAuth = async (params) => {
   const account = _getAuth()
   if (!account.jwPassword) {
-    Taro.showModal({title: '提示', content: '还未绑定教务账号', showCancel: false})
+    utils.openNavModal('还未绑定教务账号，是否前往绑定？', '/pages/common/bind/index?from=requestAuth')
     return
   }
   params = Object.assign(params, {studentID: account.studentID, password: account.jwPassword})
@@ -100,7 +105,7 @@ const jwAuth = async (params) => {
 const cardAuth = async (params) => {
   const account = _getAuth()
   if (!account.cardPassword) {
-    Taro.showModal({title: '提示', content: '还未绑定校园卡账号', showCancel: false})
+    utils.openNavModal('还未绑定校园卡账号，是否前往绑定？', '/pages/common/bind/index?from=requestAuth')
     return
   }
   params = Object.assign(params, {studentID: account.studentID, password: account.cardPassword})
@@ -134,6 +139,46 @@ const jwSchedule = async ({year, semester}) => {
     data: {
       year: year,
       semester: semester,
+    },
+  }
+  return jwAuth(params)
+}
+
+const jwRecommendMajor = async ({college, grade}) => {
+  let params = {
+    tokenKey: 'eduToken',
+    url: api.jwRecommendMajor,
+    data: {
+      college: college,
+      grade: grade,
+    },
+  }
+  return jwAuth(params)
+}
+
+const jwRecommendClass = async ({college, grade, major}) => {
+  let params = {
+    tokenKey: 'eduToken',
+    url: api.jwRecommendClass,
+    data: {
+      college: college,
+      grade: grade,
+      major: major,
+    },
+  }
+  return jwAuth(params)
+}
+
+const jwRecommendSchedule = async ({year, semester, grade, major, _class}) => {
+  let params = {
+    tokenKey: 'eduToken',
+    url: api.jwRecommendSchedule,
+    data: {
+      year: year,
+      semester: semester,
+      grade: grade,
+      major: major,
+      class: _class,
     },
   }
   return jwAuth(params)
@@ -176,24 +221,24 @@ const libSearch = async ({keyword, page}) => {
   return proxy(params)
 }
 
-const libBookInfo = async ({isbn, marc_no}) => {
+const libBookInfo = async ({isbn, marcNo}) => {
   let params = {
     url: api.libBookInfo,
     quite_mode: true,
     data: {
       isbn: isbn,
-      marc_no: marc_no,
+      marcNo: marcNo,
     }
   }
   return proxy(params)
 }
 
-const libBookDetail = async ({isbn, marc_no}) => {
+const libBookDetail = async ({isbn, marcNo}) => {
   let params = {
     url: api.libBookDetail,
     data: {
       isbn: isbn,
-      marc_no: marc_no,
+      marcNo: marcNo,
     }
   }
   return proxy(params)
@@ -221,7 +266,7 @@ const libReaderCaptcha = async ({opacToken}) => {
 
 const libReaderLogin = async ({studentID, password, captcha, opacToken}) => {
   let params = {
-    type: 'lib',
+    tokenKey: 'opacToken',
     url: api.libReaderLogin,
     studentID: studentID,
     password: password,
@@ -235,7 +280,7 @@ const libReaderLogin = async ({studentID, password, captcha, opacToken}) => {
 
 const libReaderInfo = async ({quite_mode}) => {
   let params = {
-    type: 'lib',
+    tokenKey: 'opacToken',
     quite_mode: quite_mode,
     url: api.libReaderInfo,
   }
@@ -244,7 +289,7 @@ const libReaderInfo = async ({quite_mode}) => {
 
 const libReaderRenew = async ({captcha, barcode, check}) => {
   let params = {
-    type: 'lib',
+    tokenKey: 'opacToken',
     data: { captcha, barcode, check },
     url: api.libReaderRenew,
   }
@@ -253,7 +298,7 @@ const libReaderRenew = async ({captcha, barcode, check}) => {
 
 const libReaderRenewCheck = async ({barcode, quite_mode}) => {
   let params = {
-    type: 'lib',
+    tokenKey: 'opacToken',
     data: { barcode },
     quite_mode: quite_mode,
     url: api.libReaderRenewCheck,
@@ -263,7 +308,7 @@ const libReaderRenewCheck = async ({barcode, quite_mode}) => {
 
 const libReaderCurrentCheckout = async ({quite_mode}) => {
   let params = {
-    type: 'lib',
+    tokenKey: 'opacToken',
     quite_mode: quite_mode,
     url: api.libReaderCurrentCheckout,
   }
@@ -272,7 +317,7 @@ const libReaderCurrentCheckout = async ({quite_mode}) => {
 
 const libReaderCheckoutRecord = async ({quite_mode}) => {
   let params = {
-    type: 'lib',
+    tokenKey: 'opacToken',
     quite_mode: quite_mode,
     url: api.libReaderCheckoutRecord,
   }
@@ -282,9 +327,14 @@ const libReaderCheckoutRecord = async ({quite_mode}) => {
 export default {
   notice,
 
+  jwAuth,
   jwVerify,
   jwScores,
   jwSchedule,
+
+  jwRecommendMajor,
+  jwRecommendClass,
+  jwRecommendSchedule,
 
   cardVerify,
   cardBalance,

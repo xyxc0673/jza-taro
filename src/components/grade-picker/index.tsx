@@ -3,11 +3,12 @@ import {View, Label, Input, Picker} from '@tarojs/components'
 
 import './index.scss'
 
-import Account from '../../services/edu/account'
-
 interface IProps {
   onChange: Function,
-  showTotal?: boolean
+  showTotal?: boolean,
+  schoolYears: Array<any>,
+  year: number,
+  semester: number,
 }
 
 interface IState {
@@ -15,6 +16,10 @@ interface IState {
   semesterRange: Array<any>,
   yearSelected: number,
   semesterSelected: number,
+
+  schoolYears: Array<any>,
+  year: number,
+  semester: number,
 }
 
 export default class GradePicker extends Component<IProps, {}> {
@@ -25,15 +30,15 @@ export default class GradePicker extends Component<IProps, {}> {
 
   constructor (props) {
     super (...arguments)
-    const {showTotal} = props
-
+    const { showTotal, schoolYears, year, semester } = props
+    const { yearRange, semesterRange } = this.state
     if (showTotal) {
-      const {yearRange, semesterRange} = this.state
       yearRange.unshift({key: '', name: '全部'})
       semesterRange.unshift({key: '', name: '全部'})
-
-      this.setState({yearRange: yearRange, semesterRange: semesterRange})
     }
+
+    this.setState({ yearRange, semesterRange, schoolYears, year, semester })
+
   }
 
   state: IState = {
@@ -46,12 +51,35 @@ export default class GradePicker extends Component<IProps, {}> {
     semesterRange: [{key: 1, name: '第一学期'}, {key: 2, name: '第二学期'}, {key: 3, name: '第三学期'}],
     yearSelected: 0,
     semesterSelected: 0,
+    schoolYears: [],
+    year: 0,
+    semester: 0,
   }
 
   componentWillMount () {
-    const schoolYears = Account.calSchoolYears()
-    const {year, term} = Account.calYearTerm()
-    const { semesterRange } = this.state
+    this.init()
+  }
+
+  componentDidMount () { }
+
+  componentWillUnmount () { }
+
+  componentDidShow () { }
+
+  componentDidHide () { }
+
+  componentWillReceiveProps (nextProps) {
+    const { schoolYears, year, semester } = nextProps
+    if ( this.props.schoolYears === schoolYears && this.props.year === year && this.props.semester === semester) {
+      return
+    }
+    this.setState({ schoolYears, year, semester }, () => {
+      this.init()
+    })
+  }
+
+  init () {
+    const { semesterRange, schoolYears, year, semester } = this.state
     
     if (schoolYears.length === 0) {
       return
@@ -86,7 +114,7 @@ export default class GradePicker extends Component<IProps, {}> {
     })
 
     semesterRange.forEach((item, index) => {
-      if (item.key === term) semesterSelected = index
+      if (item.key === semester) semesterSelected = index
     })
 
     this.setState({yearRange: yearRange, yearSelected: yearSelected, semesterSelected: semesterSelected}, () => {
@@ -94,14 +122,6 @@ export default class GradePicker extends Component<IProps, {}> {
       this.props.onChange("semester", this.state.semesterRange[this.state.semesterSelected].key)
     })
   }
-
-  componentDidMount () { }
-
-  componentWillUnmount () { }
-
-  componentDidShow () { }
-
-  componentDidHide () { }
 
   handleChange (e) {
     this.setState({[`${e.currentTarget.id}Selected`]: e.detail.value})

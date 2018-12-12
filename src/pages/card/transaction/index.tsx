@@ -11,9 +11,9 @@ import utils from '../../../utils/utils'
 interface ITransaction {
   time?: string,
   area?: string,
-  trade_branch_name?: string,
-  client_no?: string,
-  operate_type?: string,
+  tradeBranchName?: string,
+  clientNo?: string,
+  operateType?: string,
   amount?: string,
 }
 
@@ -130,11 +130,11 @@ export default class Transcation extends Component<IState> {
                     return (
                       <View className='card' key={index}>
                         <View className='column'>
-                          <View className='t-branch'>{item.trade_branch_name}</View>
+                          <View className='t-branch'>{item.tradeBranchName}</View>
                           <View className='t-amount'>{item.amount}</View>
                         </View>
                         <View className='column'>
-                          <View className='t-area'>{item.area} / {item.client_no}</View>
+                          <View className='t-area'>{item.area}</View>
                           <View className='t-time'>{item.time}</View>
                         </View>
                       </View>

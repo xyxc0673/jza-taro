@@ -35,6 +35,7 @@ class App extends Component {
       'pages/edu/schedule/setting',
       'pages/edu/schedule/schedule',
       'pages/edu/schedule/custom',
+      'pages/edu/schedule/recommend',
     ],
     window: {
       backgroundTextStyle: 'light',

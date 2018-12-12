@@ -8,6 +8,7 @@ import Panel from '../../../components/panel'
 import Account from '../../../services/edu/account'
 
 import init from '../../../utils/init'
+import global from '../../../utils/global';
 
 export default class Setting extends Component {
   config: Config = {
@@ -53,7 +54,9 @@ export default class Setting extends Component {
   async handleDataClear () {
     const resp = await Taro.showModal({title: '提示', content: '确定要清除所有数据吗？'})
     if (resp.cancel) { return }
+
     Taro.clearStorageSync()
+    global.cache.Clear()
 
     init()
 
@@ -135,7 +138,7 @@ export default class Setting extends Component {
             <View className='list-item'>图书馆 <Text id='lib' className='state' onClick={this.handleClearClick.bind(this, 'lib')}>{accountState.lib == true ? '已': '未'}绑定</Text></View>
           </View>
         </Panel>
-        <Panel title='缓存' marginBottom={0}>
+        <Panel title='数据' marginBottom={0}>
           <View className='list with-symbol'>
             <View className='list-item' hoverClass='list-item__hover' onClick={this.handleDataClear}>
             <View>

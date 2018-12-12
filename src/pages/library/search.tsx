@@ -11,16 +11,16 @@ import request from '../../utils/request'
 interface IBook {
   title: string,
   author: string,
-  call_no: string,
-  doc_type_name: string,
+  callNo: string,
+  docTypeName: string,
   isbn: string,
-  marc_no: string,
-  publish_year: string,
+  marcNo: string,
+  publishYear: string,
   publisher: string,
 
-  image_url: string,
-  total_number: string,
-  remain_number: string,
+  imageUrl: string,
+  totalNumber: string,
+  remainNumber: string,
 
   summary: string,
   books: ICollection[],
@@ -29,7 +29,7 @@ interface IBook {
 }
 
 interface ICollection {
-  bar_code: string,
+  barCode: string,
   location: string,
   year: string,
   state: string,
@@ -103,7 +103,7 @@ export default class Index extends Component<{IState}, {}> {
   onShareAppMessage () {
     let path = '/pages/library/search/index?'
     if (this.state.showDetailCard) {
-      path += 'marc_no=' + this.state.bookDetail.marc_no + '&isbn=' + this.state.bookDetail.isbn
+      path += 'marc_no=' + this.state.bookDetail.marcNo + '&isbn=' + this.state.bookDetail.isbn
     } else {
       path += 'keyword=' + this.state.keyword
     }
@@ -138,7 +138,7 @@ export default class Index extends Component<{IState}, {}> {
   }
 
   async onOpenDetial (bookItem: IBook) {
-    let response = await request.libBookDetail({isbn: bookItem.isbn, marc_no: bookItem.marc_no})
+    let response = await request.libBookDetail({isbn: bookItem.isbn, marcNo: bookItem.marcNo})
     if (!response) {
       return
     }
@@ -192,11 +192,11 @@ export default class Index extends Component<{IState}, {}> {
       }
       let tmpBooks
       for (let bookItem of this.state.books) {
-        let data = await this.getBookInfo(bookItem.isbn, bookItem.marc_no)
+        let data = await this.getBookInfo(bookItem.isbn, bookItem.marcNo)
         if (!utils.isObj(data)) {
           continue
         }
-        let cover = await this.getBookCover(data.image_url)
+        let cover = await this.getBookCover(data.imageUrl)
         let _tmp = Object.assign(bookItem, data, {cover: cover})
         tmpBooks = Object.assign(this.state.books, _tmp)
         this.setState({books: tmpBooks})
@@ -204,8 +204,8 @@ export default class Index extends Component<{IState}, {}> {
     })
   }
 
-  async getBookInfo (isbn: string, marc_no: string) {
-    let response = await request.libBookInfo({isbn: isbn, marc_no: marc_no})
+  async getBookInfo (isbn: string, marcNo: string) {
+    let response = await request.libBookInfo({isbn: isbn, marcNo: marcNo})
     
     if (!utils.isObj(response.data) && response.data.code === -1) {
       return
@@ -232,18 +232,18 @@ export default class Index extends Component<{IState}, {}> {
         let imageElem = require('../../asserts/images/default_book.svg')
         
         return (
-          <View className='card book-item' key={bookItem.marc_no} onClick={this.onOpenDetial.bind(this, bookItem)}>
+          <View className='card book-item' key={bookItem.marcNo} onClick={this.onOpenDetial.bind(this, bookItem)}>
             <Image className='book-item__image' src={`${bookItem.cover ? 'data:image/jpeg;base64,' + bookItem.cover : imageElem}`} />
             <View className='book-item__wrap'>
               <Text className='book-item__title'>{bookItem.title}</Text>
-              <Text className='book-item__author'>{bookItem.author} / {bookItem.publisher} / {bookItem.publish_year}</Text>
-              <Text className='book-item__call_no'>{bookItem.call_no}</Text>
+              <Text className='book-item__author'>{bookItem.author} / {bookItem.publisher} / {bookItem.publishYear}</Text>
+              <Text className='book-item__call_no'>{bookItem.callNo}</Text>
             </View>
             <View className='book-item-right'>
               <Text className='book-item__remain'>馆 藏</Text>
-              <Text className='book-item__remain'>{bookItem.total_number}</Text>
+              <Text className='book-item__remain'>{bookItem.totalNumber}</Text>
               <Text className='book-item__remain'>可 借</Text>
-              <Text className='book-item__remain'>{bookItem.remain_number}</Text>
+              <Text className='book-item__remain'>{bookItem.remainNumber}</Text>
             </View>
           </View>
         )
@@ -297,7 +297,7 @@ export default class Index extends Component<{IState}, {}> {
         <FloatLayout title={this.state.bookDetail.title} isOpened={this.state.showDetailCard} onClose={this.closeDetailCard}>
           <View className='container'>
             <Panel title='信息' none={false} marginBottom={0} padding="20rpx 20rpx 20rpx">
-              <Text className='info'>{this.state.bookDetail.author} / {this.state.bookDetail.publisher} / {this.state.bookDetail.publish_year} / isbn: {this.state.bookDetail.isbn} / 索书号: {this.state.bookDetail.call_no}</Text>
+              <Text className='info'>{this.state.bookDetail.author} / {this.state.bookDetail.publisher} / {this.state.bookDetail.publishYear} / isbn: {this.state.bookDetail.isbn} / 索书号: {this.state.bookDetail.callNo}</Text>
             </Panel>
 
             <Panel title='简介' padding="20rpx 20rpx 20rpx" marginBottom={0}>
@@ -316,9 +316,9 @@ export default class Index extends Component<{IState}, {}> {
               {
                 this.state.bookDetail && this.state.bookDetail.books.map((collectionItem) => {
                   return (
-                    <View className='collection-item' key={collectionItem.bar_code}>
+                    <View className='collection-item' key={collectionItem.barCode}>
                       <Text className='collection-item__first'>{collectionItem.location}</Text>
-                      <Text className='collection-item__second'>{collectionItem.bar_code ? collectionItem.bar_code : collectionItem.year}</Text>
+                      <Text className='collection-item__second'>{collectionItem.barCode ? collectionItem.barCode : collectionItem.year}</Text>
                       <Text className={`collection-item__last ${collectionItem.state === '可借' ? 'avalible-text': ''}`}>{collectionItem.state}</Text>
                     </View>
                   )

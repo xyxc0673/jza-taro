@@ -6,7 +6,7 @@ import account from './account'
 
 interface ISchedule {
   index: Array<number>
-  course_name: string,
+  courseName: string,
   flex: number,
 }
 
@@ -30,9 +30,9 @@ class Schedule {
 
   static async Get (year: number = 0, semester: number = 0) {
     if (!year || !semester) {
-      const ret = account.calYearTerm()
+      const ret = account.calYearSemester()
       year = ret['year']
-      semester = ret['term']
+      semester = ret['semester']
     }
 
     const response = await request.jwSchedule({year: year, semester: semester})
@@ -65,7 +65,7 @@ class Schedule {
       for (let j = 0; j < 12; j++) {
         courseBlock[j] = {
           index: [i+1, j+1],
-          course_name: '',
+          courseName: '',
           flex: 1,
         }
       }
@@ -122,7 +122,7 @@ class Schedule {
       s.duringText = allWeek[0] + '-' + allWeek[allWeek.length - 1] // start week to end week
 
       // 跳过是下周但是会覆盖当前周的课程
-      if (s.day === preValidCourseIndex[0], s.session === preValidCourseIndex[1]) {
+      if (s.day === preValidCourseIndex[0] && s.session === preValidCourseIndex[1]) {
         continue
       }
 
@@ -130,14 +130,14 @@ class Schedule {
 
       if (day === -1) {
         // 课程块随机上色，并为同一课程上相同色
-        const colorBefore = sameScheduleSameColor[s.course_name]
+        const colorBefore = sameScheduleSameColor[s.courseName]
 
         if (nextWeekCourse) {
           s.color = this.notCurrentCourseColor
         } else {
           if (!colorBefore) {
             s.color = this.colors[(colorIndex++) % colorLength]
-            sameScheduleSameColor[s.course_name] = s.color
+            sameScheduleSameColor[s.courseName] = s.color
           } else {
             s.color = colorBefore
           }
@@ -157,8 +157,9 @@ class Schedule {
     // 将与该课程上课节数有关的 cell 的 flex 置 0
     const sessionArray = s.session.split(',')
     const dayInt = parseInt(s.day)
-    
-    s.sessionText = sessionArray[0] + '-' + sessionArray[sessionArray.length - 1] // start seesion to end session
+
+    s.sessionText = this.genStartToEnd(s.session)
+
     s.flex = sessionArray.length // 用于课程第一个 cell 的 flex 值，予以撑开所占节数
 
     sessionArray.forEach((i) => {
@@ -173,6 +174,9 @@ class Schedule {
 
   static genStartToEnd(text, separator: string = '-') {
     const textArray = text.split(',')
+    if (textArray.length === 1) {
+      return text
+    }
     return textArray[0] + separator + textArray[textArray.length - 1]
   }
 }

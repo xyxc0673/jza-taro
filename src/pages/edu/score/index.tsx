@@ -3,18 +3,20 @@ import {View, Form, Text, Button} from '@tarojs/components'
 
 import './index.scss'
 
-import GradePicker from '../../../components/grade-picker'
 import Panel from '../../../components/panel';
-
-import request from '../../../utils/request'
+import GradePicker from '../../../components/grade-picker'
 import FloatLayout from '../../../components/float-layout';
 
+import global from '../../../utils/global'
+import request from '../../../utils/request'
+import Account from '../../../services/edu/account'
+
 interface IScore {
-  course_name: string,
+  courseName: string,
   score: string,
   credit: string,
   point: string,
-  course_type: string,
+  courseType: string,
 }
 
 interface IState {
@@ -52,13 +54,21 @@ export default class Score extends Component {
     openHelpFloatLayout: false,
   }
 
-  componentWillMount () { }
+  componentWillMount () {
+    const { year, semester } = Account.calYearSemester()
+    this.setState({ year, semester })
+  }
 
   componentDidMount () { }
 
   componentWillUnmount () { }
 
-  componentDidShow () { }
+  componentDidShow () {
+    if (global.cache.Get('from') === 'bind') {
+      this.componentWillMount()
+      global.cache.Set('from', '')
+    }
+  }
 
   componentDidHide () { }
 
@@ -136,11 +146,12 @@ export default class Score extends Component {
   }
 
   render () {
+    const { year, semester } = this.state
     return (
       <View className='page'>
         <View>
           <Form className='form' onSubmit={this.handleSubmit}>
-            <GradePicker onChange={this.handleChange} showTotal={true}></GradePicker>
+            <GradePicker onChange={this.handleChange} showTotal={true} schoolYears={Account.calSchoolYears()} year={year} semester={semester} />
             <Button className='btn' formType='submit'>检索</Button>
           </Form>
         </View>
@@ -166,11 +177,11 @@ export default class Score extends Component {
                     return (
                       <View className='card' key={index}>
                         <View className='column'>
-                          <Text className='course-name'>{item.course_name}</Text>
+                          <Text className='course-name'>{item.courseName}</Text>
                           <Text className='score'>{item.score}</Text>
                         </View>
                         <View className='column'>
-                          <Text>{item.course_type} / {item.credit}</Text>
+                          <Text>{item.courseType} / {item.credit}</Text>
                           <Text>{item.point}</Text>
                         </View>
                       </View>

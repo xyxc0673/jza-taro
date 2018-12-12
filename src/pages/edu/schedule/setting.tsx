@@ -5,13 +5,14 @@ import './setting.scss'
 
 import GradePicker from '../../../components/grade-picker'
 
-import request from '../../../utils/request'
 import utils from '../../../utils/utils'
-
+import global from '../../../utils/global'
+import request from '../../../utils/request'
+import Account from '../../../services/edu/account'
 
 interface IState {
-  year: string,
-  semester: string,
+  year: number,
+  semester: number,
 }
 
 export default class ScheduleSearch extends Component {
@@ -20,17 +21,25 @@ export default class ScheduleSearch extends Component {
   }
   
   state: IState = {
-    year: '',
-    semester: '',
+    year: 0,
+    semester: 0,
   }
 
-  componentWillMount () { }
+  componentWillMount () {
+    const { year, semester } = Account.calYearSemester()
+    this.setState({ year, semester })
+  }
 
   componentDidMount () { }
 
   componentWillUnmount () { }
 
-  componentDidShow () { }
+  componentDidShow () {
+    if (global.cache.Get('from') === 'bind') {
+      this.componentWillMount()
+      global.cache.Set('from', '')
+    }
+  }
 
   componentDidHide () { }
 
@@ -60,11 +69,12 @@ export default class ScheduleSearch extends Component {
   }
 
   render () {
+    const { year, semester } = this.state
     return (
       <View className='page'>
         <View>
           <Form className='form' onSubmit={this.handleSubmit}>
-            <GradePicker onChange={this.handleChange}></GradePicker>
+            <GradePicker onChange={this.handleChange} schoolYears={Account.calSchoolYears()} year={year} semester={semester} />
             <Button className='btn' formType='submit'>检索</Button>
             <Button className='btn' onClick={this.gotoCustom}>管理自定义课表</Button>
           </Form>
