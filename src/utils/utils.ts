@@ -1,5 +1,19 @@
 import Taro from '@tarojs/taro'
 
+const _replaceToChinese = (num: number): string => {
+  enum days {
+    '日'=0,
+    '一',
+    '二',
+    '三',
+    '四',
+    '五',
+    '六',
+  }
+  return days[num]
+}
+
+
 // Convert string to array buffer
 // See https://stackoverflow.com/questions/6965107/converting-between-strings-and-arraybuffers
 // And.. The code has been modified for some reasons for some bugs
@@ -70,23 +84,18 @@ const getDayDate = (week): Array<any> => {
   for (let i = 0; i < 7; i ++) {
     let timestamp = schoolOpenDate.setDate(schoolOpenDate.getDate() + 1)
     let date = new Date(timestamp)
-    days.push({date: (date.getMonth() + 1) + '-' + date.getDate(), day: '周' + replaceToChinese(date.getDay()), dayInt: date.getDay()})
+    days.push({date: (date.getMonth() + 1) + '-' + date.getDate(), day: '周' + _replaceToChinese(date.getDay()), dayInt: date.getDay()})
   }
 
   return days
 }
 
-const replaceToChinese = (num: number): string => {
-  enum days {
-    '日'=0,
-    '一',
-    '二',
-    '三',
-    '四',
-    '五',
-    '六',
+const openNavModal = async (content, url) => {
+  const res = await Taro.showModal({title: '提示', content: content, showCancel: true})
+  if (res.cancel) {
+    return
   }
-  return days[num]
+  Taro.navigateTo({url: url})
 }
 
 export default {
@@ -99,4 +108,5 @@ export default {
   formatNumber,
   getWeek,
   getDayDate,
+  openNavModal,
 }

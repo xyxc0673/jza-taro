@@ -1,11 +1,12 @@
 import Taro, {Component, Config} from '@tarojs/taro'
-import {View, Form, Image, Button, Picker, Input, Text, ScrollView} from '@tarojs/components'
+import {View, Form, Image, Button, Picker, Input, Text} from '@tarojs/components'
 
 import FloatLayout from '../../../components/float-layout'
 
 import './schedule.scss'
 
 import utils from '../../../utils/utils'
+import global from '../../../utils/global'
 import Schedule from '../../../services/edu/schedule'
 
 const questionUrl = require('../../../asserts/images/question.svg')
@@ -21,7 +22,7 @@ const questionUrl = require('../../../asserts/images/question.svg')
 // }
 
 interface ISchedule {
-  course_name: string,
+  courseName: string,
   location: string,
   color: string,
   teacher: string,
@@ -31,8 +32,8 @@ interface ISchedule {
 interface IState {
   schedule: Array<Array<ISchedule>>,
   week: number,
-  month: number,
   day: number,
+  date: string,
   dayDate: Array<any>,
   showAddCourseFloatLayout: boolean,
 
@@ -64,7 +65,7 @@ export default class Core extends Component {
     schedule: [],
     week: 0,
     day: 0,
-    month: 0,
+    date: '',
     dayDate: [],
     showAddCourseFloatLayout: false,
 
@@ -129,8 +130,15 @@ export default class Core extends Component {
     newCourseOddText: '非单双周',
   }
 
-  async componentWillMount () {
-    this.init(utils.getWeek())    
+  componentWillMount () {
+    const from = this.$router.params.from
+    const title = this.$router.params.title
+
+    if (utils.isObj(title) && title !== "") {
+      Taro.setNavigationBarTitle({title: title})
+    }
+
+    this.init(from, utils.getWeek())
   }
 
   componentDidMount () {
@@ -145,9 +153,18 @@ export default class Core extends Component {
 
   componentDidHide () { }
 
-  init (week: number) {
-    const rawSchedule = Schedule.GetFormStorage()
-    const mySchedule = Taro.getStorageSync('mySchedule')
+  init (from, week: number) {
+    let rawSchedule = []
+    let mySchedule = []
+
+    if (from === "recommend") {
+      rawSchedule = global.cache.Get('recommendSchedule')
+    } else {
+      rawSchedule = Schedule.GetFormStorage()
+      mySchedule = Taro.getStorageSync('mySchedule')
+    }
+
+
     const newSchedule = rawSchedule.concat(mySchedule)
 
     const newState = {}
@@ -162,7 +179,7 @@ export default class Core extends Component {
 
     newState['week'] = week
     newState['day'] = new Date().getDay(),
-    newState['month'] = new Date().getMonth(),
+    newState['date'] = `${new Date().getMonth() + 1}-${new Date().getDate()}`
     newState['dayDate'] = utils.getDayDate(week),
 
     this.setState(newState)
@@ -175,7 +192,7 @@ export default class Core extends Component {
   }
 
   gotoManageCustom () {
-    Taro.navigateTo({url: '/pages/edu/schedule/custom?from=core'})
+    Taro.navigateTo({url: '/pages/edu/schedule/custom?from=schedule'})
   }
 
   handleAddCourseHelp () {
@@ -193,24 +210,33 @@ export default class Core extends Component {
     const { week, startX } = this.state
     const touchMoveX = e.changedTouches[0].clientX
 
-    if (Math.abs(touchMoveX - startX) < 20) {
+    if (Math.abs(touchMoveX - startX) < 100) {
       return
     }
 
+    const from = this.$router.params.from
+
     if (touchMoveX < startX) {
-      this.init(week + 1)
+      this.init(from, week + 1)
     } else if (touchMoveX > startX) {
-      this.init(week - 1)
+      this.init(from,week - 1)
     }
   }
   
   showAddCourse (value, course) {
+    const from = this.$router.params.from
+
+    if (from === 'recommend') {
+      this.gotoManageCustom()
+      return  
+    }
+
     let newState = {}
 
     if (course.index) {
       const courseIndex = course.index
       newState = {
-        newCourseDay: courseIndex[0],
+        newCourseDay: courseIndex[0].toString(),
         newCourseWeekStart: 2,
         newCourseWeekEnd: 16,
         newCourseSessionStart: courseIndex[1],
@@ -274,8 +300,8 @@ export default class Core extends Component {
       return flag
     }
 
-    if (!checkLength([newCourseName, newCourseTeacher, newCourseLocation], 1)) {
-      Taro.showToast({title: '所有选项不能为空', icon: 'none'})
+    if (!checkLength([newCourseName], 1)) {
+      Taro.showToast({title: '课程名称不能为空', icon: 'none'})
       return
     } else if (!checkBetween([newCourseSessionStart, newCourseSessionEnd], 1, 12)) {
       Taro.showModal({title: '提示', content: '节次的取值范围是 1 - 12, 并且起始节数需要小于或等于终止节数', showCancel: false})
@@ -294,11 +320,11 @@ export default class Core extends Component {
     }
 
     const newCourse = {
-      course_name: newCourseName,
+      courseName: newCourseName,
       teacher: newCourseTeacher,
       location: newCourseLocation,
       day: newCourseDaySelected + 1,
-      odd_or_even: newCourseOddSelected,
+      oddOrEven: newCourseOddSelected,
       session: sessionArray.join(","),
       during: weekArray.join(","),
     }
@@ -316,14 +342,14 @@ export default class Core extends Component {
 
   }
 
-  handleCourseClick (course) {
-    if (!course.course_name) {
+  async handleCourseClick (course) {
+    if (!course.courseName) {
       this.showAddCourse(true, course)
       return
     }
 
     let oddText = ''
-    switch (course.odd_or_even) {
+    switch (course.oddOrEven) {
       case 0:
         oddText = '非单双周'
         break
@@ -336,7 +362,7 @@ export default class Core extends Component {
     }
 
     const contentArrary = [
-      course.course_name,
+      course.courseName,
       course.teacher,
       course.location,
       course.duringText + ' 周',
@@ -345,16 +371,36 @@ export default class Core extends Component {
     if (oddText !== '') {
       contentArrary.push(oddText)
     }
+
+    const from = this.$router.params.from
+    if (from === 'recommend') {
+      contentArrary.push(course.courseNature)
+      contentArrary.push(course.courseType)
+      if (course.capacity !== '') {
+        contentArrary.push(`容量：${course.capacity}人`)
+      }
+      if (course.enrollment_number !== '0') {
+        contentArrary.push(`选课：${course.enrollment_number}人`)
+      } 
+    }
     
     const content: Array<any> = contentArrary.map((c, index, arrary) => {
+      if (c === '') { return }
       return index != (arrary.length - 1) ? c + ' \\ ' : c
     })
 
-    Taro.showModal({title: '', content: content.join(''), showCancel: false})
+    const res = await Taro.showModal({title: from === 'recommend' ? '加入到自定义课程': '', content: content.join(''), showCancel: from === 'recommend'})
+
+    if (from === 'recommend' && res.confirm) {
+      const mySchedule = Taro.getStorageSync('mySchedule')
+      mySchedule.push(course)
+      Taro.setStorageSync('mySchedule', mySchedule)
+      Taro.showToast({'title': '添加成功', icon: 'none'})
+    }
   }
 
   render () {
-    const {schedule, dayDate, day, showAddCourseFloatLayout} = this.state
+    const {schedule, dayDate, date, showAddCourseFloatLayout} = this.state
 
     // 这里写得好不优雅，要怎么改
     const container = schedule.map((s, index) => {
@@ -368,8 +414,8 @@ export default class Core extends Component {
             : s.map((course, courseIndex) => {
                 return course.flex != 0
                   ? (
-                    <View className='row' key={courseIndex} onClick={this.handleCourseClick.bind(this, course)} style={`background-color: ${course.color?course.color: ''};flex: ${course.flex}; margin: ${course.flex}rpx;`}>
-                      <Text className='course-name'>{course.course_name}</Text><Text>{course.location}</Text>
+                    <View className='row' key={courseIndex} onClick={this.handleCourseClick.bind(this, course)} style={`background-color: ${course.color?course.color: ''};flex: ${course.flex}; margin: 2rpx; padding: ${course.flex > 1 ? (course.flex - 1)*2 : 0}rpx 0.25rem`}>
+                      <Text className='course-name'>{course.courseName}</Text><Text>{course.location}</Text>
                     </View>
                   )
                   : null
@@ -387,16 +433,14 @@ export default class Core extends Component {
             {dayDate.map((item, index) => {
               return (
                 <View className='dayDate-item' key={index}>
-                  <View className='dayDate-item__day' style={`color:${item.dayInt == day ? '#00b26a': ''}`}>{item.day}</View>
-                  <View className='dayDate-item__date' style={`color:${item.dayInt == day ? '#68bb9a': ''}`}>{item.date}</View>
+                  <View className='dayDate-item__day' style={`color:${item.date == date ? '#00b26a': ''}`}>{item.day}</View>
+                  <View className='dayDate-item__date' style={`color:${item.date == date ? '#68bb9a': ''}`}>{item.date}</View>
                 </View>
               )
             })}
           </View>
         </View>
-        <ScrollView scrollX scrollY>
           <View className='container' onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd}>{container}</View>
-        </ScrollView>
         <FloatLayout title='添加课程' isOpened={showAddCourseFloatLayout} onClose={this.showAddCourse.bind(this, false)}>
           <View className='padding20'>
             <Form className='form' onSubmit={this.handleAddCourse}>

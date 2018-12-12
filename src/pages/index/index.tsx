@@ -8,13 +8,14 @@ import './index.scss'
 
 import utils from '../../utils/utils';
 import request from '../../utils/request';
+import data from '../../utils/data'
 
 import IAccount from '../../interfaces/account'
 import Account from '../../services/edu/account'
 import Schedule from '../../services/edu/schedule';
 
 interface ISchedule {
-  course_name: string,
+  courseName: string,
   location: string,
   teacher: string,
   sessionText: string,
@@ -55,38 +56,6 @@ export default class Index extends Component<{}, IState> {
     enablePullDownRefresh: true,
     backgroundTextStyle: "dark",
   }
-  
-  gridItems = [
-    {
-      title: '教务系统',
-      pageUrl: '',
-      bindState: 'showJWFloatLayout',
-      imageUrl: require('../../asserts/images/grid_schedule.svg')
-    },
-    {
-      title: '校园卡',
-      pageUrl: '',
-      bindState: 'showCardFloatLayout',
-      imageUrl: require('../../asserts/images/grid_card.svg')
-    },
-    {
-      title: '图书馆',
-      pageUrl: '',
-      bindState: 'showLibFloatLayout',
-      imageUrl: require('../../asserts/images/grid_book.svg')
-    },
-    // {
-    //   id: '3',
-    //   title: '校历',
-    //   pageUrl: '/pages/common/testing/index',
-    //   imageUrl: require('../../asserts/images/grid_calendar.svg')
-    // },
-    {
-      title: '设置',
-      pageUrl: '/pages/common/setting/index',
-      imageUrl: require('../../asserts/images/grid_settings.svg')
-    }
-  ]
 
   state: IState = {
     showJWFloatLayout: false,
@@ -268,7 +237,6 @@ export default class Index extends Component<{}, IState> {
       showBalance,
       schedule,
       showSchedule,
-      jwVerified,
       cardVerified,
       showJWFloatLayout,
       showCardFloatLayout,
@@ -301,7 +269,7 @@ export default class Index extends Component<{}, IState> {
                 <View className='card-schedule__item' key={index}>
                   <View className='card-schedule__item__session'>{item.sessionText}</View>
                   <View className='card-schedule__item__info'>
-                    {item.course_name}
+                    {item.courseName}
                     <View className='card-schedule__item__teacher'>{item.teacher}</View>
                   </View>
                   <View className='card-schedule__item__location'>{item.location}</View>
@@ -320,17 +288,18 @@ export default class Index extends Component<{}, IState> {
         </View>
       </Panel>
     ) : null
-
-    const gridItems = this.gridItems
+    
+    const gridItems = data.magicBoxItems
     const gridItemMap = gridItems.map((gridItem, index) => {
       return (
-        <View key={index} className='grid__item' onClick={this.gridGotoPage.bind(this, gridItem)}>
+        <View key={index} className='grid-item' onClick={this.gridGotoPage.bind(this, gridItem)}>
           <Image src={gridItem.imageUrl} />
           <Text>{gridItem.title}</Text>
         </View>
       )
     })
-    const gridPanel = (
+    
+    const magicBoxPanel = (
       <Panel title='Magic Box' none={false}>
         <View className='grid'>
           {gridItemMap}
@@ -345,18 +314,19 @@ export default class Index extends Component<{}, IState> {
           {helloPanel}
           {schedulePanel}
           {balancePanel}
-          {gridPanel}
+          {magicBoxPanel}
         </View>
-        <FloatLayot title='教务' isOpened={showJWFloatLayout} onClose={this.handleClose.bind(this, 'showJWFloatLayout')}>
-          <Panel title='功能' marginBottom={0} padding='20rpx 20rpx 30rpx;'>
-            <View className='btn-group'>
-              <View className='inline'>
-                <Button className='btn left' onClick={this.goto.bind(this, '/pages/edu/schedule/schedule')}>课程表</Button>
-                <Button className='btn right' onClick={this.goto.bind(this, '/pages/edu/schedule/setting')}>设置</Button>
-              </View>
-              <Button className='btn' onClick={this.goto.bind(this, '/pages/edu/score/index')}>教务成绩</Button>
+        <FloatLayot title='教务系统' isOpened={showJWFloatLayout} onClose={this.handleClose.bind(this, 'showJWFloatLayout')}>
+            <View className='grid small'>
+              {data.scheduleItems.map((item, index) => {
+                return (
+                  <View className='grid-item small' key={index} onClick={this.goto.bind(this, item.pageUrl)}>
+                    <Image src={item.imageUrl} />
+                    <Text>{item.title}</Text>
+                  </View>
+                )
+              })}
             </View>
-          </Panel>
         </FloatLayot>
         <FloatLayot title='校园卡' isOpened={showCardFloatLayout} onClose={this.handleClose.bind(this, 'showCardFloatLayout')}>
           <View>

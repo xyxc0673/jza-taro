@@ -5,6 +5,8 @@ import './about.scss'
 
 import Panel from '../../../components/panel'
 
+import data from '../../../utils/data'
+
 export default class About extends Component {
   config: Config = {
     navigationBarTitleText: '关于'
@@ -41,13 +43,12 @@ export default class About extends Component {
           </View>
           <Panel title='更新日志' marginBottom={0}>
             <View className='list'>
-              <View className="list-item title">版本: 0.2.0 日期: 2018-12-05</View>
-              <View className='list-item'>新增 图书馆个人中心</View>
-              <View className='list-item'>新增 左右滑动我的课程表主体可切换上下周课程</View>
-              <View className='list-item'>修复 一些学院拥有不同的学年制度所产生的问题</View>
-              <View className='list-item'>修复 图书查询第一次加载更多时出现重复的记录</View>
-              <View className='list-item'>修复 我的课程表表头日期中月份不正确的问题</View>
-              <View className='list-item'>优化 部分样式、文案与代码结构</View>
+              <View className="list-item title">版本: 0.3.0 日期: 2018-12-11</View>
+              {data.changeLog.map((log, index) => {
+                return (
+                  <View className='list-item' key={index}>{log}</View>
+                )
+              })}
             </View>
           </Panel>
           <Panel title='开源' marginBottom={0}>

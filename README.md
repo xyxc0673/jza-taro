@@ -3,12 +3,10 @@
 [![GitHub](https://img.shields.io/badge/license-WTFPL-blue.svg?style=flat-square)](https://zh.wikipedia.org/wiki/WTFPL)
 
 
-> A Project For JLUZH For Taro
-> 
-> Also For Fun For Many Years
+> 一个多年的心愿
 
 ## 预览
-搜索同名小程序或者扫描下方小程序码即可预览
+微信搜索同名小程序或者扫描下方小程序码即可预览
 
 ![小程序二维码](/images/qrcode.jpg)
 
@@ -28,14 +26,13 @@
 8. 使用顺手的开发工具，享受编码的乐趣 ( :
 
 ## 功能
-> 一个令人遗憾的消息：
-> 
+> 一则令人遗憾的消息：  
 > 由于没有内网服务器，宿舍电费功能变得遥遥无期。
 
 - [x] 教务系统
   - [x] 课表
     - [x] 手动添加
-    - [ ] 推荐课表
+    - [x] 班级课表
   - [x] 成绩
     - [x] 成绩分析
 - [x] 校园卡

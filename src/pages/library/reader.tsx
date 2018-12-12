@@ -1,5 +1,5 @@
 import Taro, { Component, Config } from '@tarojs/taro'
-import { View, Text, OpenData, Form, Label, Input, Image, Button } from '@tarojs/components'
+import { View, Text, OpenData, Form, Input, Image, Button } from '@tarojs/components'
 
 import './reader.scss'
 
@@ -7,6 +7,7 @@ import Panel from '../../components/panel';
 import FloatLayout from '../../components/float-layout';
 
 import request from '../../utils/request'
+import utils from '../../utils/utils'
 import Account from '../../services/edu/account';
 
 export default class Sample extends Component {
@@ -49,14 +50,8 @@ export default class Sample extends Component {
 
   init () {
     const opacToken = Taro.getStorageSync('opacToken')
-
     if (!opacToken) {
-      Taro.showModal({title: '提示', content: '检测到你还未登录，是否前往登录？'})
-        .then((res) => {
-          if (res.confirm) {
-            Taro.navigateTo({url: '/pages/library/auth'})
-          }
-        })
+      utils.openNavModal('检测到你还未登录，是否前往登录？', '/pages/library/auth')
       return
     }
 
@@ -128,11 +123,7 @@ export default class Sample extends Component {
   async getCurrentCheckout() {
     const response = await request.libReaderCurrentCheckout({quite_mode: false})
 
-    if (!response) {
-      return
-    }
-
-    if (!this.isValid(response)) {
+    if (!response || !this.isValid(response)) {
       return
     }
 
@@ -142,11 +133,7 @@ export default class Sample extends Component {
   async getCheckoutRecord() {
     const response = await request.libReaderCheckoutRecord({quite_mode: false})
 
-    if (!response) {
-      return
-    }
-
-    if (!this.isValid(response)) {
+    if (!response || !this.isValid(response)) {
       return
     }
 
@@ -208,6 +195,7 @@ export default class Sample extends Component {
       return
     }
 
+    this.getInfo()
     this.getCurrentCheckout()
 
     Taro.showToast({title: '续借成功', icon: 'none'})
@@ -258,8 +246,8 @@ export default class Sample extends Component {
                     <View className='item'><Text>作者</Text><Text>{item.author}</Text></View>
                     <View className='item'><Text>条形码</Text><Text>{item.barcode}</Text></View>
                     <View className='item'><Text>馆藏地</Text><Text>{item.location}</Text></View>
-                    <View className='item'><Text>借出日期</Text><Text>{item.lend_date}</Text></View>
-                    <View className='item'><Text>应还日期</Text><Text>{item.return_date}</Text></View>
+                    <View className='item'><Text>借出日期</Text><Text>{item.lendDate}</Text></View>
+                    <View className='item'><Text>应还日期</Text><Text>{item.returnDate}</Text></View>
                   </View>
                 )
               })}
@@ -275,8 +263,8 @@ export default class Sample extends Component {
                     <View className='item'><Text>书籍</Text><Text>{item.title}</Text></View>
                     <View className='item'><Text>作者</Text><Text>{item.author}</Text></View>
                     <View className='item'><Text>条形码</Text><Text>{item.barcode}</Text></View>
-                    <View className='item'><Text>借出日期</Text><Text>{item.lend_date}</Text></View>
-                    <View className='item'><Text>归还日期</Text><Text>{item.return_date}</Text></View>
+                    <View className='item'><Text>借出日期</Text><Text>{item.lendDate}</Text></View>
+                    <View className='item'><Text>归还日期</Text><Text>{item.returnDate}</Text></View>
                   </View>
                 )
               })}

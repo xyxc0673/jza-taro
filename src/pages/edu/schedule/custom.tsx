@@ -3,16 +3,14 @@ import {View, Button} from '@tarojs/components'
 
 import './custom.scss'
 
-import utils from '../../../utils/utils'
-
 interface ISchedule {
-  course_name: string,
+  courseName: string,
   location: string,
   color: string,
   teacher: string,
   flex: number,
   isTouchMove: boolean,
-  odd_or_even: number,
+  oddOrEven: number,
   during: string,
   session: string,
 }
@@ -50,7 +48,7 @@ export default class Sample extends Component {
 
   handleManualAdd () {
     const { from } = this.state
-    if (from === 'core') { Taro.navigateBack() }
+    if (from === 'schedule') { Taro.navigateBack() }
     else if (from === 'search') {Taro.navigateTo({url: '/pages/edu/schedule/schedule?from=search'})}
   }
 
@@ -109,7 +107,7 @@ export default class Sample extends Component {
     const sessionText = this.parseText(course.session)
 
     let oddText = ''
-    switch (course.odd_or_even) {
+    switch (course.oddOrEven) {
       case 0:
         oddText = '非单双周'
         break
@@ -122,7 +120,7 @@ export default class Sample extends Component {
     }
 
     const contentArrary = [
-      course.course_name,
+      course.courseName,
       course.teacher,
       course.location,
       sessionText + ' 节',
@@ -165,7 +163,7 @@ export default class Sample extends Component {
             <View className={`box ${item.isTouchMove? 'touch-move__active': ''}`} key={index} data-index={index} onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd}>
               <View className="left">
                 <View className="item">
-                  <View className="value">{item.course_name}</View>
+                  <View className="value">{item.courseName}</View>
                 </View>
                 <View className="item">
                   <View className="value">{item.teacher} • {item.location}</View>

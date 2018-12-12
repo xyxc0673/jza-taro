@@ -23,17 +23,17 @@ class Account {
     return account
   }
 
+  static save (key, value) {
+    Taro.setStorageSync(key, value)
+    global.cache.Set(key, value)
+  }
+
   static Get ():any {
     return this.get('account')
   }
 
   static GetLib ():any {
     return this.get('libAccount')
-  }
-
-  static save (key, value) {
-    Taro.setStorageSync(key, value)
-    global.cache.Set(key, value)
   }
 
   static Save (account) {
@@ -73,13 +73,13 @@ class Account {
     return schoolYears.map((item) => {return 2000+item})
   }
 
-  static calYearTerm () {
+  static calYearSemester () {
     const now = new Date()
     const year = now.getFullYear()
     const month = now.getMonth()
-    const term = (month <= 2 || month >= 8) ? 1 : 2
+    const Semester = (month <= 2 || month >= 8) ? 1 : 2
     const schoolYear = month < 8 ? year - 1 : year
-    return {year: schoolYear, term: term}
+    return {year: schoolYear, semester: Semester}
   }
 
   static checkBindState(type: string): boolean {

@@ -7,6 +7,10 @@ const api = apiReset({
   jwScore: '/jw/score',
   jwSchedule: '/jw/schedule',
 
+  jwRecommendMajor: '/jw/recommend/major',
+  jwRecommendClass: '/jw/recommend/class',
+  jwRecommendSchedule: '/jw/recommend/schedule',
+
   cardVerify: '/card/verify',
   cardBalance: '/card/balance',
   cardTransaction: '/card/transaction',

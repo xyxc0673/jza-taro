@@ -8,7 +8,6 @@ import Panel from '../../components/panel';
 
 import Account from '../../services/edu/account'
 import request from '../../utils/request'
-import utils from '../../utils/utils'
 
 const questionUrl = require('../../asserts/images/question.svg')
 
@@ -111,6 +110,7 @@ export default class Sample extends Component {
 
     Taro.setStorageSync('opacToken', opacToken)
     Taro.eventCenter.trigger('libraryReaderRemount')
+    Taro.eventCenter.trigger('IndexRemount')
     Taro.navigateBack()
     Taro.showToast({title: '登录成功', icon: 'none'}) // Todo 这里会触发微信 `请注意 showLoading 与 hideLoading 必须配对使用` 的提示
   }
