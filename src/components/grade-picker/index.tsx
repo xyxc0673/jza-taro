@@ -88,10 +88,6 @@ export default class GradePicker extends Component<IProps, {}> {
     const yearRange = [] as Array<any>
     const _strings = ["一", "二", "三", "四", "五"]
 
-    if (this.props.showTotal) {
-      yearRange.push({key: '', name: '全部'})
-    }
-
     for(let i = 0; i < schoolYears.length; i ++) {
       yearRange.push(
         {
@@ -101,15 +97,18 @@ export default class GradePicker extends Component<IProps, {}> {
       )
     }
 
-    let yearSelected, semesterSelected
+    if (this.props.showTotal) {
+      yearRange.unshift({key: '', name: '全部'})
+    }
 
-    schoolYears.forEach((item, index) => {
-      const realIndex = this.props.showTotal ? index + 1 : index
+    let yearSelected = 0, semesterSelected = 0 // 必须初始化为 0，不然遇到 handleChange 遇到 name 为 全部 的时候，传进来的 year 为 ''，yearSelected 就是 undefined 了
 
-      yearRange[realIndex].key = item
-
-      if (item === year) {
-        yearSelected = realIndex
+    yearRange.forEach((item, index) => {
+      if (item.name !== '全部') {
+        item.key = schoolYears[index-1]
+      }
+      if (item.key === year) {
+        yearSelected = index
       }
     })
 
