@@ -1,3 +1,7 @@
+const version = '0.3.1'
+
+const versionReleaseDate = '2018-12-14'
+
 const changeLog = [
   '新增 班级课表查询及其课程添加',
   '修复 课程表表头高亮显示不正确',
@@ -209,6 +213,8 @@ const scheduleItems = [
 ]
 
 export default {
+  version,
+  versionReleaseDate,
   changeLog,
   collegeRange,
   gradeRange,
