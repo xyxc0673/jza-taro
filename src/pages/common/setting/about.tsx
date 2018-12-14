@@ -62,7 +62,12 @@ export default class About extends Component {
               <View className='list-item'>微吉风</View>
               <View className='list-item'>课表</View>
             </View>
-          </Panel>    
+          </Panel>
+          <Panel title='鸣谢' marginBottom={0}>
+            <View className='list'>
+              <View className='list-item'>@車前子：提供帮助以解决课表显示不正确的问题</View>
+            </View>
+          </Panel>
         </View>
 
         <View className='footer'>
