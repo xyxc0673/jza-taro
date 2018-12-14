@@ -390,8 +390,8 @@ export default class Core extends Component {
       if (course.capacity !== '') {
         contentArrary.push(`容量：${course.capacity}人`)
       }
-      if (course.enrollment_number !== '0') {
-        contentArrary.push(`选课：${course.enrollment_number}人`)
+      if (course.enrollmentNumber !== '0') {
+        contentArrary.push(`选课：${course.enrollmentNumber}人`)
       } 
     }
     
