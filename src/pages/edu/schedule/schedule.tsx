@@ -38,6 +38,7 @@ interface IState {
   showAddCourseFloatLayout: boolean,
 
   startX: number,
+  dayDateHeight: number,
 
   newCourseName: string,
   newCourseTeacher: string,
@@ -70,6 +71,7 @@ export default class Core extends Component {
     showAddCourseFloatLayout: false,
 
     startX: 0,
+    dayDateHeight: 58,
 
     newCourseName: '',
     newCourseTeacher: '',
@@ -145,6 +147,12 @@ export default class Core extends Component {
     Taro.eventCenter.on('scheduleCoreRemount', () => {
       this.componentWillMount()
     })
+
+    let dayDateHeight
+    Taro.createSelectorQuery().select('#dayDateID').boundingClientRect().exec(res => {
+      dayDateHeight = res[0].height
+      this.setState({dayDateHeight: dayDateHeight})
+    })
   }
 
   componentWillUnmount () { }
@@ -180,7 +188,7 @@ export default class Core extends Component {
     newState['week'] = week
     newState['day'] = new Date().getDay(),
     newState['date'] = `${new Date().getMonth() + 1}-${new Date().getDate()}`
-    newState['dayDate'] = utils.getDayDate(week),
+    newState['dayDate'] = utils.getDayDate(week)
 
     this.setState(newState)
   }
@@ -200,6 +208,9 @@ export default class Core extends Component {
   }
 
   handleTouchStart (e) {
+    if (!e.changedTouches[0]) {
+      return
+    }
     this.setState({
       startX: e.changedTouches[0].clientX,
       startY: e.changedTouches[0].clientY,
@@ -400,7 +411,7 @@ export default class Core extends Component {
   }
 
   render () {
-    const {schedule, dayDate, date, showAddCourseFloatLayout} = this.state
+    const {schedule, dayDate, date, showAddCourseFloatLayout, dayDateHeight} = this.state
 
     // 这里写得好不优雅，要怎么改
     const container = schedule.map((s, index) => {
@@ -428,7 +439,7 @@ export default class Core extends Component {
     return (
       <View>
         <View className='header'>
-          <View className='dayDate'>
+          <View id='dayDateID' className='dayDate'>
             <View className='left-block'>{this.state.week}周</View>
             {dayDate.map((item, index) => {
               return (
@@ -440,7 +451,7 @@ export default class Core extends Component {
             })}
           </View>
         </View>
-          <View className='container' onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd}>{container}</View>
+        <View className='container' onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd} style={`padding-top: ${dayDateHeight-1}px;`}>{container}</View>
         <FloatLayout title='添加课程' isOpened={showAddCourseFloatLayout} onClose={this.showAddCourse.bind(this, false)}>
           <View className='padding20'>
             <Form className='form' onSubmit={this.handleAddCourse}>
