@@ -72,7 +72,7 @@ const getWeek = (): number => {
   const start: number = new Date(schoolOpenDate).getTime()
   const end: number = new Date().getTime()
   const delta: number = end - start
-  return Math.floor(delta / (1000 * 3600 * 24 * 7))
+  return Math.ceil(delta / (1000 * 3600 * 24 * 7))
 }
 
 const getDayDate = (week): Array<any> => {
