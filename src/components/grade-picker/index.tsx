@@ -102,10 +102,10 @@ export default class GradePicker extends Component<IProps, {}> {
     }
 
     let yearSelected = 0, semesterSelected = 0 // 必须初始化为 0，不然遇到 handleChange 遇到 name 为 全部 的时候，传进来的 year 为 ''，yearSelected 就是 undefined 了
-
     yearRange.forEach((item, index) => {
+      const realIndex = this.props.showTotal ? index -1 : index
       if (item.name !== '全部') {
-        item.key = schoolYears[index-1]
+        item.key = schoolYears[realIndex]
       }
       if (item.key === year) {
         yearSelected = index
