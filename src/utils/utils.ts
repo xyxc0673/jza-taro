@@ -79,7 +79,7 @@ const getDayDate = (week): Array<any> => {
   const schoolOpenDate: Date = new Date(Taro.getStorageSync('schoolOpenDate'))
   const days: Array<any> = []
 
-  schoolOpenDate.setDate(schoolOpenDate.getDate() + (week) * 7 - 1)
+  schoolOpenDate.setDate(schoolOpenDate.getDate() + (week - 1) * 7 - 1)
 
   for (let i = 0; i < 7; i ++) {
     let timestamp = schoolOpenDate.setDate(schoolOpenDate.getDate() + 1)
