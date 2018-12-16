@@ -36,7 +36,7 @@ export default class Sample extends Component {
     gradeText: '',
 
     yearSemesterSelected: [] as Array<any>,
-    collegeSelectedKey: '',
+    collegeSelectedKey: '-1',
     majorSelectedKey: '-1',
     gradeSelectedKey: '',
     
@@ -103,8 +103,8 @@ export default class Sample extends Component {
       return
     }
 
-    if (majorSelectedKey === '-1') {
-      Taro.showModal({title: '提示', content: '还未选择专业', showCancel: false})
+    if (collegeSelectedKey === '-1') {
+      Taro.showModal({title: '提示', content: '还未选择学院', showCancel: false})
       return
     }
 
