@@ -6,7 +6,8 @@ import './auth.scss'
 import FloatLayout from '../../components/float-layout';
 import Panel from '../../components/panel';
 
-import Account from '../../services/edu/account'
+import Account from '../../services/account'
+import Library from '../../services/library'
 import request from '../../utils/request'
 
 const questionUrl = require('../../asserts/images/question.svg')
@@ -56,7 +57,7 @@ export default class Sample extends Component {
   }
 
   async getCaptcha () {
-    const response = await request.libReaderCaptcha({opacToken: ''})
+    const response = await Library.getCaptchaResponse(false)
 
     if (!response) {
       return
@@ -93,6 +94,9 @@ export default class Sample extends Component {
     const response = await request.libReaderLogin({studentID, password, captcha, opacToken})
 
     if (!response || response.data.code === -1) {
+      if (response.data.data === '缓存不存在或已过期') {
+        Taro.showModal({title: '提示', content: '验证码已过期', showCancel: false})
+      }
       this.getCaptcha()
       return
     }
@@ -141,13 +145,13 @@ export default class Sample extends Component {
         </Form>
         <FloatLayout title='帮助' isOpened={openHelpFloatLayout} onClose={this.handleOpenHelp.bind(this, false)}>
           <Panel title='提示' marginBottom={0}>
-            <View className='help-text'>如未修改过密码，默认密码一般为 12345678。</View>
+            <View className='help-text'>如未修改过密码，默认密码一般为 12345678。另外如果之前没有登录过图书馆官网进行身份认证，小程序将无法登录。</View>
           </Panel>
           <Panel title='有效期' marginBottom={0}>
-            <View className='help-text'>登录成功后，登录状态的有效期为一个小时。此间任何有关图书馆个人中心的操作都会延长该有效期。</View>
+            <View className='help-text'>登录成功后，登录状态的有效期为一个小时。此间任何有关图书馆个人中心的操作都会重置该有效期。</View>
           </Panel>
           <Panel title='隐私' marginBottom={0}>
-            <View className='help-text'>账号密码均储存在微信内部中，但是基于技术实现，服务器会缓存一段时间登录成功后的会话，用于后续操作。</View>
+            <View className='help-text'>账号密码均储存在微信内部中，但是基于技术实现，服务器会缓存登录成功后的会话一段时间，以用于后续操作。</View>
           </Panel>
         </FloatLayout>
       </View>

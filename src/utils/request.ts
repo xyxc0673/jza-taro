@@ -2,7 +2,7 @@ import Taro from '@tarojs/taro'
 import api from './api'
 import utils from './utils'
 import global from './global'
-import Account from '../services/edu/account';
+import Account from '../services/account';
 
 const genAuth = (studentID, password) => {
   const auth = utils.str2ab(`${studentID}:${password}`)
@@ -10,7 +10,7 @@ const genAuth = (studentID, password) => {
 }
 
 const proxy = async (params): Promise<any> => {
-  if (!params.quite_mode) {
+  if (!params.quiet_mode) {
     Taro.showLoading({
       title: '加载中'
     })
@@ -19,7 +19,7 @@ const proxy = async (params): Promise<any> => {
   try {
     const response = await Taro.request(params)
     
-    if (!params.quite_mode) {
+    if (!params.quiet_mode) {
       Taro.hideLoading()
     }
 
@@ -35,7 +35,7 @@ const proxy = async (params): Promise<any> => {
       return response
     }
 
-    if (response.data.code == -1 && !params.quite_mode) {
+    if (response.data.code == -1 && !params.quiet_mode) {
       if (!response.data.data) {
         utils._showModal({title: "提示", content: response.data.msg})
         return
@@ -47,7 +47,7 @@ const proxy = async (params): Promise<any> => {
       return response
     }
 
-    if(params.quite_mode) {
+    if(params.quiet_mode) {
       Taro.showToast({icon: 'none', title: response.data.msg})
       console.warn('Request error: ', response.data.msg)
     }
@@ -55,7 +55,7 @@ const proxy = async (params): Promise<any> => {
     return response
   } catch(e) {
     console.error('Request error: ', e)
-    if (!params.quite_mode) {
+    if (!params.quiet_mode) {
       Taro.hideLoading()
       utils._showModal({title: '提示', content: '服务器暂时出了点问题'})
     } else {
@@ -67,7 +67,7 @@ const proxy = async (params): Promise<any> => {
 const notice = (params) => {
   params = {
     url: api.notice,
-    quite_mode: true,
+    quiet_mode: true,
   }
   return proxy(params)
 }
@@ -224,7 +224,7 @@ const libSearch = async ({keyword, page}) => {
 const libBookInfo = async ({isbn, marcNo}) => {
   let params = {
     url: api.libBookInfo,
-    quite_mode: true,
+    quiet_mode: true,
     data: {
       isbn: isbn,
       marcNo: marcNo,
@@ -247,7 +247,7 @@ const libBookDetail = async ({isbn, marcNo}) => {
 const libBookCover = async (url: string) => {
   let params = {
     url: api.libBookCover,
-    quite_mode: true,
+    quiet_mode: true,
     data: {
       url: url,
     }
@@ -278,10 +278,10 @@ const libReaderLogin = async ({studentID, password, captcha, opacToken}) => {
   return authProxy(params)
 }
 
-const libReaderInfo = async ({quite_mode}) => {
+const libReaderInfo = async ({quiet_mode}) => {
   let params = {
     tokenKey: 'opacToken',
-    quite_mode: quite_mode,
+    quiet_mode: quiet_mode,
     url: api.libReaderInfo,
   }
   return authProxy(params)
@@ -296,30 +296,31 @@ const libReaderRenew = async ({captcha, barcode, check}) => {
   return authProxy(params)
 }
 
-const libReaderRenewCheck = async ({barcode, quite_mode}) => {
+const libReaderRenewCheck = async ({barcode, quiet_mode}) => {
   let params = {
     tokenKey: 'opacToken',
     data: { barcode },
-    quite_mode: quite_mode,
+    quiet_mode: quiet_mode,
     url: api.libReaderRenewCheck,
   }
   return authProxy(params)
 }
 
-const libReaderCurrentCheckout = async ({quite_mode}) => {
+const libReaderCurrentCheckout = async ({quiet_mode}) => {
   let params = {
     tokenKey: 'opacToken',
-    quite_mode: quite_mode,
+    quiet_mode: quiet_mode,
     url: api.libReaderCurrentCheckout,
   }
   return authProxy(params)
 }
 
-const libReaderCheckoutRecord = async ({quite_mode}) => {
+const libReaderCheckoutRecord = async ({page, quiet_mode}) => {
   let params = {
     tokenKey: 'opacToken',
-    quite_mode: quite_mode,
+    quiet_mode: quiet_mode,
     url: api.libReaderCheckoutRecord,
+    data: { page }
   }
   return authProxy(params)
 }

@@ -6,8 +6,8 @@ import IAccount from '../../../interfaces/account'
 import request from '../../../utils/request'
 import utils from '../../../utils/utils'
 import global from '../../../utils/global'
-import Account from '../../../services/edu/account';
-import Schedule from '../../../services/edu/schedule';
+import Account from '../../../services/account';
+import Schedule from '../../../services/schedule';
 
 import FloatLayout from '../../../components/float-layout'
 import Panel from '../../../components/panel'

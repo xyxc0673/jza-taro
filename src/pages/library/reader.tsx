@@ -6,19 +6,23 @@ import './reader.scss'
 import Panel from '../../components/panel';
 import FloatLayout from '../../components/float-layout';
 
-import request from '../../utils/request'
 import utils from '../../utils/utils'
-import Account from '../../services/edu/account';
+import Account from '../../services/account';
+import Library from '../../services/library'
 
 export default class Sample extends Component {
   config: Config = {
-    navigationBarTitleText: '我的图书馆'
+    navigationBarTitleText: '我的图书馆',
+    enablePullDownRefresh: true,
+    backgroundTextStyle: "dark",
   }
   
   state = {
-    nearExpired: '0',
-    expired: '0',
-    order: '0',
+    page: 0,
+    totalCount: 0,
+    nearExpire: '-1',
+    expired: '-1',
+    order: '-1',
     loginState: '未登录',
     isLogin: false,
     currentCheckout: [] as Array<any>,
@@ -36,7 +40,7 @@ export default class Sample extends Component {
 
   componentDidMount () {
     Taro.eventCenter.on('libraryReaderRemount', () => {
-      this.setState({nearExpired: '0', expired: '0', order: '0', currentCheckout: [], checkoutRecord: []}, () => {
+      this.setState({nearExpire: '0', expired: '0', order: '0', currentCheckout: [], checkoutRecord: []}, () => {
         this.init()
       })
     })
@@ -47,6 +51,11 @@ export default class Sample extends Component {
   componentDidShow () { }
 
   componentDidHide () { }
+
+  onPullDownRefresh () {
+    this.init()
+    Taro.stopPullDownRefresh()
+  }
 
   init () {
     const opacToken = Taro.getStorageSync('opacToken')
@@ -60,11 +69,11 @@ export default class Sample extends Component {
 
     this.getInfo()
     this.getCurrentCheckout()
-    this.getCheckoutRecord()
+    this.getCheckoutRecord(true)
   }
 
-  gotoAuth () {
-    Taro.navigateTo({url: '/pages/library/auth'})
+  goto (url) {
+    Taro.navigateTo({url: url})
   }
 
   openRenewFloatLayout (value: boolean, barcode? : string) {
@@ -84,9 +93,7 @@ export default class Sample extends Component {
   }
 
   async getCaptcha () {
-    const opacToken = Taro.getStorageSync('opacToken')
-
-    const response = await request.libReaderCaptcha({opacToken: opacToken})
+    const response = await Library.getCaptchaResponse(true)
 
     if (!response) {
       return
@@ -95,79 +102,56 @@ export default class Sample extends Component {
     this.setState({captcha: '', captchaSource: 'data:image/jpeg;base64,' + response.data.data.captcha})
   }
 
-  isValid (response) {
-    if (response.data.data === "缓存不存在或已过期" || response.data.data === "未登录") {
-      return false
-    }
-    return true
-  }
-
   async getInfo () {
-    const response = await request.libReaderInfo({quite_mode: true})
+    const res = await Library.getInfo()
 
-    if (!response) {
+    if (!res) {
       return
     }
 
-    if (!this.isValid(response)) {
+    if (!res.isLogin) {
       const { loginState } = this.state
       this.setState({loginState: loginState+'(登录已过期)', isLogin: false})
       return
     }
 
-    const { nearExpired, expired, order } = response.data.data
-
-    this.setState({nearExpired: nearExpired, expired: expired, order: order})
+    this.setState(res)
   }
 
   async getCurrentCheckout() {
-    const response = await request.libReaderCurrentCheckout({quite_mode: false})
+    const record = await Library.getCurrentCheckout()
 
-    if (!response || !this.isValid(response)) {
+    if (!record) {
       return
     }
 
-    this.setState({currentCheckout: response.data.data.record})
+    this.setState({currentCheckout: record})
   }
 
-  async getCheckoutRecord() {
-    const response = await request.libReaderCheckoutRecord({quite_mode: false})
-
-    if (!response || !this.isValid(response)) {
-      return
-    }
-
-    this.setState({checkoutRecord: response.data.data.record})
-  }
-
-  async getRenewCheck (barcode) {
-    const response = await request.libReaderRenewCheck({barcode: barcode, quite_mode: false})
+  async getCheckoutRecord(firstSearch) {
+    const { page, checkoutRecord } = this.state
+    const nextPage = firstSearch ? 1 : page + 1
+    
+    const response = await Library.getCheckoutRecord(nextPage)
 
     if (!response) {
       return
     }
 
-    if (response.data.data === "缓存不存在或已过期" || response.data.data === "未登录") {
-      Taro.showModal({title: '提示', content: '登录已过期，请重新登录', showCancel: false})
-      return
-    }
-    
-    return response.data.data.check
-  }
+    const { record, totalCount } = response
 
-  async RenewBook (captcha, barcode, check) {
-    const response = await request.libReaderRenew({captcha: captcha, barcode: barcode, check: check})
-
-    if (!response || response.data.code == -1) {
+    if (!record) {
       return
     }
 
-    if (response.data.data === "缓存不存在或已过期" || response.data.data === "未登录") {
-      Taro.showModal({title: '提示', content: '登录已过期，请重新登录', showCancel: false})
+    if (nextPage > 1 && record.length === 0) {
+      Taro.showToast({title: '没有更多记录了', icon: 'none'})
       return
     }
 
-    return response
+    const newRecordArray = firstSearch ? record: checkoutRecord.concat(record)
+
+    this.setState({page: nextPage, checkoutRecord: newRecordArray, totalCount: totalCount})
   }
 
   async handleSubmit () {
@@ -182,13 +166,13 @@ export default class Sample extends Component {
       return
     }
 
-    const check = await this.getRenewCheck(renewBarcode)
+    const check = await Library.getRenewCheck(renewBarcode)
 
     if (!check) {
       return
     }
 
-    const response = await this.RenewBook(captcha, renewBarcode, check)
+    const response = await Library.renewBook(captcha, renewBarcode, check)
 
     if (!response) {
       this.getCaptcha()
@@ -202,11 +186,11 @@ export default class Sample extends Component {
   }
 
   render () {
-    const { nearExpired, expired, loginState, isLogin, currentCheckout, checkoutRecord, captcha, captchaSource, openRenewFloatLayout } = this.state
+    const { totalCount, nearExpire, expired, loginState, isLogin, currentCheckout, checkoutRecord, captcha, captchaSource, openRenewFloatLayout } = this.state
 
     return (
       <View className='full-bd background-grey'>
-        <View className='info' onClick={this.gotoAuth}>
+        <View className='info' onClick={this.goto.bind(this, '/pages/library/auth')}>
           <View className='left'>
             <OpenData className='avatar' type='userAvatarUrl'></OpenData>
             <View className='detail'>
@@ -220,7 +204,7 @@ export default class Sample extends Component {
         </View>
         <View className='float-card'>
           <View className='item'>
-            <View className='item__value'>{currentCheckout.length + checkoutRecord.length}</View>
+            <View className='item__value'>{totalCount + currentCheckout.length}</View>
             <View className='item__title'>总共借阅</View>
           </View>
           <View className='item'>
@@ -228,7 +212,7 @@ export default class Sample extends Component {
             <View className='item__title'>当前借阅</View>
           </View>
           <View className='item'>
-            <View className='item__value'>{nearExpired}</View>
+            <View className='item__value'>{nearExpire}</View>
             <View className='item__title'>即将过期</View>
           </View>
           <View className='item'>
@@ -270,6 +254,7 @@ export default class Sample extends Component {
               })}
             </View>
           </View>
+          <View className='load-more' onClick={this.getCheckoutRecord.bind(this, false)}>加载更多</View>
         </Panel>
         {/* this.openRenewFloatLayout.bind(this, false) 可以 this.handleRenewFloatLayout.bind(this, false) 却不可以*/}
         <FloatLayout isOpened={openRenewFloatLayout} onClose={this.openRenewFloatLayout.bind(this, false)}>

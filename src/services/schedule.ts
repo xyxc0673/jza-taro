@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro'
 
-import request from '../../utils/request'
+import request from '../utils/request'
 
 import account from './account'
 

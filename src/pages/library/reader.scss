@@ -87,11 +87,21 @@
       transition: all 0.8s ease;
 
     }
+
+    &:last-child {
+      margin-bottom: 30px;
+    }
   }
 
   &-body {
     font-size: 27px;
   }
+}
+
+.load-more {
+  text-align: center;
+  font-size: 25px;
+  color: #b0b0b0;
 }
 
 .captcha {

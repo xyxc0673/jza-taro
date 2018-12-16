@@ -1,13 +1,12 @@
-const version = '0.3.1'
+const version = '0.3.2'
 
-const versionReleaseDate = '2018-12-14'
+const versionReleaseDate = '2018-12-16'
 
 const changeLog = [
-  '修复 显示的周数与正确的周数相差一周的问题',
-  '修复 班级课表中的课程选课人数显示 undefined',
-  '修复 Android 设备和 iPhone 设备课表样式显示不一致',
-  '修复 与教务系统相关的页面可能无法正常地选择学年或学期',
-  '优化 检索完课表进入我的课表时不再关闭设置页面',
+  '修复 我的课程表表头日期不正确',
+  '优化 重构部分图书馆个人中心代码',
+  '优化 图书馆个人中心借阅历史开启分页显示',
+  '优化 班级课表未选择时的提示从专业改为学院',
 ]
 
 const collegeRange = [

@@ -66,6 +66,7 @@ export default class About extends Component {
           <Panel title='鸣谢' marginBottom={0}>
             <View className='list'>
               <View className='list-item'>@車前子：提供帮助以解决课表显示不正确的问题</View>
+              <View className='list-item'>@史努比：提供帮助以开发借阅历史分页显示功能</View>
             </View>
           </Panel>
         </View>

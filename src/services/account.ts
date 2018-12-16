@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro'
 
-import utils from "../../utils/utils";
-import global from "../../utils/global"
+import utils from "../utils/utils";
+import global from "../utils/global"
 
 class Account {
   static get (key) {

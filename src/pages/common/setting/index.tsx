@@ -5,7 +5,7 @@ import './index.scss'
 
 import Panel from '../../../components/panel'
 
-import Account from '../../../services/edu/account'
+import Account from '../../../services/account'
 
 import init from '../../../utils/init'
 import global from '../../../utils/global';

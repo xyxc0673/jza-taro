@@ -7,7 +7,7 @@ import './schedule.scss'
 
 import utils from '../../../utils/utils'
 import global from '../../../utils/global'
-import Schedule from '../../../services/edu/schedule'
+import Schedule from '../../../services/schedule'
 
 const questionUrl = require('../../../asserts/images/question.svg')
 

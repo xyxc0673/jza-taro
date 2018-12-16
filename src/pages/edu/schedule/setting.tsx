@@ -8,7 +8,7 @@ import GradePicker from '../../../components/grade-picker'
 import utils from '../../../utils/utils'
 import global from '../../../utils/global'
 import request from '../../../utils/request'
-import Account from '../../../services/edu/account'
+import Account from '../../../services/account'
 
 interface IState {
   year: number,

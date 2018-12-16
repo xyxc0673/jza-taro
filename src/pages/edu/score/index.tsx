@@ -9,7 +9,7 @@ import FloatLayout from '../../../components/float-layout';
 
 import global from '../../../utils/global'
 import request from '../../../utils/request'
-import Account from '../../../services/edu/account'
+import Account from '../../../services/account'
 
 interface IScore {
   courseName: string,

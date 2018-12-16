@@ -11,8 +11,8 @@ import request from '../../utils/request';
 import data from '../../utils/data'
 
 import IAccount from '../../interfaces/account'
-import Account from '../../services/edu/account'
-import Schedule from '../../services/edu/schedule';
+import Account from '../../services/account'
+import Schedule from '../../services/schedule';
 
 interface ISchedule {
   courseName: string,
@@ -167,14 +167,14 @@ export default class Index extends Component<{}, IState> {
     this.setState({notice: response.data.data.notice})
   }
 
-  async getBalance (quite_mode: boolean = true) {
+  async getBalance (quiet_mode: boolean = true) {
     const account:IAccount = Account.Get()
 
     if (!account || !Account.checkBindState('card')) {
       return
     }
 
-    const response = await request.cardBalance({quite_mode: quite_mode})
+    const response = await request.cardBalance({quiet_mode: quiet_mode})
 
     if (!response || response.data.code == -1) {
       return
