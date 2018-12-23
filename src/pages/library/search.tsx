@@ -24,8 +24,6 @@ interface IBook {
 
   summary: string,
   books: ICollection[],
-
-  cover: string,
 }
 
 interface ICollection {
@@ -196,8 +194,7 @@ export default class Index extends Component<{IState}, {}> {
         if (!utils.isObj(data)) {
           continue
         }
-        let cover = await this.getBookCover(data.imageUrl)
-        let _tmp = Object.assign(bookItem, data, {cover: cover})
+        let _tmp = Object.assign(bookItem, data)
         tmpBooks = Object.assign(this.state.books, _tmp)
         this.setState({books: tmpBooks})
       }
@@ -214,26 +211,15 @@ export default class Index extends Component<{IState}, {}> {
     return response.data.data.details
   }
 
-  async getBookCover (url: string) {
-    let response = await request.libBookCover(url)
-    
-    if (!utils.isObj(response.data) && response.data.code === -1) {
-      return
-    }
-    return response.data.data.cover
-  }
-
   render () {
+    const defaultImage = require('../../asserts/images/default_book.svg')
     let bookItemsView
 
     if (this.state.books) {
       bookItemsView = this.state.books.map((bookItem) => {
-        
-        let imageElem = require('../../asserts/images/default_book.svg')
-        
         return (
           <View className='card book-item' key={bookItem.marcNo} onClick={this.onOpenDetial.bind(this, bookItem)}>
-            <Image className='book-item__image' src={`${bookItem.cover ? 'data:image/jpeg;base64,' + bookItem.cover : imageElem}`} />
+            <Image className='book-item__image' src={bookItem.imageUrl ? bookItem.imageUrl : defaultImage} />
             <View className='book-item__wrap'>
               <Text className='book-item__title'>{bookItem.title}</Text>
               <Text className='book-item__author'>{bookItem.author} / {bookItem.publisher} / {bookItem.publishYear}</Text>

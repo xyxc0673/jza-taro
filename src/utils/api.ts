@@ -19,9 +19,8 @@ const api = apiReset({
   electricUsedRecord: '/electric/used',
 
   libSearch: '/lib/search',
-  libBookInfo: '/lib/book_info',
-  libBookDetail: '/lib/book_detail',
-  libBookCover: '/lib/book_cover',
+  libBookInfo: '/lib/book/info',
+  libBookDetail: '/lib/book/detail',
 
   libReaderLogin: '/lib/reader/login',
   libReaderCaptcha: '/lib/reader/captcha',

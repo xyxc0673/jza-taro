@@ -20,9 +20,9 @@ export default class Sample extends Component {
   state = {
     page: 0,
     totalCount: 0,
-    nearExpire: '-1',
-    expired: '-1',
-    order: '-1',
+    nearExpire: '－',
+    expired: '－',
+    order: '－',
     loginState: '未登录',
     isLogin: false,
     currentCheckout: [] as Array<any>,
@@ -65,7 +65,7 @@ export default class Sample extends Component {
     }
 
     const account = Account.GetLib()
-    this.setState({loginState: account.studentID, isLogin: true})
+    this.setState({loginState: account.studentID})
 
     this.getInfo()
     this.getCurrentCheckout()
@@ -204,11 +204,11 @@ export default class Sample extends Component {
         </View>
         <View className='float-card'>
           <View className='item'>
-            <View className='item__value'>{totalCount + currentCheckout.length}</View>
+            <View className='item__value'>{isLogin ? totalCount + currentCheckout.length : '－'}</View>
             <View className='item__title'>总共借阅</View>
           </View>
           <View className='item'>
-            <View className='item__value'>{currentCheckout.length}</View>
+            <View className='item__value'>{isLogin ? currentCheckout.length : '－'}</View>
             <View className='item__title'>当前借阅</View>
           </View>
           <View className='item'>

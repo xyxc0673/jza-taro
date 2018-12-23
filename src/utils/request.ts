@@ -244,17 +244,6 @@ const libBookDetail = async ({isbn, marcNo}) => {
   return proxy(params)
 }
 
-const libBookCover = async (url: string) => {
-  let params = {
-    url: api.libBookCover,
-    quiet_mode: true,
-    data: {
-      url: url,
-    }
-  }
-  return proxy(params)
-}
-
 const libReaderCaptcha = async ({opacToken}) => {
   let params = {
     opacToken: opacToken,
@@ -347,7 +336,6 @@ export default {
   libSearch,
   libBookInfo,
   libBookDetail,
-  libBookCover,
 
   libReaderCaptcha,
   libReaderLogin,
