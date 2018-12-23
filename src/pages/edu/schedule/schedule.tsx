@@ -38,7 +38,6 @@ interface IState {
   showAddCourseFloatLayout: boolean,
 
   startX: number,
-  dayDateHeight: number,
 
   newCourseName: string,
   newCourseTeacher: string,
@@ -71,7 +70,6 @@ export default class Core extends Component {
     showAddCourseFloatLayout: false,
 
     startX: 0,
-    dayDateHeight: 58,
 
     newCourseName: '',
     newCourseTeacher: '',
@@ -146,12 +144,6 @@ export default class Core extends Component {
   componentDidMount () {
     Taro.eventCenter.on('scheduleCoreRemount', () => {
       this.componentWillMount()
-    })
-
-    let dayDateHeight
-    Taro.createSelectorQuery().select('#dayDateID').boundingClientRect().exec(res => {
-      dayDateHeight = res[0].height
-      this.setState({dayDateHeight: dayDateHeight})
     })
   }
 
@@ -411,7 +403,7 @@ export default class Core extends Component {
   }
 
   render () {
-    const {schedule, dayDate, date, showAddCourseFloatLayout, dayDateHeight} = this.state
+    const {schedule, dayDate, date, showAddCourseFloatLayout} = this.state
 
     // 这里写得好不优雅，要怎么改
     const container = schedule.map((s, index) => {
@@ -425,7 +417,7 @@ export default class Core extends Component {
             : s.map((course, courseIndex) => {
                 return course.flex != 0
                   ? (
-                    <View className='row' key={courseIndex} onClick={this.handleCourseClick.bind(this, course)} style={`background-color: ${course.color?course.color: ''};flex: ${course.flex}; margin: 2rpx; padding: ${course.flex > 1 ? (course.flex - 1)*2 : 0}rpx 0.25rem`}>
+                    <View className='row course' key={courseIndex} onClick={this.handleCourseClick.bind(this, course)} style={`background-color: ${course.color?course.color: ''};flex: ${course.flex}; padding: ${course.flex > 1 ? (course.flex - 1)*2 : 0}rpx 0.25rem`}>
                       <Text className='course-name'>{course.courseName}</Text><Text>{course.location}</Text>
                     </View>
                   )
@@ -444,14 +436,14 @@ export default class Core extends Component {
             {dayDate.map((item, index) => {
               return (
                 <View className='dayDate-item' key={index}>
-                  <View className='dayDate-item__day' style={`color:${item.date == date ? '#00b26a': ''}`}>{item.day}</View>
-                  <View className='dayDate-item__date' style={`color:${item.date == date ? '#68bb9a': ''}`}>{item.date}</View>
+                  <Text className='dayDate-item__day' style={`color:${item.date == date ? '#00b26a': ''}`}>{item.day}</Text>
+                  <Text className='dayDate-item__date' style={`color:${item.date == date ? '#68bb9a': ''}`}>{item.date}</Text>
                 </View>
               )
             })}
           </View>
         </View>
-        <View className='container' onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd} style={`padding-top: ${dayDateHeight-1}px;`}>{container}</View>
+        <View className='container' onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd}>{container}</View>
         <FloatLayout title='添加课程' isOpened={showAddCourseFloatLayout} onClose={this.showAddCourse.bind(this, false)}>
           <View className='padding20'>
             <Form className='form' onSubmit={this.handleAddCourse}>

@@ -17,15 +17,19 @@
     }
 
     &-item {
+      display: flex;
+      flex-direction: column;
       flex: 1;
       text-align: center;
 
       &__day {
+        line-height: 40px;
         font-size: 30px;
         color: #838383;
       }
 
       &__date {
+        height: 30px;
         font-size: 20px;
         color: #b0b0b0;
       }
@@ -36,12 +40,13 @@
 .container {
   display: flex;
   flex-direction: row;
-  padding: 58px 0 0;
+  padding: 70px 0 10px;
   width: 100%;
   height: 100%;
   background-color: #f0f0f0;
 
   .col {
+    width: 100%;
     display: flex;
     flex-direction: column;
     margin-top: 5px;
@@ -54,7 +59,6 @@
       margin: 0 5px 0 0;
     }
     .row {
-      width: 85px;
       height: 120px;
       font-size: 20px;
       padding: 0 0.25rem;
@@ -62,15 +66,28 @@
       flex-direction: column;
       justify-content: space-around;
       text-align: center;
+
       &.session {
         width: 38px;
-        padding: 0;
+        padding: 1px 0;
+        margin: 1px 0;
+      }
+
+      &.course {
+        margin: 2px;
       }
 
       .course-name {
         word-wrap: break-word;
         font-size: 23px;
         font-weight: bold;
+
+        display: -webkit-box;
+        overflow: hidden;
+
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        /* 源自微吉风 多行溢出省略号 http://t.cn/zWUS0VF */
       }
     }
   }
