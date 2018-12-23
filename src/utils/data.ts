@@ -1,12 +1,10 @@
-const version = '0.3.2'
+const version = '0.3.3'
 
-const versionReleaseDate = '2018-12-16'
+const versionReleaseDate = '2018-12-23'
 
 const changeLog = [
-  '修复 我的课程表表头日期不正确',
-  '优化 重构部分图书馆个人中心代码',
-  '优化 图书馆个人中心借阅历史开启分页显示',
-  '优化 班级课表未选择时的提示从专业改为学院',
+  '优化 我的课程表布局代码',
+  '优化 图书检索书籍封面获取方式',
 ]
 
 const collegeRange = [
@@ -192,11 +190,11 @@ const scheduleItems = [
     pageUrl: '/pages/edu/schedule/schedule',
     imageUrl: require('../asserts/images/schedule.svg')
   },
-  {
-    title: '班级课表',
-    pageUrl: '/pages/edu/schedule/recommend',
-    imageUrl: require('../asserts/images/recommend.svg')
-  },
+  // {
+  //   title: '班级课表',
+  //   pageUrl: '/pages/edu/schedule/recommend',
+  //   imageUrl: require('../asserts/images/recommend.svg')
+  // },
   {
     title: '课表设置',
     pageUrl: '/pages/edu/schedule/setting',
