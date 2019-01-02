@@ -408,7 +408,7 @@ export default class Core extends Component {
     // 这里写得好不优雅，要怎么改
     const container = schedule.map((s, index) => {
       return (
-        <View className={`col ${ index === 0 ? 'title' : ''}`} key={index}>
+        <View className={`col ${ index === 0 ? 'title' : 'course'}`} key={index}>
           {
             index === 0
             ? s.map((sessionText, sessionIndex) => {
