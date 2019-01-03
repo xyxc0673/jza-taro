@@ -107,6 +107,7 @@ export default class Setting extends Component {
       account = Object.assign({}, account, {[`${type}Password`]: ''})
 
       Account.Save(account)
+      this.setState({account: account})
     }
 
     Taro.showToast({title: `${typeHuman}成功`, icon: 'none'})
