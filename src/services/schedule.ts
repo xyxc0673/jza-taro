@@ -77,7 +77,7 @@ class Schedule {
   static InitSchedule (rawSchedule: Array<any>, week: number = -1, day: number = -1) {
     const sameScheduleSameColor = {}
     const colorLength = this.colors.length
-    const displayNextWeekCourse = Taro.getStorageSync('displayNextWeekCourse') || false
+    const displaNotCurrentWeekCourse = Taro.getStorageSync('displaNotCurrentWeekCourse') || false
     let schedule: Array<any> = []
 
     if (day === -1) {
@@ -90,7 +90,7 @@ class Schedule {
     // 初始化课程表
     for (let s of rawSchedule) {
       let thisWeekCourse = false
-      let nextWeekCourse = false
+      let notCurrentWeekCourse = true
 
       if (!s.during) {
         continue
@@ -103,19 +103,19 @@ class Schedule {
         let wInt = parseInt(w)
         if (wInt == week) {
           thisWeekCourse = true
+          notCurrentWeekCourse = false
           break
-        } else if (wInt == week + 1) {
-          nextWeekCourse = true
+        } else if (wInt > week) {
           break
         }
       }
 
       // 用于首页今日课表的判断
-      if ((day !== -1 && parseInt(s.day) != day)) {
+      if (day !== -1 && (parseInt(s.day) != day ||  notCurrentWeekCourse)) {
         continue
       }
 
-      if (!thisWeekCourse && (!displayNextWeekCourse || !nextWeekCourse)) {
+      if (!thisWeekCourse && (!displaNotCurrentWeekCourse || !notCurrentWeekCourse)) {
         continue
       }
 
@@ -132,7 +132,7 @@ class Schedule {
         // 课程块随机上色，并为同一课程上相同色
         const colorBefore = sameScheduleSameColor[s.courseName]
 
-        if (nextWeekCourse) {
+        if (notCurrentWeekCourse) {
           s.color = this.notCurrentCourseColor
         } else {
           if (!colorBefore) {

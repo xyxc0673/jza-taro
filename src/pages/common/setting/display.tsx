@@ -10,13 +10,13 @@ export default class Card extends Component {
   
   state = {
     cardSetting: Taro.getStorageSync('cardSetting'),
-    displayNextWeekCourse: false,
+    displaNotCurrentWeekCourse: false,
   }
 
   componentWillMount () {
     const allStorageKeys = [
       'cardSetting',
-      'displayNextWeekCourse',
+      'displaNotCurrentWeekCourse',
     ]
 
     const newState = {}
@@ -55,7 +55,7 @@ export default class Card extends Component {
   }
 
   render () {
-    const { cardSetting, displayNextWeekCourse } = this.state
+    const { cardSetting, displaNotCurrentWeekCourse } = this.state
     return (
       <View className='page'>
         <View className='list'>
@@ -75,8 +75,8 @@ export default class Card extends Component {
           <View className='list-title'>我的课表</View>
           <View className='list-container'>
             <View className='list-item'>
-              <View className='list-item__title'>显示下周课程</View>
-              <Switch checked={displayNextWeekCourse || false} onChange={this.handleNormalChange.bind(this, 'displayNextWeekCourse', '下周课程显示')} />
+              <View className='list-item__title'>显示非本周课程</View>
+              <Switch checked={displaNotCurrentWeekCourse || false} onChange={this.handleNormalChange.bind(this, 'displaNotCurrentWeekCourse', '显示非本周课程')} />
             </View>
           </View>
         </View>
