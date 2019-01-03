@@ -132,10 +132,10 @@ export default class Setting extends Component {
           </View>
         </Panel>
         <Panel title='账号' marginBottom={0}>
-          <View className='list'>
-            <View className='list-item'>教务 <Text id='jw' className='state' onClick={this.handleClearClick.bind(this, 'jw')}>{accountState.jw == true ? '已': '未'}绑定</Text></View>
-            <View className='list-item'>校园卡 <Text id='card' className='state' onClick={this.handleClearClick.bind(this, 'card')}>{accountState.card == true ? '已': '未'}绑定</Text></View>
-            <View className='list-item'>图书馆 <Text id='lib' className='state' onClick={this.handleClearClick.bind(this, 'lib')}>{accountState.lib == true ? '已': '未'}绑定</Text></View>
+          <View className='list with-symbol'>
+            <View className='list-item' hoverStayTime={200} hoverClass='list-item__hover' onClick={this.handleClearClick.bind(this, 'jw')}>教务 <Text id='jw' className='symbol'>{accountState.jw == true ? '√': '×'}</Text></View>
+            <View className='list-item' hoverStayTime={200} hoverClass='list-item__hover' onClick={this.handleClearClick.bind(this, 'card')}>校园卡 <Text id='card' className='symbol'>{accountState.card == true ? '√': '×'}</Text></View>
+            <View className='list-item' hoverStayTime={200} hoverClass='list-item__hover' onClick={this.handleClearClick.bind(this, 'lib')}>图书馆 <Text id='lib' className='symbol'>{accountState.lib == true ? '√': '×'}</Text></View>
           </View>
         </Panel>
         <Panel title='数据' marginBottom={0}>

@@ -33,8 +33,7 @@ $list-item-font-size: 30px;
 
     .state {
       font-size: $list-item-font-size;
-      color: #b0b0b0;
-      border-bottom: 1px solid #6190e8;
+      color: rgba(52, 142, 141, 0.5);
     }
 
     &__hover {

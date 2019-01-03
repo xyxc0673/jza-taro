@@ -175,7 +175,7 @@ export default class Core extends Component {
       this.$router.params.from = ''
     }
 
-    newState['schedule'] = Schedule.InitSchedule(newSchedule, week, -1)
+    newState['schedule'] = Schedule.InitSchedule(newSchedule, week, -1, from === "recommend")
 
     newState['week'] = week
     newState['day'] = new Date().getDay(),
@@ -436,8 +436,8 @@ export default class Core extends Component {
             {dayDate.map((item, index) => {
               return (
                 <View className='dayDate-item' key={index}>
-                  <Text className='dayDate-item__day' style={`color:${item.date == date ? '#00b26a': ''}`}>{item.day}</Text>
-                  <Text className='dayDate-item__date' style={`color:${item.date == date ? '#68bb9a': ''}`}>{item.date}</Text>
+                  <Text className='dayDate-item__day' style={`color:${item.date == date ? 'rgba(52, 142, 141, 0.9)': ''}`}>{item.day}</Text>
+                  <Text className='dayDate-item__date' style={`color:${item.date == date ? 'rgba(52, 142, 141, 0.7)': ''}`}>{item.date}</Text>
                 </View>
               )
             })}

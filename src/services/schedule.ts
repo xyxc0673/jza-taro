@@ -74,11 +74,12 @@ class Schedule {
     return schedule
   }
 
-  static InitSchedule (rawSchedule: Array<any>, week: number = -1, day: number = -1) {
+  static InitSchedule (rawSchedule: Array<any>, week: number = -1, day: number = -1, displaNotCurrentWeekCourse: boolean = false) {
     const sameScheduleSameColor = {}
     const colorLength = this.colors.length
-    const displaNotCurrentWeekCourse = Taro.getStorageSync('displaNotCurrentWeekCourse') || false
     let schedule: Array<any> = []
+
+    displaNotCurrentWeekCourse = displaNotCurrentWeekCourse || Taro.getStorageSync('displaNotCurrentWeekCourse')
 
     if (day === -1) {
       schedule = this.initFrame()

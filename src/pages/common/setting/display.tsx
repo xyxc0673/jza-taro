@@ -65,7 +65,7 @@ export default class Card extends Component {
               return (
                 <View className='list-item' key={index}>
                   <View className='list-item__title'>{item.title}</View>
-                  <Switch checked={item.show} onChange={this.handleCardChange.bind(this, index)} />
+                  <Switch checked={item.show} color='rgba(52, 142, 141, 0.7)' onChange={this.handleCardChange.bind(this, index)} />
                 </View>
               )
             })}
@@ -76,7 +76,7 @@ export default class Card extends Component {
           <View className='list-container'>
             <View className='list-item'>
               <View className='list-item__title'>显示非本周课程</View>
-              <Switch checked={displaNotCurrentWeekCourse || false} onChange={this.handleNormalChange.bind(this, 'displaNotCurrentWeekCourse', '显示非本周课程')} />
+              <Switch checked={displaNotCurrentWeekCourse || false} color='rgba(52, 142, 141, 0.7)' onChange={this.handleNormalChange.bind(this, 'displaNotCurrentWeekCourse', '显示非本周课程')} />
             </View>
           </View>
         </View>
