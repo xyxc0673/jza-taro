@@ -1,10 +1,12 @@
-const version = '0.3.3'
+const version = '0.3.4'
 
-const versionReleaseDate = '2018-12-23'
+const versionReleaseDate = '2019-01-03'
 
 const changeLog = [
-  '优化 我的课程表布局代码',
-  '优化 图书检索书籍封面获取方式',
+  '修复 设置页面不能正常解绑账号',
+  '修复 我的课程表课程格子宽度不统一',
+  '优化 部分样式和逻辑代码',
+  '优化 显示下周课程改为显示非本周课程',
 ]
 
 const collegeRange = [
@@ -190,11 +192,11 @@ const scheduleItems = [
     pageUrl: '/pages/edu/schedule/schedule',
     imageUrl: require('../asserts/images/schedule.svg')
   },
-  // {
-  //   title: '班级课表',
-  //   pageUrl: '/pages/edu/schedule/recommend',
-  //   imageUrl: require('../asserts/images/recommend.svg')
-  // },
+  {
+    title: '班级课表',
+    pageUrl: '/pages/edu/schedule/recommend',
+    imageUrl: require('../asserts/images/recommend.svg')
+  },
   {
     title: '课表设置',
     pageUrl: '/pages/edu/schedule/setting',
