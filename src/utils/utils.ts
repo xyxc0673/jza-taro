@@ -82,9 +82,9 @@ const getDayDate = (week): Array<any> => {
   schoolOpenDate.setDate(schoolOpenDate.getDate() + (week - 1) * 7 - 1)
 
   for (let i = 0; i < 7; i ++) {
-    let timestamp = schoolOpenDate.setDate(schoolOpenDate.getDate() + 1)
-    let date = new Date(timestamp)
-    days.push({date: (date.getMonth() + 1) + '-' + date.getDate(), day: '周' + _replaceToChinese(date.getDay()), dayInt: date.getDay()})
+    const timestamp = schoolOpenDate.setDate(schoolOpenDate.getDate() + 1)
+    const datetime = new Date(timestamp)
+    days.push({date: (datetime.getMonth() + 1) + '-' + datetime.getDate(), day: '周' + _replaceToChinese(datetime.getDay()), dayInt: datetime.getDay()})
   }
 
   return days
@@ -98,6 +98,13 @@ const openNavModal = async (content, url) => {
   Taro.navigateTo({url: url})
 }
 
+const isTokenValid = (response) => {
+  if (response.data.data === "缓存不存在或已过期" || response.data.data === "未登录") {
+    return false
+  }
+  return true
+}
+
 export default {
   str2ab,
   isObj,
@@ -109,4 +116,5 @@ export default {
   getWeek,
   getDayDate,
   openNavModal,
+  isTokenValid,
 }

@@ -1,3 +1,7 @@
+page {
+  background-color: rgba(240, 240, 240, 0.5);
+}
+
 .tips {
   display: flex;
   justify-content: flex-end;
@@ -10,7 +14,61 @@
   }
 }
 
-.title {
+.arrow {
+  font-size: 30px;
+  font-weight: bold;
+  color: #b0b0b0;
+}
+
+.searchPanel {
+  position: fixed;
+
+  top: 100%;
+  left: 0;
+
+  padding: 0 20px 20px;
+  box-sizing: border-box;
+  min-width: 100%;
+  margin-top: -73px;
+
+  background-color: #fff;
+
+  transition: all 0.5s ease;
+
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.05);
+
+
+  &.show {
+    position: absolute;
+
+    margin-top: 0px;
+    top: 10px;
+    height: calc(100% - 10px);
+  }
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 20px 5px 5px;
+
+    .title {
+      font-size: 30px;
+    }
+
+    .arrow {
+      font-size: 20px;
+      margin-right: 10px;
+      transform: scale(2, 1);
+    }
+  }
+}
+
+.year-semester-title {
   padding: 10px 0;
   font-size: 28px;
 
@@ -21,11 +79,7 @@
   }
 
   .arrow {
-    font-size: 20px;
-    font-weight: bold;
-    color: #b0b0b0;
     padding: 0 0 0.1rem 10px;
-    transform: scale(2, 2);
   }
 }
 
@@ -46,12 +100,36 @@
 }
 
 .card-list {
-  margin-top: 40px;
+  &.online {
+    margin-top: 40px;
+  }
+  &.history {
+    margin-top: 30px;
+
+    .card {
+      box-shadow: none;
+
+      &:last-child {
+        margin-bottom: 5px;
+      }
+
+      .right {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
 }
 
 .card {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+
+  .left {
+    display: flex;
+    align-items: center;
+  }
 
   .cycle {
     font-size: 26px;
@@ -59,12 +137,26 @@
     padding: 10px;
   }
 
+  .class-name, .save, .del {
+    font-size: 30px;
+  }
+
   .class-name {
     margin-left: 15px;
-    font-size: 30px;
+  }
+
+  .save, .del {
+    padding: 10px;
   }
 }
 
 .help-text {
   font-size: 26px;
+}
+
+.none-text {
+  text-align: center;
+  font-size: 26px;
+  margin-top: 30px;
+  padding: 20px;
 }

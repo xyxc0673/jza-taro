@@ -1,5 +1,5 @@
 import Taro, { Component, Config } from '@tarojs/taro'
-import { View, Form, Label, Picker, Image, Button } from '@tarojs/components'
+import { View, Form, Label, Text, Picker, Image, Button, Icon } from '@tarojs/components'
 
 import './recommend.scss'
 
@@ -41,8 +41,10 @@ export default class Sample extends Component {
     gradeSelectedKey: '',
     
     allClass: [] as Array<any>,
+    recommendSchedules: [] as Array<any>,
     isLogin: false,
     openHelpFloatLayout: false,
+    showSearchPanel: false,
   }
 
   componentWillMount () {
@@ -61,11 +63,11 @@ export default class Sample extends Component {
       yearSemesterSelected: [year.key, semester.key],
       gradeSelectedKey: gradeSelectedKey,
     })
+
+    this.loadRecommendSchedules ()
   }
 
-  componentDidMount () {
-    this.login()
-  }
+  componentDidMount () { }
 
   componentWillUnmount () { }
 
@@ -77,6 +79,11 @@ export default class Sample extends Component {
   }
 
   componentDidHide () { }
+
+  loadRecommendSchedules () {
+    const recommendSchedules = Taro.getStorageSync('recommendSchedules')
+    this.setState({recommendSchedules: recommendSchedules})
+  }
 
   openHelp (value) {
     this.setState({openHelpFloatLayout: value})
@@ -93,6 +100,15 @@ export default class Sample extends Component {
       )
     }
     return range
+  }
+
+  async checkLoginState (response) {
+    if (!utils.isTokenValid(response)) {
+      await Taro.showModal({title: '提示', content: '登录已经过期，请点击确定重新登录', showCancel: false})
+      this.login()
+      return false
+    }
+    return true
   }
 
   async handleSubmit () {
@@ -142,7 +158,7 @@ export default class Sample extends Component {
     this.setState({gradeValue: e.detail.value, gradeSelectedKey: grade.key, gradeText: grade.name})
   }
 
-  async handleClick (index) {
+  async handleOnlineClick (index) {
     const { yearSemesterSelected, gradeSelectedKey, majorSelectedKey, allClass } = this.state
 
     const schedule = await this.getSchedule(yearSemesterSelected[0], yearSemesterSelected[1], gradeSelectedKey, majorSelectedKey, allClass[index].key)
@@ -157,11 +173,110 @@ export default class Sample extends Component {
     Taro.navigateTo({url: '/pages/edu/schedule/schedule?from=recommend&title=' + customTitle})
   }
 
+  async handleShowPanel () {
+    const { showSearchPanel, isLogin } = this.state
+
+    if (!showSearchPanel && !isLogin) {
+      const isLogin = await this.login()
+      if (!isLogin) {
+        return
+      }
+    }
+
+    this.setState({showSearchPanel: !showSearchPanel})
+  }
+
+  async handleSaveSchedule (index, e) {
+    e.stopPropagation()
+
+    const { yearSemesterSelected, gradeSelectedKey, majorSelectedKey, allClass, yearSemesterText } = this.state
+    const thisClass = allClass[index]
+    const scheduleTitle = `${thisClass.name} ${yearSemesterText}`
+
+    const res = await Taro.showModal({title: '提示', content: `确定要保存 ${scheduleTitle} 的课表吗？`})
+
+    if (res.cancel) {
+      return
+    }
+
+    const schedule = await this.getSchedule(yearSemesterSelected[0], yearSemesterSelected[1], gradeSelectedKey, majorSelectedKey, thisClass.key)
+
+    if (!schedule) {
+      Taro.showToast({title: '获取课表失败', icon: 'none'})
+      return
+    }
+
+    const recommendSchedules: Array<any> = Taro.getStorageSync('recommendSchedules') || []
+    const thisScheduleMap = {className: thisClass.name, schedule: schedule}
+    let found = false
+
+    for (let i = 0; i < recommendSchedules.length; i ++) {
+      const scheduleListMap = recommendSchedules[i]
+      if (scheduleListMap.key === yearSemesterText) {
+        found = true
+        scheduleListMap.schedules.push(thisScheduleMap)
+      }
+    }
+
+    if (!found) {
+      recommendSchedules.push ({key: yearSemesterText, schedules: [thisScheduleMap]})
+    }
+
+    Taro.setStorageSync('recommendSchedules', recommendSchedules)
+    Taro.showToast({title: '保存成功', icon: 'none'})
+    this.loadRecommendSchedules()
+  }
+
+  handleHistoryClick (index1, index2, e) {
+    e.stopPropagation()
+    
+    const { recommendSchedules } = this.state
+
+    const thisSchedule = recommendSchedules[index1].schedules[index2]
+
+    const customTitle = thisSchedule.className
+
+    global.cache.Set('recommendSchedule', thisSchedule.schedule)
+    Taro.navigateTo({url: '/pages/edu/schedule/schedule?from=recommend&title=' + customTitle})
+  }
+
+  handleHistoryManage (index1, e) {
+    const { recommendSchedules } = this.state
+    recommendSchedules[index1].showManageArea = !recommendSchedules[index1].showManageArea
+    this.setState({recommendSchedules})
+  }
+
+  async handleDeleteSchedule (index1, index2, e) {
+    e.stopPropagation()
+    
+    const { recommendSchedules } = this.state
+    const scheduleListMap = recommendSchedules[index1]
+    const thisSchedule = scheduleListMap.schedules[index2]
+    const scheduleTitle = `${thisSchedule.className} ${scheduleListMap.key}`
+
+    const res = await Taro.showModal({title: '提示', content: `确定要删除 ${scheduleTitle} 的课表吗？`})
+
+    if (res.cancel) {
+      return
+    }
+
+    scheduleListMap.schedules.splice(index2, 1)
+
+    if (scheduleListMap.schedules.length > 0) {
+      recommendSchedules[index1] = scheduleListMap
+    } else {
+      recommendSchedules.splice(index1, 1)
+    }
+
+    Taro.setStorageSync('recommendSchedules', recommendSchedules)
+    this.loadRecommendSchedules()
+  }
+
   async login () {
     const response = await request.jwAuth({url: api.jwVerify, data: {tokenRequired: true}})
 
     if (!response  || response.data.code === -1) {
-      return
+      return false
     }
 
     Taro.setStorageSync('eduToken', response.data.data.token)
@@ -171,6 +286,12 @@ export default class Sample extends Component {
 
   async getMajor (college, grade) {
     const response = await request.jwRecommendMajor({college, grade})
+
+    const isValid = await this.checkLoginState(response)
+    if (!isValid) {
+      this.setState({collegeSelectedKey: '-1', collegeText: '请选择学院', collegeValue: ''})
+      return
+    }
 
     if (!response || response.data.code === -1) {
       return
@@ -187,6 +308,11 @@ export default class Sample extends Component {
 
   async getClass (college, grade, major) {
     const response = await request.jwRecommendClass({college, grade, major})
+
+    const isValid = this.checkLoginState(response)
+    if (!isValid) {
+      return
+    }
 
     if (!response || response.data.code === -1) {
       return
@@ -205,6 +331,10 @@ export default class Sample extends Component {
   async getSchedule (year, semester, grade, major, _class) {
     const response = await request.jwRecommendSchedule({year, semester, grade, major, _class})
 
+    if (!this.checkLoginState(response)) {
+      return
+    }
+    
     if (!response || response.data.code === -1) {
       return
     }
@@ -218,17 +348,53 @@ export default class Sample extends Component {
       collegeRange, collegeValue, collegeText,
       majorRange, majorValue, majorText,
       gradeRange, gradeValue, gradeText,
-      allClass, openHelpFloatLayout
+      allClass, recommendSchedules,
+      openHelpFloatLayout, isLogin, showSearchPanel
     } = this.state
 
     return (
       <View>
-        <View className='padding20'>
-          <View className='title'>
+        {recommendSchedules.length === 0
+        ? (
+          <View className='none-text'>
+            还未保存过班级课表哦，点击下方面板检索课表
+          </View>
+        )
+        : null}
+        <View className='card-list history'>
+          {recommendSchedules.map((schedulesListMap, index1) => {
+            return (
+              <Panel title={schedulesListMap.key} key={index1} marginBottom={30} rightTip='管理' onRightTipClick={this.handleHistoryManage.bind(this, index1)}>
+                {schedulesListMap.schedules.map((schedule, index2) => {
+                  return (
+                    <View className='card' key={index2} onClick={this.handleHistoryClick.bind(this, index1, index2)}>
+                      <View className='left'>
+                        <View className='class-name'>
+                        {schedule.className}
+                        </View>
+                      </View>
+                      {schedulesListMap.showManageArea
+                      ? (
+                        <View className='right'>
+                          <Icon type='clear' size='20' color='red' onClick={this.handleDeleteSchedule.bind(this, index1, index2)}/>
+                        </View>
+                      )
+                      : null
+                    }
+                    </View>
+                  )
+                })}
+              </Panel>
+            )
+          })}
+        </View>
+        <View className={`searchPanel ${showSearchPanel ? 'show': ''}`}>
+          <View className='searchPanel-header' onClick={this.handleShowPanel}><Text className='title'>检索</Text><Text className='arrow'>{showSearchPanel ? '∨': '∧'}</Text></View>
+          <View className='year-semester-title'>
             <Picker mode='multiSelector' range={yearSemesterRange} rangeKey='name' value={yearSemesterValue} onChange={this.handleYearSemesterChange}>
               <View className='container'>
                 <View>{yearSemesterText}</View>
-                <View className='arrow'>v</View>
+                <View className={`arrow ${isLogin ? 'avalible-text' : ''}`}>∨</View>
               </View>
             </Picker>
           </View>
@@ -252,16 +418,19 @@ export default class Sample extends Component {
               </Picker>
             </View>
             <View className='tips' onClick={this.openHelp.bind(this, true)}><Image src={questionUrl}/></View>
-            <Button className='btn' formType='submit'>查询</Button>
+            <Button className='btn' formType='submit'>确定</Button>
           </Form>
-          <View className='card-list'>
+          <View className='card-list online'>
             {allClass.map((item, index) => {
               return (
-                <View className='card' key={index} onClick={this.handleClick.bind(this, index)}>
-                  <View className='cycle'>{index+1}</View>
-                  <View className='class-name'>
-                    {item.name}
+                <View className='card' key={index} onClick={this.handleOnlineClick.bind(this, index)}>
+                  <View className='left'>
+                    <View className='cycle'>{index+1}</View>
+                    <View className='class-name'>
+                      {item.name}
+                    </View>
                   </View>
+                  <View className='right'><Text className='save' onClick={this.handleSaveSchedule.bind(this, index)}>保存</Text></View>
                 </View>
               )
             })}
@@ -269,7 +438,7 @@ export default class Sample extends Component {
         </View>
         <FloatLayout title='帮助' isOpened={openHelpFloatLayout} onClose={this.openHelp.bind(this, false)}>
           <Panel title='为什么需要登录' marginBottom={0}>
-            <View className='help-text'>因为目前的技术原理是通过模拟登录来获取教务系统的课表，以后可能会开发不需要登录的版本。</View>
+            <View className='help-text'>因为目前的技术原理是通过模拟登录来获取教务系统的课表，所以需要登录。</View>
           </Panel>
           <Panel title='怎么添加到我的课表里' marginBottom={0}>
             <View className='help-text'>在进入到指定的班级课表后，点击想要添加的课程按照提示操作即可添加到我的课表中。</View>
