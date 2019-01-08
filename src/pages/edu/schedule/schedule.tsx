@@ -219,7 +219,14 @@ export default class Core extends Component {
 
     const from = this.$router.params.from
 
-    if (touchMoveX < startX) {
+    const deltaX = touchMoveX - startX
+
+    if (deltaX > 0 && week - 1 < 1 || deltaX < 0 && week  + 1 > 20) {
+      Taro.showToast({title: '到头了', icon: 'none'})
+      return
+    }
+
+    if (deltaX < 0) {
       this.init(from, week + 1)
     } else if (touchMoveX > startX) {
       this.init(from,week - 1)
