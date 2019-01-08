@@ -1,5 +1,7 @@
 import Taro from '@tarojs/taro'
 import utils from './utils'
+import data from './data'
+import Update from './update'
 
 export default function init () {
   const firstUse = Taro.getStorageSync('firstUse')
@@ -33,9 +35,13 @@ export default function init () {
     utils.setStorage({
       'firstUse': false,
       'schedule': [],
-      'mySchedule': [],
       'cardSetting': cardSetting,
       'schoolOpenDate': '2018-09-10',
     })
+  }
+
+  if (data.version === '0.3.4') {
+    console.log('Detected old version: 0.3.4')
+    Update.updateCustomField()
   }
 }
