@@ -27,13 +27,19 @@ export default class Sample extends Component {
   }
 
   componentWillMount () {
-    const schedule = Taro.getStorageSync('mySchedule')
+    const params = this.$router.params
+    const schedule = Taro.getStorageSync('customSchedule')
+   
+    if (!schedule) { 
+      this.setState({from: params.from})
+      return 
+    }
+
     schedule.forEach((item) => {
       item.isTouchMove = false
       return item
     })
 
-    const params = this.$router.params
 
     this.setState({schedule: schedule, from: params.from})
   }
@@ -147,7 +153,7 @@ export default class Sample extends Component {
     schedule.splice(index, 1)
 
     this.setState({schedule: schedule})
-    Taro.setStorageSync('mySchedule', schedule)
+    Taro.setStorageSync('customSchedule', schedule)
     Taro.eventCenter.trigger('indexRemount')
     Taro.eventCenter.trigger('scheduleCoreRemount')
     Taro.showToast({title: '成功删除自定义课程', icon: 'none'})

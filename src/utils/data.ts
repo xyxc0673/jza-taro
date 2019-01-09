@@ -1,13 +1,15 @@
-const version = '0.3.4'
+const version = '0.3.5'
 
-const versionReleaseDate = '2019-01-03'
+const versionReleaseDate = '2019-01-08'
 
 const changeLog = [
-  '修复 设置页面不能正常解绑账号',
-  '修复 我的课程表课程格子宽度不统一',
-  '优化 部分样式和逻辑代码',
-  '优化 显示下周课程改为显示非本周课程',
+  '新增 新版本特性提示',
+  '新增 旧版本判断与升级',
+  '新增 班级课表支持保存整个课表',
+  '修复 我的课程表滑动切换周数时周数越界',
 ]
+
+const newFuture = '现在班级课表支持保存整个课表啦！'
 
 const collegeRange = [
   {
@@ -213,6 +215,7 @@ export default {
   version,
   versionReleaseDate,
   changeLog,
+  newFuture,
   collegeRange,
   gradeRange,
   yearSemesterRange,

@@ -1,14 +1,8 @@
 import Taro from '@tarojs/taro'
+import utils from '../utils/utils'
 import request from '../utils/request'
 
 class Library {
-  static _isValid (response) {
-    if (response.data.data === "缓存不存在或已过期" || response.data.data === "未登录") {
-      return false
-    }
-    return true
-  }
-
   static async getCaptchaResponse (withToken) {
     const opacToken = withToken ? Taro.getStorageSync('opacToken') : ''
 
@@ -28,7 +22,7 @@ class Library {
       return
     }
 
-    if (!this._isValid(response)) {
+    if (!utils.isTokenValid(response)) {
       return { isLogin: false }
     }
 
@@ -40,7 +34,7 @@ class Library {
   static async getCurrentCheckout() {
     const response = await request.libReaderCurrentCheckout({quiet_mode: false})
 
-    if (!response || !this._isValid(response)) {
+    if (!response || !utils.isTokenValid(response)) {
       return
     }
 
@@ -50,7 +44,7 @@ class Library {
   static async getCheckoutRecord (page: number) {
     const response = await request.libReaderCheckoutRecord({page: page, quiet_mode: false})
 
-    if (!response || !this._isValid(response)) {
+    if (!response || !utils.isTokenValid(response)) {
       return
     }
 
@@ -64,7 +58,7 @@ class Library {
       return
     }
 
-    if (!this._isValid(response)) {
+    if (!utils.isTokenValid(response)) {
       Taro.showModal({title: '提示', content: '登录已过期，请重新登录', showCancel: false})
       return
     }
@@ -79,7 +73,7 @@ class Library {
       return
     }
 
-    if (!this._isValid(response)) {
+    if (!utils.isTokenValid(response)) {
       Taro.showModal({title: '提示', content: '登录已过期，请重新登录', showCancel: false})
       return
     }

@@ -58,7 +58,7 @@ interface IState {
 
 export default class Core extends Component {
   config: Config = {
-    navigationBarTitleText: '我的课程表'
+    navigationBarTitleText: ''
   }
   
   state: IState = {
@@ -134,9 +134,7 @@ export default class Core extends Component {
     const from = this.$router.params.from
     const title = this.$router.params.title
 
-    if (utils.isObj(title) && title !== "") {
-      Taro.setNavigationBarTitle({title: title})
-    }
+    Taro.setNavigationBarTitle({title: title || '我的课程表'})
 
     this.init(from, utils.getWeek())
   }
@@ -155,17 +153,17 @@ export default class Core extends Component {
 
   init (from, week: number) {
     let rawSchedule = []
-    let mySchedule = []
+    let customSchedule = []
 
     if (from === "recommend") {
       rawSchedule = global.cache.Get('recommendSchedule')
     } else {
       rawSchedule = Schedule.GetFormStorage()
-      mySchedule = Taro.getStorageSync('mySchedule')
+      customSchedule = Taro.getStorageSync('customSchedule')
     }
 
 
-    const newSchedule = rawSchedule.concat(mySchedule)
+    const newSchedule = rawSchedule.concat(customSchedule)
 
     const newState = {}
     const params = this.$router.params
@@ -339,12 +337,12 @@ export default class Core extends Component {
       during: weekArray.join(","),
     }
     
-    const mySchedule = Taro.getStorageSync('mySchedule')
+    const customSchedule = Taro.getStorageSync('customSchedule')
 
-    mySchedule.push(newCourse)
+    customSchedule.push(newCourse)
 
     this.setState({showAddCourseFloatLayout: false, newCourseName: '', newCourseTeacher: '', newCourseLocation: ''})
-    Taro.setStorageSync('mySchedule', mySchedule)
+    Taro.setStorageSync('customSchedule', customSchedule)
     
     Taro.eventCenter.trigger('scheduleCoreRemount')
     Taro.eventCenter.trigger('indexRemount')
@@ -402,9 +400,9 @@ export default class Core extends Component {
     const res = await Taro.showModal({title: from === 'recommend' ? '加入到自定义课程': '', content: content.join(''), showCancel: from === 'recommend'})
 
     if (from === 'recommend' && res.confirm) {
-      const mySchedule = Taro.getStorageSync('mySchedule')
-      mySchedule.push(course)
-      Taro.setStorageSync('mySchedule', mySchedule)
+      const customSchedule = Taro.getStorageSync('customSchedule')
+      customSchedule.push(course)
+      Taro.setStorageSync('customSchedule', customSchedule)
       Taro.showToast({'title': '添加成功', icon: 'none'})
     }
   }
