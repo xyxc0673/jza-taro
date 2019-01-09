@@ -35,6 +35,7 @@ export default function init () {
     utils.setStorage({
       'firstUse': false,
       'schedule': [],
+      'customSchedule': [],
       'cardSetting': cardSetting,
       'schoolOpenDate': '2018-09-10',
     })
