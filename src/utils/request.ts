@@ -144,6 +144,11 @@ const jwSchedule = async ({year, semester}) => {
   return jwAuth(params)
 }
 
+const jwSchoolStartDate = async () => {
+  let params = {url: api.jwSchoolStartDate, quiet_mode: true}
+  return proxy(params)
+}
+
 const jwRecommendMajor = async ({college, grade}) => {
   let params = {
     tokenKey: 'eduToken',
@@ -321,6 +326,7 @@ export default {
   jwVerify,
   jwScores,
   jwSchedule,
+  jwSchoolStartDate,
 
   jwRecommendMajor,
   jwRecommendClass,

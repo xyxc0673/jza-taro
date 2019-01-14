@@ -5,7 +5,6 @@ import FloatLayout from '../../../components/float-layout'
 
 import './schedule.scss'
 
-import utils from '../../../utils/utils'
 import global from '../../../utils/global'
 import Schedule from '../../../services/schedule'
 
@@ -130,13 +129,17 @@ export default class Core extends Component {
     newCourseOddText: '非单双周',
   }
 
-  componentWillMount () {
+  async componentWillMount () {
     const from = this.$router.params.from
     const title = this.$router.params.title
 
     Taro.setNavigationBarTitle({title: title || '我的课程表'})
 
-    this.init(from, utils.getWeek())
+    const currWeek = await Schedule.getCurrWeek()
+
+    if (!currWeek) { return }
+
+    this.init(from, currWeek)
   }
 
   componentDidMount () {
@@ -178,7 +181,7 @@ export default class Core extends Component {
     newState['week'] = week
     newState['day'] = new Date().getDay(),
     newState['date'] = `${new Date().getMonth() + 1}-${new Date().getDate()}`
-    newState['dayDate'] = utils.getDayDate(week)
+    newState['dayDate'] = Schedule.getDayDate(week)
 
     this.setState(newState)
   }

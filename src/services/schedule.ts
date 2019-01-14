@@ -1,8 +1,9 @@
 import Taro from '@tarojs/taro'
 
-import request from '../utils/request'
-
 import account from './account'
+
+import utils from '../utils/utils'
+import request from '../utils/request'
 
 interface ISchedule {
   index: Array<number>
@@ -11,6 +12,40 @@ interface ISchedule {
 }
 
 class Schedule {
+  static getSchoolStartDate () {
+    return Taro.getStorageSync('schoolStartDate')
+  }
+  
+  static async getCurrWeek (refresh = false)  {
+
+    let schoolStartDate: string = this.getSchoolStartDate()
+
+    if (refresh || !schoolStartDate) {
+      const res = await request.jwSchoolStartDate()
+      if (!res) { return }
+      schoolStartDate = res.data.data.date
+    }
+
+    Taro.setStorageSync('schoolStartDate', schoolStartDate)
+
+    return Math.ceil((new Date().getTime() - new Date(schoolStartDate).getTime()) / (1000 * 3600 * 24 * 7))
+  }
+  
+  static getDayDate (week) {
+    const schoolStartDate: Date = new Date(this.getSchoolStartDate())
+    const days: Array<any> = []
+  
+    schoolStartDate.setDate(schoolStartDate.getDate() + (week - 1) * 7 - 1)
+  
+    for (let i = 0; i < 7; i ++) {
+      const timestamp = schoolStartDate.setDate(schoolStartDate.getDate() + 1)
+      const datetime = new Date(timestamp)
+      days.push({date: (datetime.getMonth() + 1) + '-' + datetime.getDate(), day: '周' + utils.replaceToChinese(datetime.getDay()), dayInt: datetime.getDay()})
+    }
+  
+    return days
+  }
+
   static colors = [
     'rgba(196, 98, 67, 0.5)', // 照柿
     'rgba(208, 16, 76, 0.5)', // 韓紅花

@@ -200,17 +200,17 @@ export default class Index extends Component<{}, IState> {
     this.setState({balance: parseFloat(balance), showBalanceLoading: false})
   }
 
-  getSchedule () {
+  async getSchedule () {
     const rawSchedule = Schedule.GetFormStorage()
     const customSchedule = Taro.getStorageSync('customSchedule')
     const newSchedule = rawSchedule.concat(customSchedule)
 
     if (!newSchedule) { return }
 
-    const week = utils.getWeek()
-    const day = new Date().getDay() || 7 // day 等于 0 时为 7
+    const currWeek = await Schedule.getCurrWeek()
+    const currDay = new Date().getDay() || 7 // day 等于 0 时为 7
 
-    const schedule: Array<any> = Schedule.InitSchedule(newSchedule, week, day)
+    const schedule: Array<any> = Schedule.InitSchedule(newSchedule, currWeek, currDay)
     this.setState({schedule: schedule})
   }
 

@@ -37,7 +37,6 @@ export default function init () {
       'schedule': [],
       'customSchedule': [],
       'cardSetting': cardSetting,
-      'schoolOpenDate': '2018-09-10',
     })
   }
 

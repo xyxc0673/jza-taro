@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro'
 
-const _replaceToChinese = (num: number): string => {
+const replaceToChinese = (num: number): string => {
   enum days {
     '日'=0,
     '一',
@@ -67,29 +67,6 @@ const deltaDate = (deltaDay: number): Date => {
   return now
 }
 
-const getWeek = (): number => {
-  const schoolOpenDate: string = Taro.getStorageSync('schoolOpenDate')
-  const start: number = new Date(schoolOpenDate).getTime()
-  const end: number = new Date().getTime()
-  const delta: number = end - start
-  return Math.ceil(delta / (1000 * 3600 * 24 * 7))
-}
-
-const getDayDate = (week): Array<any> => {
-  const schoolOpenDate: Date = new Date(Taro.getStorageSync('schoolOpenDate'))
-  const days: Array<any> = []
-
-  schoolOpenDate.setDate(schoolOpenDate.getDate() + (week - 1) * 7 - 1)
-
-  for (let i = 0; i < 7; i ++) {
-    const timestamp = schoolOpenDate.setDate(schoolOpenDate.getDate() + 1)
-    const datetime = new Date(timestamp)
-    days.push({date: (datetime.getMonth() + 1) + '-' + datetime.getDate(), day: '周' + _replaceToChinese(datetime.getDay()), dayInt: datetime.getDay()})
-  }
-
-  return days
-}
-
 const openNavModal = async (content, url) => {
   const res = await Taro.showModal({title: '提示', content: content, showCancel: true})
   if (res.cancel) {
@@ -113,8 +90,7 @@ export default {
   deltaDate,
   formatTime,
   formatNumber,
-  getWeek,
-  getDayDate,
   openNavModal,
   isTokenValid,
+  replaceToChinese,
 }

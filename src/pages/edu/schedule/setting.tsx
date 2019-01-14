@@ -9,6 +9,7 @@ import utils from '../../../utils/utils'
 import global from '../../../utils/global'
 import request from '../../../utils/request'
 import Account from '../../../services/account'
+import Schedule from '../../../services/schedule'
 
 interface IState {
   year: number,
@@ -45,6 +46,13 @@ export default class ScheduleSearch extends Component {
 
   async handleSubmit () {
     const {year, semester} = this.state
+
+    const currWeek = await Schedule.getCurrWeek(true)
+
+    if (!currWeek) {
+      return
+    }
+
     const response = await request.jwSchedule({year: year, semester: semester})
     
     if (!response || !response.data) {

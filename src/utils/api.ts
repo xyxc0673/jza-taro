@@ -6,6 +6,7 @@ const api = apiReset({
   jwVerify: '/jw/verify',
   jwScore: '/jw/score',
   jwSchedule: '/jw/schedule',
+  jwSchoolStartDate: '/jw/date',
 
   jwRecommendMajor: '/jw/recommend/major',
   jwRecommendClass: '/jw/recommend/class',
