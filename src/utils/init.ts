@@ -1,6 +1,5 @@
 import Taro from '@tarojs/taro'
 import utils from './utils'
-import data from './data'
 import Update from './update'
 
 export default function init () {
@@ -40,8 +39,5 @@ export default function init () {
     })
   }
 
-  if (data.version === '0.3.4') {
-    console.log('Detected old version: 0.3.4')
-    Update.updateCustomField()
-  }
+  Update.Check()
 }
