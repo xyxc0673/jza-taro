@@ -1,15 +1,15 @@
-const version = '0.3.5'
+const version = '0.3.6'
 
-const versionReleaseDate = '2019-01-08'
+const versionReleaseDate = '2019-01-14'
 
 const changeLog = [
-  '新增 新版本特性提示',
-  '新增 旧版本判断与升级',
-  '新增 班级课表支持保存整个课表',
-  '修复 我的课程表滑动切换周数时周数越界',
+  '修复 无法添加自定义课程',
+  '优化 班级课表的存储结构',
+  '优化 开学日期的获取方式',
+  '优化 旧版本的升级检测方式'
 ]
 
-const newFuture = '现在班级课表支持保存整个课表啦！'
+const newFuture = '修复了无法添加自定义课程的问题'
 
 const collegeRange = [
   {

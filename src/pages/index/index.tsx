@@ -6,7 +6,6 @@ import Panel from '../../components/panel'
 
 import './index.scss'
 
-import utils from '../../utils/utils';
 import request from '../../utils/request';
 import data from '../../utils/data'
 
