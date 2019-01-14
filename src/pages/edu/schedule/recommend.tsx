@@ -81,7 +81,27 @@ export default class Sample extends Component {
   componentDidHide () { }
 
   loadRecommendSchedules () {
-    const recommendSchedules = Taro.getStorageSync('recommendSchedules')
+    const res = Taro.getStorageSync('recommendSchedules')
+    const recommendSchedules: Array<any> = []
+    const tmpScheduleMap = {}
+
+    for (let i = 0; i < res.length; i ++) {
+      const s = res[i]
+      const schedules = tmpScheduleMap[s.yearSemester] || []
+
+      Object.assign(s, {index: i})
+      
+      schedules.push(s)
+
+      tmpScheduleMap[s.yearSemester] = schedules
+    }
+
+    for (let k in tmpScheduleMap){
+      recommendSchedules.push({
+        key: k,
+        schedules: tmpScheduleMap[k]
+      })
+    }
     this.setState({recommendSchedules: recommendSchedules})
   }
 
@@ -207,20 +227,16 @@ export default class Sample extends Component {
     }
 
     const recommendSchedules: Array<any> = Taro.getStorageSync('recommendSchedules') || []
-    const thisScheduleMap = {className: thisClass.name, schedule: schedule}
-    let found = false
+    const thisScheduleMap = {className: thisClass.name, yearSemester: yearSemesterText, schedule: schedule}
 
-    for (let i = 0; i < recommendSchedules.length; i ++) {
-      const scheduleListMap = recommendSchedules[i]
-      if (scheduleListMap.key === yearSemesterText) {
-        found = true
-        scheduleListMap.schedules.push(thisScheduleMap)
+    for (let s of recommendSchedules) {
+      if (s.yearSemester === yearSemesterText && s.className === thisClass.name) {
+        Taro.showToast({title: '已经保存过该课表，保存失败', icon: 'none'})
+        return
       }
     }
 
-    if (!found) {
-      recommendSchedules.push ({key: yearSemesterText, schedules: [thisScheduleMap]})
-    }
+    recommendSchedules.push(thisScheduleMap)
 
     Taro.setStorageSync('recommendSchedules', recommendSchedules)
     Taro.showToast({title: '保存成功', icon: 'none'})
@@ -240,7 +256,7 @@ export default class Sample extends Component {
     Taro.navigateTo({url: '/pages/edu/schedule/schedule?from=recommend&title=' + customTitle})
   }
 
-  handleHistoryManage (index1, e) {
+  handleHistoryManage (index1) {
     const { recommendSchedules } = this.state
     recommendSchedules[index1].showManageArea = !recommendSchedules[index1].showManageArea
     this.setState({recommendSchedules})
@@ -260,15 +276,11 @@ export default class Sample extends Component {
       return
     }
 
-    scheduleListMap.schedules.splice(index2, 1)
+    const rs = Taro.getStorageSync('recommendSchedules')
 
-    if (scheduleListMap.schedules.length > 0) {
-      recommendSchedules[index1] = scheduleListMap
-    } else {
-      recommendSchedules.splice(index1, 1)
-    }
+    rs.splice(thisSchedule.index, 1)
 
-    Taro.setStorageSync('recommendSchedules', recommendSchedules)
+    Taro.setStorageSync('recommendSchedules', rs)
     this.loadRecommendSchedules()
   }
 
