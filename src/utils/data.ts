@@ -1,15 +1,16 @@
-const version = '0.3.6'
+const version = '0.3.7'
 
-const versionReleaseDate = '2019-01-14'
+const versionReleaseDate = '2019-02-19'
 
 const changeLog = [
-  '修复 无法添加自定义课程',
-  '优化 班级课表的存储结构',
-  '优化 开学日期的获取方式',
-  '优化 旧版本的升级检测方式'
+  '新增 首页部分卡片点击可直达相应功能',
+  '修复 周数可能导致无法获取和正常显示课表',
+  '修复 班级课表检索班级时班级数据过多会越屏',
+  '优化 更新检测程序',
+  '优化 部分文案和显示效果',
 ]
 
-const newFuture = '修复了无法添加自定义课程的问题'
+const newFuture = '首页部分卡片点击可直达相应功能'
 
 const collegeRange = [
   {
