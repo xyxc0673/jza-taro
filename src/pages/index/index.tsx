@@ -92,9 +92,7 @@ export default class Index extends Component<{}, IState> {
 
   componentWillUnmount () { }
 
-  componentDidShow () {
-    this.checkUpdate()
-  }
+  componentDidShow () { }
 
   componentDidHide () { }
 
@@ -136,30 +134,7 @@ export default class Index extends Component<{}, IState> {
 
     state['showHelloWorld'] = !state['jwVerified'] && !state['cardVerified'] && !Account.checkBindState('lib')
 
-    const setting = Taro.getStorageSync('setting') || {}
-
-    if (!setting.hadShownNewFuture) {
-      Taro.showModal({title: '提示', content: data.newFuture, showCancel: false})
-      Object.assign(setting, {hadShownNewFuture: true})
-      Taro.setStorageSync('setting', setting)
-    } 
-
     this.setState(state)
-  }
-
-  async checkUpdate () {
-    const updateManager = Taro.getUpdateManager()
-    const setting = Taro.getStorageSync('setting') || {}
-
-    updateManager.onUpdateReady(async () => {
-      console.log('Detect new version')
-      const resp = await Taro.showModal({title: '提示', content: '新版本已经准备好，是否重启应用？'})
-      if (resp.confirm) {
-        Object.assign(setting, {hadShownNewFuture: false})
-        Taro.setStorageSync('setting', setting)
-        updateManager.applyUpdate()
-      }
-    })
   }
 
   goto(url: string) {
