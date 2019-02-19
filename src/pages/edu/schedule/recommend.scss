@@ -46,7 +46,7 @@ page {
 
     margin-top: 0px;
     top: 10px;
-    height: calc(100% - 10px);
+    min-height: calc(100% - 10px);
   }
 
   &-header {
