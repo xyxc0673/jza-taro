@@ -17,8 +17,6 @@ class Update {
   static Check () {
     console.log("版本更新检测")
 
-    let update = true
-
     const storageVersion = Taro.getStorageSync('version')
     const dataVersion = data.version
 
@@ -30,12 +28,10 @@ class Update {
       this.updateDefaultValue()
       this.updateRecommendStruct()
       break
-      default:
-      update = false
     }
 
     // 升级后更新本地储存的版本号
-    if (update || !storageVersion) {
+    if (storageVersion !== dataVersion) {
       console.log('检测到更新或者本地无版本号')
       Taro.setStorageSync('version', data.version)
       Taro.showModal({title: '提示', content: data.newFuture, showCancel: false})
