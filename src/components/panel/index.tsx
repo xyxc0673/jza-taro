@@ -10,6 +10,7 @@ interface IProps {
   none?: boolean
   marginBottom?: number,
   padding?: string,
+  onClick?: Function,
   onRightTipClick?: Function,
 }
 
@@ -38,7 +39,14 @@ export default class Panel extends Component<IProps, IState> {
     }
   }
 
-  handleRightClick () {
+  handleClick () {
+    if (!this.props.onClick) {
+      return
+    }
+    this.props.onClick()
+  }
+
+  handleRightTipClick () {
     if (!this.props.onRightTipClick) {
       return
     }
@@ -48,12 +56,12 @@ export default class Panel extends Component<IProps, IState> {
   render () {
     const {title, none, rightTip, nonText, marginBottom, padding} = this.props
     return (
-      <View className={`panel} ${!padding ? 'padding': ''}`} style={`padding:${padding || ''}; margin-bottom: ${marginBottom !== -1 ? marginBottom: 20}rpx`}>
+      <View className={`panel} ${!padding ? 'padding': ''}`} style={`padding:${padding || ''}; margin-bottom: ${marginBottom !== -1 ? marginBottom: 20}rpx`} onClick={this.handleClick}>
         {title !== ''
           ? (
             <View className="panel-header">
               <Text className="panel-header__title">{title}</Text>
-              {rightTip ? <View className="panel-header__right-tip" onClick={this.handleRightClick}>{rightTip}</View>: null}
+              {rightTip ? <View className="panel-header__right-tip" onClick={this.handleRightTipClick}>{rightTip}</View>: null}
             </View>
           )
           :null

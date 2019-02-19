@@ -213,7 +213,6 @@ export default class Index extends Component<{}, IState> {
 
   handleRightTipClick (type) {
     const actions = {
-      feedback: '/pages/common/setting/index',
       schedule: '/pages/edu/schedule/schedule',
       transaction: '/pages/card/transaction/index'
     }
@@ -251,7 +250,7 @@ export default class Index extends Component<{}, IState> {
     ): null
 
     const schedulePanel = showSchedule ? (
-      <Panel title='今日课表' none={schedule.length === 0} nonText='今天没有课哦😄' rightTip='课程表' onRightTipClick={this.handleRightTipClick.bind(this, 'schedule')}>
+      <Panel title='今日课表' none={schedule.length === 0} nonText='今天没有课哦😄' rightTip='课程表' onRightTipClick={this.handleRightTipClick.bind(this, 'schedule')} onClick={this.handleRightTipClick.bind(this, 'schedule')}>
         <View className='card-schedule'>
           {
             schedule.map((item, index) => {
@@ -272,7 +271,7 @@ export default class Index extends Component<{}, IState> {
     ) : null
 
     const balancePanel = showBalance ? (
-      <Panel title='校园卡余额' none={!cardVerified? true: false} nonText='还未绑定校园卡账号哦😏' rightTip={`${this.state.cardVerified ? '消费记录': ''}`}  onRightTipClick={this.handleRightTipClick.bind(this, 'transaction')}>
+      <Panel title='校园卡余额' none={!cardVerified? true: false} nonText='还未绑定校园卡账号哦😏' rightTip={`${this.state.cardVerified ? '消费记录': ''}`}  onRightTipClick={this.handleRightTipClick.bind(this, 'transaction')} onClick={this.handleRightTipClick.bind(this, 'transaction')}>
         <View className='card-balance'>
           <Text className='card-balance__text'>{showBalanceLoading ? '' : `￥${balance}`}</Text>
         </View>
