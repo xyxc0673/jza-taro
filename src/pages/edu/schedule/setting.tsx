@@ -49,7 +49,7 @@ export default class ScheduleSearch extends Component {
 
     const currWeek = await Schedule.getCurrWeek(true)
 
-    if (!currWeek) {
+    if (currWeek === undefined) {
       return
     }
 

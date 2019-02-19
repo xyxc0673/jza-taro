@@ -137,7 +137,7 @@ export default class Core extends Component {
 
     const currWeek = await Schedule.getCurrWeek()
 
-    if (!currWeek) { return }
+    if (currWeek === undefined ) { return }
 
     this.init(from, currWeek)
   }
