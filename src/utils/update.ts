@@ -34,7 +34,7 @@ class Update {
     if (storageVersion !== dataVersion) {
       console.log('检测到更新或者本地无版本号')
       Taro.setStorageSync('version', data.version)
-      Taro.showModal({title: '提示', content: data.newFuture, showCancel: false})
+      Taro.showModal({title: '新特性', content: data.newFuture, showCancel: false})
     }
 
     this.checkUpdateOnline()

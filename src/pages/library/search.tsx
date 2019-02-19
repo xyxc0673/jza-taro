@@ -268,14 +268,6 @@ export default class Index extends Component<{IState}, {}> {
           </View>
           <Button className='btn' formType='submit'>检索</Button>
         </Form>
-        {!this.state.startSearch
-          ? (
-            <View className="tips">
-              <View>输入完敲 enter 键就可以搜索啦！</View>
-            </View>
-          )
-          : null
-        }
         <View className='float-corner' onClick={this.handleSearchFocus}>
           <Image src={require('../../asserts/images/search.svg')} />
         </View>

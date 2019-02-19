@@ -143,7 +143,7 @@ export default class Setting extends Component {
           <View className='list with-symbol'>
             <View className='list-item' hoverClass='list-item__hover' onClick={this.handleDataClear}>
             <View>
-              清除数据<Text className='small grey'>(占用储存空间：{currentSize} kb)</Text>
+              清除数据<Text className='small grey'>(占用存储空间：{currentSize} kb)</Text>
             </View>
             <Text className='danger-cycle'>!</Text>
             </View>

@@ -4,7 +4,7 @@ import Update from './update'
 
 export default function init () {
   const firstUse = Taro.getStorageSync('firstUse')
-  console.log("Frist use judge: ", firstUse === "")
+  console.log("第一次使用：", firstUse === "" ? "是" : "否")
 
   if (firstUse === "") {
     const cardSetting = [
@@ -30,7 +30,7 @@ export default function init () {
       }
     ]
 
-    console.log('Init app')
+    console.log('初始化小程序')
     utils.setStorage({
       'firstUse': false,
       'schedule': [],
