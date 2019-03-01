@@ -11,6 +11,7 @@ import data from '../../../utils/data'
 import utils from '../../../utils/utils'
 import request from '../../../utils/request'
 import global from '../../../utils/global'
+import Account from '../../../services/account';
 
 const questionUrl = require('../../../asserts/images/question.svg')
 
@@ -25,7 +26,7 @@ export default class Sample extends Component {
     majorRange: [] as Array<any>,
     gradeRange: data.gradeRange,
 
-    yearSemesterValue: [3, 0],
+    yearSemesterValue: [0, 0],
     collegeValue: -1,
     majorValue: 0,
     gradeValue: 3,
@@ -48,20 +49,37 @@ export default class Sample extends Component {
   }
 
   componentWillMount () {
-    const { yearSemesterRange, gradeRange, yearSemesterValue, gradeValue } = this.state
+    const { yearSemesterRange, gradeRange, gradeValue } = this.state
 
-    const year = yearSemesterRange[0][yearSemesterValue[0]]
-    const semester = yearSemesterRange[1][yearSemesterValue[1]]
+    const { year, semester } = Account.calYearSemester()
+
+    const judgeRealIndex = (originList, targetValue) => {
+      for (let i = 0; i < originList.length; i++) {
+        if (originList[i].key === targetValue.toString()) {
+          return i
+        }
+      }
+      return 0
+    }
+
+    const yearSemesterValue = [
+      judgeRealIndex(yearSemesterRange[0], year),
+      judgeRealIndex(yearSemesterRange[1], semester)
+    ]
+
+    const yearObj = yearSemesterRange[0][yearSemesterValue[0]]
+    const semesterObj = yearSemesterRange[1][yearSemesterValue[1]]
 
     const grade = gradeRange[gradeValue]
 
     const gradeSelectedKey = grade.key
 
     this.setState({
-      yearSemesterText: year.name + " 学年 " + semester.name,
+      yearSemesterText: yearObj.name + " 学年 " + semesterObj.name,
       gradeText: grade.name,
-      yearSemesterSelected: [year.key, semester.key],
+      yearSemesterSelected: [yearObj.key, semesterObj.key],
       gradeSelectedKey: gradeSelectedKey,
+      yearSemesterValue: yearSemesterValue,
     })
 
     this.loadRecommendSchedules ()
