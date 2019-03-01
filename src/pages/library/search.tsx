@@ -167,10 +167,12 @@ export default class Index extends Component<{IState}, {}> {
   }
 
   async setResponse(response, start) {
+    const toastTitle = start ? '无法查询到相关书籍' : '没有更多书籍了'
+
     let books = response.data.data.books
 
     if (books.length === 0) {
-      Taro.showToast({title: '没有更多记录了', icon: 'none'})
+      Taro.showToast({title: toastTitle, icon: 'none'})
       return
     }
 

@@ -42,7 +42,7 @@ export default class About extends Component {
         </View>
         <Panel title='更新日志' marginBottom={0}>
           <View className='list'>
-            <View className="list-item title">版本: {data.version} 日期: {data.versionReleaseDate}</View>
+            <View className="list-item title">版本: {data.version}</View>
             {data.changeLog.map((log, index) => {
               return (
                 <View className='list-item' key={index}>{log}</View>

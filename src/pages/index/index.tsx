@@ -12,6 +12,7 @@ import data from '../../utils/data'
 import IAccount from '../../interfaces/account'
 import Account from '../../services/account'
 import Schedule from '../../services/schedule';
+import config from '../../utils/config';
 
 interface ISchedule {
   courseName: string,
@@ -98,7 +99,7 @@ export default class Index extends Component<{}, IState> {
 
   onShareAppMessage () {
     let path = '/pages/index/index'
-    return {title: '不负时光', path: path}
+    return {title: '明日复明日', path: path, imageUrl: config.shareImageUrl}
   }
 
   onPullDownRefresh () {
@@ -211,11 +212,20 @@ export default class Index extends Component<{}, IState> {
     this.setState(newState)
   }
 
-  handleRightTipClick (type) {
+  handlePanelClick (type, fromRightTip: boolean) {
+    if (fromRightTip) {
+      Taro.showModal({ title: '提示', content: '首页卡片将要改版，现在直接点击卡片有同样效果哦。', showCancel: false})
+      return
+    }
+
+    const cardBinded = Account.checkBindState('card')
+
+
     const actions = {
       schedule: '/pages/edu/schedule/schedule',
-      transaction: '/pages/card/transaction/index'
+      transaction: cardBinded ? '/pages/card/transaction/index' : '/pages/common/bind/index'
     }
+
     Taro.navigateTo({url: actions[type]})
   }
 
@@ -250,7 +260,7 @@ export default class Index extends Component<{}, IState> {
     ): null
 
     const schedulePanel = showSchedule ? (
-      <Panel title='今日课表' none={schedule.length === 0} nonText='今天没有课哦😄' rightTip='课程表' onRightTipClick={this.handleRightTipClick.bind(this, 'schedule')} onClick={this.handleRightTipClick.bind(this, 'schedule')}>
+      <Panel title='今日课表' none={schedule.length === 0} nonText='今天没有课哦😄' rightTip='课程表' onRightTipClick={this.handlePanelClick.bind(this, 'schedule', true)} onClick={this.handlePanelClick.bind(this, 'schedule', false)}>
         <View className='card-schedule'>
           {
             schedule.map((item, index) => {
@@ -271,7 +281,7 @@ export default class Index extends Component<{}, IState> {
     ) : null
 
     const balancePanel = showBalance ? (
-      <Panel title='校园卡余额' none={!cardVerified? true: false} nonText='还未绑定校园卡账号哦😏' rightTip={`${this.state.cardVerified ? '消费记录': ''}`}  onRightTipClick={this.handleRightTipClick.bind(this, 'transaction')} onClick={this.handleRightTipClick.bind(this, 'transaction')}>
+      <Panel title='校园卡余额' none={!cardVerified? true: false} nonText='还未绑定校园卡账号哦😏' rightTip={`${this.state.cardVerified ? '消费记录': ''}`}  onRightTipClick={this.handlePanelClick.bind(this, 'transaction', true)} onClick={this.handlePanelClick.bind(this, 'transaction', false)}>
         <View className='card-balance'>
           <Text className='card-balance__text'>{showBalanceLoading ? '' : `￥${balance}`}</Text>
         </View>

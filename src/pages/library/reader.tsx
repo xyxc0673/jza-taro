@@ -226,12 +226,12 @@ export default class Sample extends Component {
               {currentCheckout.map((item, index) => {
                 return (
                   <View className='card' key={index} onClick={this.openRenewFloatLayout.bind(this, true, item.barcode)}>
-                    <View className='item'><Text>书籍</Text><Text>{item.title}</Text></View>
-                    <View className='item'><Text>作者</Text><Text>{item.author}</Text></View>
-                    <View className='item'><Text>条形码</Text><Text>{item.barcode}</Text></View>
-                    <View className='item'><Text>馆藏地</Text><Text>{item.location}</Text></View>
-                    <View className='item'><Text>借出日期</Text><Text>{item.lendDate}</Text></View>
-                    <View className='item'><Text>应还日期</Text><Text>{item.returnDate}</Text></View>
+                    <View className='item'><Text className='key'>书籍</Text><Text className='value'>{item.title}</Text></View>
+                    <View className='item'><Text className='key'>作者</Text><Text className='value'>{item.author}</Text></View>
+                    <View className='item'><Text className='key'>条形码</Text><Text className='value'>{item.barcode}</Text></View>
+                    <View className='item'><Text className='key'>馆藏地</Text><Text className='value'>{item.location}</Text></View>
+                    <View className='item'><Text className='key'>借出日期</Text><Text className='value'>{item.lendDate}</Text></View>
+                    <View className='item'><Text className='key'>应还日期</Text><Text className='value'>{item.returnDate}</Text></View>
                   </View>
                 )
               })}
@@ -244,11 +244,11 @@ export default class Sample extends Component {
               {checkoutRecord.map((item, index) => {
                 return (
                   <View className='card' key={index}>
-                    <View className='item'><Text>书籍</Text><Text>{item.title}</Text></View>
-                    <View className='item'><Text>作者</Text><Text>{item.author}</Text></View>
-                    <View className='item'><Text>条形码</Text><Text>{item.barcode}</Text></View>
-                    <View className='item'><Text>借出日期</Text><Text>{item.lendDate}</Text></View>
-                    <View className='item'><Text>归还日期</Text><Text>{item.returnDate}</Text></View>
+                    <View className='item'><Text className='key'>书籍</Text><Text className='value'>{item.title}</Text></View>
+                    <View className='item'><Text className='key'>作者</Text><Text className='value'>{item.author}</Text></View>
+                    <View className='item'><Text className='key'>条形码</Text><Text className='value'>{item.barcode}</Text></View>
+                    <View className='item'><Text className='key'>借出日期</Text><Text className='value'>{item.lendDate}</Text></View>
+                    <View className='item'><Text className='key'>归还日期</Text><Text className='value'>{item.returnDate}</Text></View>
                   </View>
                 )
               })}
