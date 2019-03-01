@@ -73,12 +73,16 @@ class Account {
     return schoolYears.map((item) => {return 2000+item})
   }
 
+  static getYearSemester () {
+
+  }
+
   static calYearSemester () {
     const now = new Date()
     const year = now.getFullYear()
-    const month = now.getMonth()
-    const Semester = (month <= 2 || month >= 8) ? 1 : 2
-    const schoolYear = month < 8 ? year - 1 : year
+    const month = now.getMonth() + 1
+    const Semester = (month <= 1 || month >= 8) ? 1 : 2
+    const schoolYear = month < 7 ? year - 1 : year
     return {year: schoolYear, semester: Semester}
   }
 
