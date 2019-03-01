@@ -1,5 +1,3 @@
-const version = "0.0.1"
-
 const dev = true
 
 const domain = {
@@ -7,8 +5,16 @@ const domain = {
   prod: 'https://api.test.com'
 }
 
+const apiBaseUrl = {
+  dev: domain['dev'],
+  prod: `${domain['prod']}/api`
+}
+
+const shareImageUrl = `${domain['prod']}/images/shareImage.png`
+
 export default {
   dev,
-  version,
   domain,
+  apiBaseUrl,
+  shareImageUrl,
 }
