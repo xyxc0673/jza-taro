@@ -1,16 +1,13 @@
-const version = '0.3.7'
-
-const versionReleaseDate = '2019-02-19'
+const version = '0.3.8(190301)'
 
 const changeLog = [
-  '新增 首页部分卡片点击可直达相应功能',
-  '修复 周数可能导致无法获取和正常显示课表',
-  '修复 班级课表检索班级时班级数据过多会越屏',
-  '优化 更新检测程序',
-  '优化 部分文案和显示效果',
+  '新增 班级课表自动选择当前学年学期',
+  '新增 设置页面小程序分享按钮',
+  '修复 当前学期判断错误',
+  '优化 部分界面布局与显示效果',
 ]
 
-const newFuture = '首页部分卡片点击可直达相应功能'
+const newFuture = '修复了当前学期判断错误的问题'
 
 const collegeRange = [
   {
@@ -214,7 +211,6 @@ const scheduleItems = [
 
 export default {
   version,
-  versionReleaseDate,
   changeLog,
   newFuture,
   collegeRange,
