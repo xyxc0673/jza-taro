@@ -1,5 +1,5 @@
 import Taro, {Component, Config} from '@tarojs/taro'
-import {View, Button, Text, OpenData} from '@tarojs/components'
+import {View, Button, Text, OpenData, Icon} from '@tarojs/components'
 
 import './index.scss'
 
@@ -9,6 +9,7 @@ import Account from '../../../services/account'
 
 import init from '../../../utils/init'
 import global from '../../../utils/global';
+import config from '../../../utils/config';
 
 export default class Setting extends Component {
   config: Config = {
@@ -42,6 +43,14 @@ export default class Setting extends Component {
 
   componentDidHide () { }
 
+  onShareAppMessage () {
+    return {
+      title: '明日何其多',
+      path: '/pages/index/index',
+      imageUrl: config.shareImageUrl
+    }
+  }
+
   loadBindState () {
     const state = {
       jw: Account.checkBindState('jw'),
@@ -52,7 +61,7 @@ export default class Setting extends Component {
   }
 
   async handleDataClear () {
-    const resp = await Taro.showModal({title: '提示', content: '确定要清除所有数据吗？'})
+    const resp = await Taro.showModal({title: '提示', content: '确定要清除所有数据吗？如需解绑账号，请点击账号栏相关条目解绑。', confirmColor: 'red'})
     if (resp.cancel) { return }
 
     Taro.clearStorageSync()
@@ -128,7 +137,12 @@ export default class Setting extends Component {
           <View className='list with-symbol'>
             <View className='list-item' hoverStayTime={200} hoverClass='list-item__hover' onClick={this.handleClick.bind(this, 'bind')}>绑定<Text className='symbol'>></Text></View>
             <View className='list-item' hoverStayTime={200} hoverClass='list-item__hover' onClick={this.handleClick.bind(this, 'ui')}>显示<Text className='symbol'>></Text></View>
+          </View>
+        </Panel>
+        <Panel title='其他' marginBottom={0}>
+          <View className='list with-symbol'>
             <Button className='list-item button' openType='contact' hoverStayTime={200} hoverClass='list-item__hover'>反馈<Text className='symbol'>></Text></Button>
+            <Button className='list-item button' openType='share' hoverStayTime={200} hoverClass='list-item__hover'>分享<Text className='symbol'>></Text></Button>
             <View className='list-item' hoverStayTime={200} hoverClass='list-item__hover' onClick={this.handleClick.bind(this, 'about')}>关于<Text className='symbol'>></Text></View>
           </View>
         </Panel>
@@ -145,7 +159,7 @@ export default class Setting extends Component {
             <View>
               清除数据<Text className='small grey'>(占用存储空间：{currentSize} kb)</Text>
             </View>
-            <Text className='danger-cycle'>!</Text>
+            <Icon type='info' color='red' size='18'></Icon>
             </View>
           </View>
         </Panel>
