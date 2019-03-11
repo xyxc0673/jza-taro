@@ -35,7 +35,7 @@ interface ICollection {
 
 interface IState {
   keyword?: string,
-  books?: IBook[],
+  books: IBook[],
   count?: number,
   nextPage?: number,
   totalCount?: number,
@@ -159,30 +159,24 @@ export default class Index extends Component<{IState}, {}> {
       nextPage: response.data.data.next_page,
       totalCount: response.data.data.total_count,
     }, async () => {
-      if (!this.state.books) {
-        return
-      }
-      let tmpBooks
-      for (let bookItem of this.state.books) {
-        let data = await this.getBookInfo(bookItem.isbn, bookItem.marcNo)
-        if (!utils.isObj(data)) {
-          continue
-        }
-        let _tmp = Object.assign(bookItem, data)
-        tmpBooks = Object.assign(this.state.books, _tmp)
-        this.setState({books: tmpBooks})
-      }
+      const { books } = this.state
+      books.forEach((bookItem, index) => {
+        this.getBookInfo(bookItem, index)
+      })
     })
   }
 
-  async getBookInfo (isbn: string, marcNo: string) {
-    let response = await request.libBookInfo({isbn: isbn, marcNo: marcNo})
+  async getBookInfo (bookItem, index) {
+    const { books } = this.state
+    const res = await request.libBookInfo({isbn: bookItem.isbn, marcNo: bookItem.marcNo})
+
     
-    if (!utils.isObj(response.data) && response.data.code === -1) {
+    if (!utils.isObj(res.data) && res.data.code === -1) {
       return
     }
 
-    return response.data.data.details
+    books[index] = Object.assign(bookItem, res.data.data.details)
+    this.setState({ books })
   }
 
   render () {
