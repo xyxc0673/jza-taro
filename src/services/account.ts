@@ -44,14 +44,17 @@ class Account {
     this.save('libAccount', account)
   }
 
-  static calSchoolYears (): Array<number> {
+  static calSchoolYears (id?: string): Array<number> {
     const account = this.Get()
-    if (!account.studentID) {
+
+    id = id || account.studentID
+
+    if (!id) {
       return []
     }
 
-    const major = parseInt(account.studentID.slice(0, 2))
-    const startYear = parseInt(account.studentID.slice(2, 4))
+    const major = parseInt(id.slice(0, 2))
+    const startYear = parseInt(id.slice(2, 4))
 
     const schoolYears = [
       startYear+0,

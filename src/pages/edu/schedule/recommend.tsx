@@ -49,39 +49,6 @@ export default class Sample extends Component {
   }
 
   componentWillMount () {
-    const { yearSemesterRange, gradeRange, gradeValue } = this.state
-
-    const { year, semester } = Account.calYearSemester()
-
-    const judgeRealIndex = (originList, targetValue) => {
-      for (let i = 0; i < originList.length; i++) {
-        if (originList[i].key === targetValue.toString()) {
-          return i
-        }
-      }
-      return 0
-    }
-
-    const yearSemesterValue = [
-      judgeRealIndex(yearSemesterRange[0], year),
-      judgeRealIndex(yearSemesterRange[1], semester)
-    ]
-
-    const yearObj = yearSemesterRange[0][yearSemesterValue[0]]
-    const semesterObj = yearSemesterRange[1][yearSemesterValue[1]]
-
-    const grade = gradeRange[gradeValue]
-
-    const gradeSelectedKey = grade.key
-
-    this.setState({
-      yearSemesterText: yearObj.name + " 学年 " + semesterObj.name,
-      gradeText: grade.name,
-      yearSemesterSelected: [yearObj.key, semesterObj.key],
-      gradeSelectedKey: gradeSelectedKey,
-      yearSemesterValue: yearSemesterValue,
-    })
-
     this.loadRecommendSchedules ()
   }
 
@@ -123,6 +90,33 @@ export default class Sample extends Component {
     this.setState({recommendSchedules: recommendSchedules})
   }
 
+  initSearchPanel () {
+    const { yearSemesterRange, gradeRange, gradeValue } = this.state
+
+    const { year, semester } = Account.calYearSemester()
+    
+    yearSemesterRange[0] = this.generateYearOptions('00' + year.toString().slice(2, 4))
+
+    const yearSemesterValue = [
+      this.judgeRealIndex(yearSemesterRange[0], year),
+      this.judgeRealIndex(yearSemesterRange[1], semester)
+    ]
+
+    const yearSemesterState = this.processYearSemesterChange(yearSemesterRange, yearSemesterValue[0], yearSemesterValue[1])
+
+    const grade = gradeRange[gradeValue]
+
+    const gradeSelectedKey = grade.key
+
+    const newState = Object.assign({}, yearSemesterState, {
+      gradeText: grade.name,
+      gradeSelectedKey: gradeSelectedKey,
+      yearSemesterValue: yearSemesterValue,
+    })
+
+    this.setState(newState)
+  }
+
   openHelp (value) {
     this.setState({openHelpFloatLayout: value})
   }
@@ -138,6 +132,15 @@ export default class Sample extends Component {
       )
     }
     return range
+  }
+
+  judgeRealIndex = (originList, targetValue) => {
+    for (let i = 0; i < originList.length; i++) {
+      if (originList[i].key === targetValue.toString()) {
+        return i
+      }
+    }
+    return 0
   }
 
   async checkLoginState (response) {
@@ -167,19 +170,31 @@ export default class Sample extends Component {
 
   handleYearSemesterChange (e) {
     const { yearSemesterRange } = this.state
-    const year = yearSemesterRange[0][e.detail.value[0]]
-    const semester = yearSemesterRange[1][e.detail.value[1]]
+    const newState = this.processYearSemesterChange(yearSemesterRange, e.detail.value[0], e.detail.value[1])
 
-    this.setState({yearSemesterText: year.name + " 学年 " + semester.name, yearSemesterSelected: [year.key, semester.key]})
+    this.setState(newState)
+  }
+
+  processYearSemesterChange (rangeObj, yearIndex, semesterIndex) {
+    const year = rangeObj[0][yearIndex]
+    const semester = rangeObj[1][semesterIndex]
+    return {yearSemesterText: `${year.name.slice(0, 2)} ${semester.name} (${year.name.slice(-10, -1)}-${semester.key})`, yearSemesterSelected: [year.key, semester.key]}
   }
 
   handleCollegeChange (e) {
-    const { collegeRange, gradeRange, gradeValue } = this.state
+    const { collegeRange, gradeSelectedKey, yearSemesterRange, yearSemesterValue, yearSemesterSelected } = this.state
     const college = collegeRange[e.detail.value]
 
-    this.getMajor(college.key, gradeRange[gradeValue].key)
+    yearSemesterRange[0] = this.generateYearOptions(college.key + gradeSelectedKey.slice(2, 4))
+    yearSemesterValue[0] = this.judgeRealIndex(yearSemesterRange[0], yearSemesterSelected[0])
+    
+    const newState = this.processYearSemesterChange(yearSemesterRange, yearSemesterValue[0], yearSemesterValue[1])
 
-    this.setState({collegeValue: e.detail.value, collegeSelectedKey: college.key, collegeText: college.name})
+    Object.assign(newState, {collegeValue: e.detail.value, collegeSelectedKey: college.key, collegeText: college.name})
+    
+    this.setState(newState)
+
+    this.getMajor(college.key, gradeSelectedKey)
   }
 
   handleMajorChange (e) {
@@ -190,10 +205,39 @@ export default class Sample extends Component {
   }
 
   handleGradeChange (e) {
-    const { gradeRange } = this.state
+    const { gradeRange, yearSemesterRange, yearSemesterValue, yearSemesterSelected, collegeSelectedKey } = this.state
     const grade = gradeRange[e.detail.value]
+    
+    yearSemesterRange[0] = this.generateYearOptions((collegeSelectedKey || '00') + grade.key.slice(2, 4))
+    yearSemesterValue[0] = this.judgeRealIndex(yearSemesterRange[0], yearSemesterSelected[0])
+    
+    const newState = this.processYearSemesterChange(yearSemesterRange, yearSemesterValue[0], yearSemesterValue[1])
 
-    this.setState({gradeValue: e.detail.value, gradeSelectedKey: grade.key, gradeText: grade.name})
+    Object.assign(newState, {
+      yearSemesterRange: yearSemesterRange,
+      gradeValue: e.detail.value,
+      gradeSelectedKey: grade.key,
+      gradeText: grade.name,
+    })
+
+    this.setState(newState)
+  }
+
+  generateYearOptions (id) {
+    const schoolYears = Account.calSchoolYears(id)
+    const yearStrings = ["一", "二", "三", "四", "五"]
+
+    let yearOptions = [] as Array<any>
+    for(let i = 0; i < schoolYears.length; i ++) {
+      let year = schoolYears[i]
+      const obj = {
+        key: year.toString(),
+        name: `大${yearStrings[i]} (${year}-${year+1})`,
+      }
+      yearOptions.push(obj)
+    }
+
+    return yearOptions
   }
 
   async handleOnlineClick (index) {
@@ -221,6 +265,7 @@ export default class Sample extends Component {
       }
     }
 
+    !showSearchPanel && this.initSearchPanel()
     this.setState({showSearchPanel: !showSearchPanel})
   }
 
@@ -420,14 +465,6 @@ export default class Sample extends Component {
         </View>
         <View className={`searchPanel ${showSearchPanel ? 'show': ''}`}>
           <View className='searchPanel-header' onClick={this.handleShowPanel}><Text className='title'>检索</Text><Text className='arrow'>{showSearchPanel ? '∨': '∧'}</Text></View>
-          <View className='year-semester-title'>
-            <Picker mode='multiSelector' range={yearSemesterRange} rangeKey='name' value={yearSemesterValue} onChange={this.handleYearSemesterChange}>
-              <View className='container'>
-                <View>{yearSemesterText}</View>
-                <View className={`arrow ${isLogin ? 'avalible-text' : ''}`}>∨</View>
-              </View>
-            </Picker>
-          </View>
           <Form className='form' onSubmit={this.handleSubmit}>
             <View className='form-input'>
               <Label>年级</Label>
@@ -446,6 +483,12 @@ export default class Sample extends Component {
               <Picker mode='selector' range={majorRange} rangeKey='name' value={majorValue} onChange={this.handleMajorChange}>
                 <View className='picker-text'>{majorText}</View>
               </Picker>
+            </View>
+            <View className='form-input'>
+              <Label>课表</Label>
+              <Picker mode='multiSelector' range={yearSemesterRange} rangeKey='name' value={yearSemesterValue} onChange={this.handleYearSemesterChange}>
+              <View className='picker-text'>{yearSemesterText}</View>
+            </Picker>
             </View>
             <View className='tips' onClick={this.openHelp.bind(this, true)}><Image src={questionUrl}/></View>
             <Button className='btn' formType='submit'>确定</Button>
@@ -468,10 +511,18 @@ export default class Sample extends Component {
         </View>
         <FloatLayout title='帮助' isOpened={openHelpFloatLayout} onClose={this.openHelp.bind(this, false)}>
           <Panel title='为什么需要登录' marginBottom={0}>
-            <View className='help-text'>因为目前的技术原理是通过模拟登录来获取教务系统的课表，所以需要登录。</View>
+            <View className='help-text'>因为目前的技术原理是通过模拟请求来获取教务系统的推荐课表，所以需要登录教务系统。</View>
           </Panel>
-          <Panel title='怎么添加到我的课表里' marginBottom={0}>
+          <Panel title='怎么添加指定的课程到我的课表里' marginBottom={0}>
             <View className='help-text'>在进入到指定的班级课表后，点击想要添加的课程按照提示操作即可添加到我的课表中。</View>
+          </Panel>
+          <Panel title='有个小技巧想要告诉你' marginBottom={0}>
+            <View className='help-text'>当你点击确定出现班级后如果想要更改指定学年学期的课表时,直接修改即可,不需要再次点击确定检索课表。</View>
+          </Panel>
+          <Panel title='我现在选择的是什么' marginBottom={0}>
+            <View className='help-text'>
+              <View className='help-tip'>{collegeText}、{majorText || '未选择专业'}、{gradeText}、{yearSemesterText}</View>
+            </View>
           </Panel>
         </FloatLayout>
       </View>
