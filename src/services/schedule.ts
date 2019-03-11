@@ -140,7 +140,8 @@ class Schedule {
     const colorLength = this.colors.length
     let schedule: Array<any> = []
 
-    displaNotCurrentWeekCourse = displaNotCurrentWeekCourse || Taro.getStorageSync('displaNotCurrentWeekCourse')
+    const setting = Taro.getStorageSync('setting')
+    displaNotCurrentWeekCourse = displaNotCurrentWeekCourse || setting.displaNotCurrentWeekCourse
 
     if (day === -1) {
       schedule = this.initFrame()

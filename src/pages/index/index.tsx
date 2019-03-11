@@ -9,16 +9,19 @@ import './index.scss'
 import request from '../../utils/request';
 import data from '../../utils/data'
 
-import IAccount from '../../interfaces/account'
 import Account from '../../services/account'
 import Schedule from '../../services/schedule';
 import config from '../../utils/config';
+
+import IAccount from '../../interfaces/account'
+import ISetting from '../../interfaces/setting'
 
 interface ISchedule {
   courseName: string,
   location: string,
   teacher: string,
   sessionText: string,
+  timeTable: string,
 }
 
 interface IState {
@@ -40,6 +43,8 @@ interface IState {
   showNotice: boolean,
 
   showHelloWorld: boolean,
+
+  setting: ISetting,
 }
 
 export default class Index extends Component<{}, IState> {
@@ -76,6 +81,8 @@ export default class Index extends Component<{}, IState> {
     showNotice: false,
 
     showHelloWorld: false,
+
+    setting: {} as ISetting,
   }
 
   componentWillMount () {
@@ -113,7 +120,8 @@ export default class Index extends Component<{}, IState> {
   
   init () {
     const cardSetting = Taro.getStorageSync('cardSetting')
-    let state = {}
+    const setting = Taro.getStorageSync('setting')
+    let state = { setting }
     
     // foreach 中使用 await 并不会等待 await 后面的函数执行完毕
     for (let item of cardSetting) {
@@ -231,6 +239,7 @@ export default class Index extends Component<{}, IState> {
 
   render () {
     const {
+      setting,
       balance,
       showBalanceLoading,
       showBalance,
@@ -269,7 +278,7 @@ export default class Index extends Component<{}, IState> {
                   <View className='card-schedule__item__session'>{item.sessionText}</View>
                   <View className='card-schedule__item__info'>
                     {item.courseName}
-                    <View className='card-schedule__item__teacher'>{item.teacher}</View>
+                    <View className='card-schedule__item__teacher'>{`${item.teacher}${setting.todayScheduleDisplayTimeTable ? ' ' + item.timeTable : ''}`}</View>
                   </View>
                   <View className='card-schedule__item__location'>{item.location}</View>
                 </View>

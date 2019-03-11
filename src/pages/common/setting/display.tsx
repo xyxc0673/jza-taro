@@ -3,6 +3,8 @@ import {View, Switch} from '@tarojs/components'
 
 import './display.scss'
 
+import ISetting from '../../../interfaces/setting'
+
 export default class Card extends Component {
   config: Config = {
     navigationBarTitleText: '显示'
@@ -10,13 +12,13 @@ export default class Card extends Component {
   
   state = {
     cardSetting: Taro.getStorageSync('cardSetting'),
-    displaNotCurrentWeekCourse: false,
+    setting: {} as ISetting,
   }
 
   componentWillMount () {
     const allStorageKeys = [
       'cardSetting',
-      'displaNotCurrentWeekCourse',
+      'setting',
     ]
 
     const newState = {}
@@ -49,13 +51,20 @@ export default class Card extends Component {
   }
 
   handleNormalChange (key, name, e) {
-    const changeHuman = e.detail.value ? '开启': '关闭'
-    Taro.setStorageSync(key, e.detail.value)
-    Taro.showToast({title: `${changeHuman} ${name}`, icon: 'none'})
+    let { setting } = this.state
+
+    setting = Object.assign({}, setting, { [key]: e.detail.value })
+
+    Taro.setStorageSync('setting', setting)
+
+    this.setState({ setting })
+
+    Taro.eventCenter.trigger('indexRemount')
+    Taro.showToast({title: `${e.detail.value ? '开启': '关闭'} ${name}`, icon: 'none'})
   }
 
   render () {
-    const { cardSetting, displaNotCurrentWeekCourse } = this.state
+    const { cardSetting, setting } = this.state
     return (
       <View className='page'>
         <View className='list'>
@@ -76,7 +85,11 @@ export default class Card extends Component {
           <View className='list-container'>
             <View className='list-item'>
               <View className='list-item__title'>显示非本周课程</View>
-              <Switch checked={displaNotCurrentWeekCourse || false} color='rgba(52, 142, 141, 0.7)' onChange={this.handleNormalChange.bind(this, 'displaNotCurrentWeekCourse', '显示非本周课程')} />
+              <Switch checked={setting.displaNotCurrentWeekCourse || false} color='rgba(52, 142, 141, 0.7)' onChange={this.handleNormalChange.bind(this, 'displaNotCurrentWeekCourse', '显示非本周课程')} />
+            </View>
+            <View className='list-item'>
+              <View className='list-item__title'>今日课表显示上课时间</View>
+              <Switch checked={setting.todayScheduleDisplayTimeTable || false} color='rgba(52, 142, 141, 0.7)' onChange={this.handleNormalChange.bind(this, 'todayScheduleDisplayTimeTable', '今日课表显示上课时间')} />
             </View>
           </View>
         </View>
