@@ -65,47 +65,19 @@ export default class Index extends Component<{IState}, {}> {
     showDetailCard: false,
   }
 
-  async componentWillMount () {
-    let params = this.$router.params
-    if (params.keyword) {
-      this.setState({keyword: params.keyword}, () => {
-        this.onSearch(true)
-      })
-    } else if (params.marc_no && params.isbn) {
-      let data = await this.getBookInfo(params.isbn, params.marc_no)
-      if (!data) {
-        return
-      }
-      this.onOpenDetial(data)
-    }
-  }
+  componentWillMount () { }
 
-  componentDidMount () {
-  }
+  componentDidMount () { }
 
-  componentDidShow () {
+  componentDidShow () { }
 
-  }
-
-  componentDidHide () {
-
-  }
+  componentDidHide () { }
 
   onReachBottom () {
     if (!this.state.startSearch) {
       return
     }
     this.onSearch(false)
-  }
-
-  onShareAppMessage () {
-    let path = '/pages/library/search/index?'
-    if (this.state.showDetailCard) {
-      path += 'marc_no=' + this.state.bookDetail.marcNo + '&isbn=' + this.state.bookDetail.isbn
-    } else {
-      path += 'keyword=' + this.state.keyword
-    }
-    return {title: '我分享了一本书籍给你', path: path}
   }
 
   onInput (e) {
