@@ -61,6 +61,32 @@ class Schedule {
     'rgba(34, 125, 81, 0.5)', // 緑
   ]
 
+  static timeTable = [
+    ['08:20', '09:05'],
+    ['09:15', '10:00'],
+
+    [
+      ['10:20', '10:30'],
+      ['11:05', '11:15'],
+    ],
+
+    [
+      ['11:15', '12:00'],
+      ['11:25', '12:10'],
+    ],
+
+    ['14:00', '14:45'],
+    ['14:55', '15:40'],
+
+    ['16:00', '16:45'],
+    ['16:55', '17:40'],
+
+    ['19:35', '20:20'],
+    ['20:30', '21:15'],
+
+    ['21:25', '22:10']
+  ]
+
   static notCurrentCourseColor = 'rgba(120,125,123, 0.2)' // 素鼠
 
   static async Get (year: number = 0, semester: number = 0) {
@@ -156,6 +182,7 @@ class Schedule {
       }
 
       s.duringText = allWeek[0] + '-' + allWeek[allWeek.length - 1] // start week to end week
+      s.timeTable = this.getTimeTable(s).join('-')
 
       // 跳过是下周但是会覆盖当前周的课程
       if (s.day === preValidCourseIndex[0] && s.session === preValidCourseIndex[1]) {
@@ -187,6 +214,29 @@ class Schedule {
     }
 
     return schedule
+  }
+
+  static getTimeTable (s) {
+    const sessionArrary = s.session.split(',')
+    const startSession = sessionArrary[0]
+    const endSession = sessionArrary[sessionArrary.length-1]
+    const isSpecial = s.location.match(/二教|实验|室/g) === null ? 0 : 1
+
+    const getTime = (session, isStart) => {
+      const sessionInt = parseInt(session)
+      const tmp = this.timeTable[sessionInt - 1]
+
+      if (sessionInt === 3 || sessionInt === 4) {
+        return tmp[isSpecial][isStart ? 0 : 1]
+      }
+
+      return tmp[isStart ? 0 : 1]
+    } 
+
+    const startTime = getTime(startSession, true)
+    const endTime = getTime(endSession, false)
+
+    return [startTime, endTime]
   }
 
   static doFlex (schedule, s) {

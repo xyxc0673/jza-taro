@@ -376,6 +376,7 @@ export default class Core extends Component {
       course.courseName,
       course.teacher,
       course.location,
+      course.timeTable,
       course.duringText + ' 周',
     ]
 
