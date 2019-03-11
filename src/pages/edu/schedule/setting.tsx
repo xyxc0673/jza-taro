@@ -61,6 +61,7 @@ export default class ScheduleSearch extends Component {
 
     if (response.data.data.schedule.length === 0) {
       Taro.showToast({title: '该学期的课表没有课程', icon: 'none'})
+      return
     }
 
     utils.setStorage({'schedule': response.data.data.schedule})
