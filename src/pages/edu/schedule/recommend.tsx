@@ -185,7 +185,7 @@ export default class Sample extends Component {
     const { collegeRange, gradeSelectedKey, yearSemesterRange, yearSemesterValue, yearSemesterSelected } = this.state
     const college = collegeRange[e.detail.value]
 
-    yearSemesterRange[0] = this.generateYearOptions(college.key + gradeSelectedKey.slice(2, 4))
+    yearSemesterRange[0] = this.generateYearOptions(college.key.slice(0, 2) + gradeSelectedKey.slice(2, 4))
     yearSemesterValue[0] = this.judgeRealIndex(yearSemesterRange[0], yearSemesterSelected[0])
     
     const newState = this.processYearSemesterChange(yearSemesterRange, yearSemesterValue[0], yearSemesterValue[1])
@@ -424,7 +424,7 @@ export default class Sample extends Component {
       majorRange, majorValue, majorText,
       gradeRange, gradeValue, gradeText,
       allClass, recommendSchedules,
-      openHelpFloatLayout, isLogin, showSearchPanel
+      openHelpFloatLayout, showSearchPanel
     } = this.state
 
     return (
