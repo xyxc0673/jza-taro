@@ -211,7 +211,7 @@ export default class Index extends Component<{IState}, {}> {
           {
             this.state.totalCount === 0
             ? <View className='book-number-tips'>0 条记录</View>
-            : <View className='book-number-tips'>显示 {this.state.books.length} / {this.state.totalCount} 条记录</View>
+            : <View className='book-number-tips'>{`显示 ${this.state.books.length} / ${this.state.totalCount} 条记录`}</View>
           }
           {
             this.state.books.length > 0 ?

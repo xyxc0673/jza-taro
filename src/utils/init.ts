@@ -32,6 +32,7 @@ export default function init () {
 
     console.log('初始化小程序')
     utils.setStorage({
+      'setting': { todayScheduleDisplayTeacher: true },
       'firstUse': false,
       'schedule': [],
       'customSchedule': [],

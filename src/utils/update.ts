@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro'
 import data from './data'
-
+import { ISetting } from '../interfaces/setting'
 class Update {
   static async checkUpdateOnline () {
     const updateManager = Taro.getUpdateManager()
@@ -20,59 +20,33 @@ class Update {
     const storageVersion = Taro.getStorageSync('version')
     const dataVersion = data.version
 
-    switch(storageVersion || dataVersion) {
-      case '0.3.4':
-      this.updateCustomField()
-      break
-      case '0.3.5':
-      this.updateDefaultValue()
-      this.updateRecommendStruct()
-      break
+    if (storageVersion === dataVersion) {
+      console.log('已是最新版本，无需进行更新操作')
+      return
     }
 
-    // 升级后更新本地储存的版本号
-    if (storageVersion !== dataVersion) {
-      console.log('检测到更新或者本地无版本号')
-      Taro.setStorageSync('version', data.version)
-      Taro.showModal({title: '新特性', content: data.newFuture, showCancel: false})
+    switch(storageVersion || dataVersion) {
+      case '0.3.9(190301)':
+        this.updateSettingStruct()
+        break
     }
+
+  // 升级后更新本地储存的版本号
+    console.log('检测到更新或者本地无版本号')
+    Taro.setStorageSync('version', data.version)
+    Taro.showModal({title: '新特性', content: data.newFuture, showCancel: false})
 
     this.checkUpdateOnline()
   }
 
-  // 0.3.4 -> 0.3.5
-  static updateCustomField () {
-    const before = Taro.getStorageSync('mySchedule')
-    if (!before) { return }
-    Taro.setStorageSync('customSchedule', before)
-    Taro.setStorageSync('mySchedule', '')
-  }
+  static updateSettingStruct () {
+    const setting: ISetting = Taro.getStorageSync('setting')
+    const displaNotCurrentWeekCourse = Taro.getStorageSync('displaNotCurrentWeekCourse')
 
-  // 0.3.5 -> 0.3.6
-  static updateDefaultValue () {
-    const before = Taro.getStorageSync('customSchedule')
-    if (before !== '') { return }
-    Taro.setStorageSync('customSchedule', [])
-  }
-
-  // 0.3.5 -> 0.3.6
-  static updateRecommendStruct () {
-    const before = Taro.getStorageSync('recommendSchedules')
-
-    if (before === '') {
-      return
-    }
-    
-    const recommendSchedules: Array<any> = []
-
-    for (let item of before) {
-      item.schedules.forEach(s => {
-        s.yearSemester = item.key
-        recommendSchedules.push(s)
-      })
-    }
-
-    Taro.setStorageSync('recommendSchedules', recommendSchedules)
+    setting.todayScheduleDisplayTeacher = true
+    setting.displaNotCurrentWeekCourse =  displaNotCurrentWeekCourse || false
+    console.log(setting)
+    Taro.setStorageSync('setting', setting)
   }
 }
 
