@@ -7,6 +7,7 @@ import './schedule.scss'
 
 import global from '../../../utils/global'
 import Schedule from '../../../services/schedule'
+import { ISetting } from '../../../interfaces/setting';
 
 const questionUrl = require('../../../asserts/images/question.svg')
 
@@ -53,6 +54,8 @@ interface IState {
   newCourseOddRange: Array<any>,
   newCourseOddSelected: number,
   newCourseOddText: string,
+
+  setting: ISetting,
 }
 
 export default class Core extends Component {
@@ -127,6 +130,8 @@ export default class Core extends Component {
     ],
     newCourseOddSelected: 0,
     newCourseOddText: '非单双周',
+
+    setting: {} as ISetting,
   }
 
   async componentWillMount () {
@@ -182,6 +187,7 @@ export default class Core extends Component {
     newState['day'] = new Date().getDay(),
     newState['date'] = `${new Date().getMonth() + 1}-${new Date().getDate()}`
     newState['dayDate'] = Schedule.getDayDate(week)
+    newState['setting'] = Taro.getStorageSync('setting')
 
     this.setState(newState)
   }
@@ -412,12 +418,15 @@ export default class Core extends Component {
   }
 
   render () {
-    const {schedule, dayDate, date, showAddCourseFloatLayout} = this.state
+    const {schedule, dayDate, date, showAddCourseFloatLayout, setting} = this.state
+    const transparent = setting.displayScheduleBg ? 'transparent' : ''
+    const bgStyles = ['', 'blur']
+    const scheduleBgStyle = setting.displayScheduleBg ? bgStyles[setting.displayScheduleBgStyle] : ''
 
     // 这里写得好不优雅，要怎么改
     const container = schedule.map((s, index) => {
       return (
-        <View className={`col ${ index === 0 ? 'title' : 'course'}`} key={index}>
+        <View className={`col ${ index === 0 ? `title ${transparent}` : 'course'}`} key={index}>
           {
             index === 0
             ? s.map((sessionText, sessionIndex) => {
@@ -426,7 +435,7 @@ export default class Core extends Component {
             : s.map((course, courseIndex) => {
                 return course.flex != 0
                   ? (
-                    <View className='row course' key={courseIndex} onClick={this.handleCourseClick.bind(this, course)} style={`background-color: ${course.color?course.color: ''};flex: ${course.flex}; padding: ${course.flex > 1 ? (course.flex - 1)*2 : 0}rpx 0.25rem`}>
+                    <View className={`row course ${transparent}`} key={courseIndex} onClick={this.handleCourseClick.bind(this, course)} style={`background-color: ${course.color?course.color: ''};flex: ${course.flex}; padding: ${course.flex > 1 ? (course.flex - 1)*2 : 0}rpx 0.25rem`}>
                       <Text className='course-name'>{course.courseName}</Text><Text>{course.location}</Text>
                     </View>
                   )
@@ -439,6 +448,7 @@ export default class Core extends Component {
 
     return (
       <View>
+        <Image className={`bg ${scheduleBgStyle}`} src={setting.displayScheduleBgSource} mode='aspectFill'></Image>
         <View className='header'>
           <View id='dayDateID' className='dayDate'>
             <View className='left-block'>{this.state.week}周</View>
@@ -452,7 +462,7 @@ export default class Core extends Component {
             })}
           </View>
         </View>
-        <View className='container' onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd}>{container}</View>
+        <View className={`container ${transparent}`} onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd}>{container}</View>
         <FloatLayout title='添加课程' isOpened={showAddCourseFloatLayout} onClose={this.showAddCourse.bind(this, false)}>
           <View className='padding20'>
             <Form className='form' onSubmit={this.handleAddCourse}>

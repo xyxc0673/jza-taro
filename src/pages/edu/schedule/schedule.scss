@@ -1,8 +1,30 @@
+.bg {
+  position: fixed;
+  z-index: -1;
+
+  top: 80px;
+
+  width: 100vw;
+  height: 100vh;
+  
+  &.blur {
+    // 消除高斯模糊产生的白边
+    top: 65px; // 80px - 15px
+    left: -15px;
+
+    width: calc(100vw + 30px);
+    height: calc(100vh + 30px);
+
+    filter: blur(10px);
+  }
+}
+
 .header {
+  padding: 5px 0;
   position: fixed;
   width: 100%;
   z-index: 100;
-  background: white;
+  background-color: #ffffff;
 
   .dayDate {
     display: flex;
@@ -40,10 +62,14 @@
 .container {
   display: flex;
   flex-direction: row;
-  padding: 70px 0 10px;
+  padding: 75px 0 10px;
   width: 100%;
   height: 100%;
   background-color: #f0f0f0;
+
+  &.transparent {
+    background-color: transparent;
+  }
 
   .col {
     display: flex;
@@ -54,10 +80,13 @@
 
     &.title {
       flex: 0 1 38px;
-
-      background-color: white;
+      background-color: #fff;
       color: #b0b0b0;
       margin: 0 5px 0 0;
+
+      &.transparent {
+        background-color: transparent;
+      }
     }
 
     &.course {
@@ -81,6 +110,11 @@
 
       &.course {
         margin: 2px;
+        opacity: 0.6;
+
+        &.transparent {
+          opacity: 0.8;
+        }
       }
 
       .course-name {
