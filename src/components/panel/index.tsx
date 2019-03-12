@@ -46,11 +46,10 @@ export default class Panel extends Component<IProps, IState> {
     this.props.onClick()
   }
 
-  handleRightTipClick () {
-    if (!this.props.onRightTipClick) {
-      return
-    }
-    this.props.onRightTipClick()
+  handleRightTipClick (e) {
+    e.stopPropagation()
+
+    this.props.onRightTipClick && this.props.onRightTipClick()
   }
 
   render () {
