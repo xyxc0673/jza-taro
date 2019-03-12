@@ -1,4 +1,5 @@
 export default interface ISetting {
   displaNotCurrentWeekCourse: boolean
-  todayScheduleDisplayTimeTable: boolean
+  todayScheduleDisplayTimeTable: boolean,
+  todayScheduleDisplayTeacher: boolean,
 }

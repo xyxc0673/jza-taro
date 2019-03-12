@@ -278,9 +278,14 @@ export default class Index extends Component<{}, IState> {
                   <View className='card-schedule__item__session'>{item.sessionText}</View>
                   <View className='card-schedule__item__info'>
                     {item.courseName}
-                    <View className='card-schedule__item__teacher'>{`${item.teacher}${setting.todayScheduleDisplayTimeTable ? ' ' + item.timeTable : ''}`}</View>
+                    <View className='card-schedule__item__location'>{`${item.location}${setting.todayScheduleDisplayTimeTable ? ' • ' + item.timeTable : ''}`}</View>
                   </View>
-                  <View className='card-schedule__item__location'>{item.location}</View>
+                  {setting.todayScheduleDisplayTeacher
+                    ? (
+                      <View className='card-schedule__item__teacher'>{item.teacher}</View>
+                    )
+                    : null
+                  }
                 </View>
               )
             })
