@@ -14,6 +14,7 @@ export default class Card extends Component {
     cardSetting: [] as Array<ICardSetting>,
     setting: {} as ISetting,
     scheduleBgStyle: ['原始图片', '高斯模糊'],
+    switchColor: ''
   }
 
   componentWillMount () {
@@ -110,7 +111,7 @@ export default class Card extends Component {
   }
 
   render () {
-    const { cardSetting, setting, scheduleBgStyle } = this.state
+    const { cardSetting, setting, scheduleBgStyle, switchColor } = this.state
     return (
       <View className='page'>
         <View className='list'>
@@ -120,7 +121,7 @@ export default class Card extends Component {
               return (
                 <View className='list-item' key={index}>
                   <View className='list-item__title'>{item.title}</View>
-                  <Switch checked={item.show} color='rgba(52, 142, 141, 0.7)' onChange={this.handleCardChange.bind(this, index)} />
+                  <Switch checked={item.show} color={switchColor} onChange={this.handleCardChange.bind(this, index)} />
                 </View>
               )
             })}
@@ -131,11 +132,11 @@ export default class Card extends Component {
           <View className='list-container'>
             <View className='list-item'>
               <View className='list-item__title'>显示上课时间</View>
-              <Switch checked={setting.todayScheduleDisplayTimeTable || false} color='rgba(52, 142, 141, 0.7)' onChange={this.handleNormalChange.bind(this, 'todayScheduleDisplayTimeTable', '显示上课时间')} />
+              <Switch checked={setting.todayScheduleDisplayTimeTable || false} color={switchColor} onChange={this.handleNormalChange.bind(this, 'todayScheduleDisplayTimeTable', '显示上课时间')} />
             </View>
             <View className='list-item'>
               <View className='list-item__title'>显示上课教师</View>
-              <Switch checked={setting.todayScheduleDisplayTeacher || false} color='rgba(52, 142, 141, 0.7)' onChange={this.handleNormalChange.bind(this, 'todayScheduleDisplayTeacher', '今日课表显示上课教师')} />
+              <Switch checked={setting.todayScheduleDisplayTeacher || false} color={switchColor} onChange={this.handleNormalChange.bind(this, 'todayScheduleDisplayTeacher', '今日课表显示上课教师')} />
             </View>
           </View>
         </View>
@@ -144,7 +145,7 @@ export default class Card extends Component {
           <View className='list-container'>
             <View className='list-item'>
               <View className='list-item__title'>显示非本周课程</View>
-              <Switch checked={setting.displaNotCurrentWeekCourse || false} color='rgba(52, 142, 141, 0.7)' onChange={this.handleNormalChange.bind(this, 'displaNotCurrentWeekCourse', '显示非本周课程')} />
+              <Switch checked={setting.displaNotCurrentWeekCourse || false} color={switchColor} onChange={this.handleNormalChange.bind(this, 'displaNotCurrentWeekCourse', '显示非本周课程')} />
             </View>
           </View>
         </View>
@@ -153,7 +154,7 @@ export default class Card extends Component {
           <View className='list-container'>
           <View className='list-item'>
             <View className='list-item__title'>自定义课表背景</View>
-            <Switch checked={setting.displayScheduleBg || false} color='rgba(52, 142, 141, 0.7)' onChange={this.handleNormalChange.bind(this, 'displayScheduleBg', '自定义课表背景')} />
+            <Switch checked={setting.displayScheduleBg || false} color={switchColor} onChange={this.handleNormalChange.bind(this, 'displayScheduleBg', '自定义课表背景')} />
           </View>
           {setting.displayScheduleBg
           ?(
@@ -165,6 +166,10 @@ export default class Card extends Component {
               <View className='list-item' onClick={this.handleSwitchBgStyle}>
                 <View className='list-item__title'>背景图片样式</View>
                 <View className='bg-style-text'>{scheduleBgStyle[setting.displayScheduleBgStyle || 0]}</View>
+              </View>
+              <View className='list-item'>
+                <View className='list-item__title'>表头日期栏透明</View>
+                <Switch checked={setting.displayScheduleHeaderTransparent || false} color={switchColor} onChange={this.handleNormalChange.bind(this, 'displayScheduleHeaderTransparent', '表头日期栏透明')} />
               </View>
             </View>
           )

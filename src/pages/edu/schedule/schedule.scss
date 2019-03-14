@@ -2,14 +2,12 @@
   position: fixed;
   z-index: -1;
 
-  top: 80px;
-
   width: 100vw;
   height: 100vh;
   
   &.blur {
     // 消除高斯模糊产生的白边
-    top: 65px; // 80px - 15px
+    top: -15px;
     left: -15px;
 
     width: calc(100vw + 30px);
@@ -25,6 +23,10 @@
   width: 100%;
   z-index: 100;
   background-color: #ffffff;
+
+  &.transparent {
+    background-color: transparent;
+  }
 
   .dayDate {
     display: flex;

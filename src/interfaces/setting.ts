@@ -3,6 +3,7 @@ export interface ISetting {
   displayScheduleBg: boolean,
   displayScheduleBgSource: string,
   displayScheduleBgStyle: number,
+  displayScheduleHeaderTransparent: boolean,
   todayScheduleDisplayTimeTable: boolean,
   todayScheduleDisplayTeacher: boolean,
 }

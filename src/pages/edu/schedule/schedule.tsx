@@ -449,7 +449,7 @@ export default class Core extends Component {
     return (
       <View>
         <Image className={`bg ${scheduleBgStyle}`} src={setting.displayScheduleBgSource} mode='aspectFill'></Image>
-        <View className='header'>
+        <View className={`header ${setting.displayScheduleBg && setting.displayScheduleHeaderTransparent ? 'transparent' : ''}`}>
           <View id='dayDateID' className='dayDate'>
             <View className='left-block'>{this.state.week}周</View>
             {dayDate.map((item, index) => {
