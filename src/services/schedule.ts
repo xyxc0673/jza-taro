@@ -71,8 +71,8 @@ class Schedule {
     ],
 
     [
-      ['11:15', '12:00'],
-      ['11:25', '12:10'],
+      ['11:15', '11:25'],
+      ['12:00', '12:10'],
     ],
 
     ['14:00', '14:45'],
@@ -228,7 +228,7 @@ class Schedule {
       const tmp = this.timeTable[sessionInt - 1]
 
       if (sessionInt === 3 || sessionInt === 4) {
-        return tmp[isSpecial][isStart ? 0 : 1]
+        return tmp[isStart ? 0 : 1][isSpecial]
       }
 
       return tmp[isStart ? 0 : 1]
