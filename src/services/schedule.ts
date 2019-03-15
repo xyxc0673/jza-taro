@@ -87,7 +87,7 @@ class Schedule {
     ['21:25', '22:10']
   ]
 
-  static notCurrentCourseColor = 'rgba(120,125,123, 0.5)' // 素鼠
+  static notCurrWeekCourseColor = 'rgba(120,125,123, 0.5)' // 素鼠
 
   static async Get (year: number = 0, semester: number = 0) {
     if (!year || !semester) {
@@ -148,79 +148,103 @@ class Schedule {
     }
     
     let colorIndex = 0
-    let preValidCourseIndex: Array<any> = []
 
     // 初始化课程表
     for (let s of rawSchedule) {
-      let thisWeekCourse = false
-      let notCurrentWeekCourse = true
+      let currWeekCourse = false
 
       if (!s.during) {
         continue
       }
 
       const allWeek = s.during.split(',')
+      s.firstWeek = parseInt(allWeek[0])
 
       // 判断是否为本周课程或下周课程
       for (let w of allWeek) {
         let wInt = parseInt(w)
         if (wInt == week) {
-          thisWeekCourse = true
-          notCurrentWeekCourse = false
+          currWeekCourse = true
           break
         } else if (wInt > week) {
           break
         }
       }
 
-      // 用于首页今日课表的判断
-      if (day !== -1 && (parseInt(s.day) != day ||  notCurrentWeekCourse)) {
+      s.sessionArray = s.session.split(',')
+      s.currWeekFlag = currWeekCourse
+
+      s.timeTable = this.getTimeTable(s).join('-')
+      s.sessionText = s.sessionArray[0] + '-' + s.sessionArray[s.sessionArray.length-1]
+
+      // 调用来自于首页的今日课表
+      if (day !== -1) {
+        // 如果是本周课程且是当日课程
+        if (parseInt(s.day) == day &&  currWeekCourse) {
+          schedule.push(s)
+        }
+        // 无论如何，跳过本次循环
         continue
       }
 
-      if (!thisWeekCourse && (!displaNotCurrentWeekCourse || !notCurrentWeekCourse)) {
+      // 显示非本周课程设置未开启, 跳过非本周课程
+      if (!displaNotCurrentWeekCourse && !currWeekCourse) {
         continue
+      }
+      
+      const firstSession = s.sessionArray[0] - 1
+      const classInCurrCell = schedule[parseInt(s.day)][firstSession]
+
+      // 计算课程首周与本周的周差
+      const sDistance = Math.abs(s.firstWeek - week)
+      const cDistance = Math.abs(classInCurrCell.firstWeek - week)
+      
+      // 课程矩阵中将要放置的格子已经有课程，以下两个情况跳过渲染
+      // 1. 格子中的课程是本周要上的课
+      // 2. 格子中的课程首周比当前课程的要晚
+      if (classInCurrCell.flex > 1 && (classInCurrCell.currWeekFlag || sDistance > cDistance)) {
+        continue
+      }
+
+      let x = parseInt(s.day)
+      let y = firstSession
+
+      // 判断当前cell是否已经被划分为不显示的格子，即已经被某个课程撑开而隐藏，但是有可能该课程撑开的大小会占用到当前循环课程的位置
+      if (classInCurrCell.flex === 0) {
+        // 跳过虽然格子被占用，但是当前课程不是本周课程
+        if (!s.currWeekFlag) {
+          continue
+        }
+
+        // 向上寻找占用格子的课程
+        while ((--y) >= 0) {
+          if (schedule[x][y].flex > 1) {
+            // 缩小课程格子
+            schedule[x][y].flex -= s.sessionArray.length
+          }
+        }
       }
 
       s.duringText = allWeek[0] + '-' + allWeek[allWeek.length - 1] // start week to end week
-      s.timeTable = this.getTimeTable(s).join('-')
 
-      // 跳过是下周但是会覆盖当前周的课程
-      if (s.day === preValidCourseIndex[0] && s.session === preValidCourseIndex[1]) {
-        continue
-      }
-
-      preValidCourseIndex = [s.day, s.session]
-
-      if (day === -1) {
-        // 课程块随机上色，并为同一课程上相同色
-        const colorBefore = sameScheduleSameColor[s.courseName]
-
-        if (notCurrentWeekCourse) {
-          s.color = this.notCurrentCourseColor
-        } else {
-          if (!colorBefore) {
-            s.color = this.colors[(colorIndex++) % colorLength]
-            sameScheduleSameColor[s.courseName] = s.color
-          } else {
-            s.color = colorBefore
-          }
-        }
-        
-        schedule = this.doFlex(schedule, s)
+      // 课程块随机上色，并为同一课程上相同色
+      if (currWeekCourse) {
+        s.color = sameScheduleSameColor[s.courseName] || this.colors[(colorIndex++) % colorLength]
+        sameScheduleSameColor[s.courseName] = s.color
       } else {
-        s.sessionText = this.genStartToEnd(s.session, '-')
-        schedule.push(s)
+        s.color = this.notCurrWeekCourseColor
       }
+      
+      schedule = this.doFlex(schedule, s)
     }
 
     return schedule
   }
 
   static getTimeTable (s) {
-    const sessionArrary = s.session.split(',')
-    const startSession = sessionArrary[0]
-    const endSession = sessionArrary[sessionArrary.length-1]
+    const sessionArray = s.sessionArray
+    const startSession = sessionArray[0]
+    const endSession = sessionArray[sessionArray.length-1]
     const isSpecial = s.location.match(/二教|实验|室/g) === null ? 0 : 1
 
     const getTime = (session, isStart) => {
@@ -241,30 +265,19 @@ class Schedule {
   }
 
   static doFlex (schedule, s) {
-    // 将与该课程上课节数有关的 cell 的 flex 置 0
-    const sessionArray = s.session.split(',')
     const dayInt = parseInt(s.day)
 
-    s.sessionText = this.genStartToEnd(s.session)
-
-    s.flex = sessionArray.length // 用于课程第一个 cell 的 flex 值，予以撑开所占节数
-
-    sessionArray.forEach((i) => {
+    // 将与该课程上课节数有关的 cell 的 flex 置 0
+    s.sessionArray.forEach((i) => {
       schedule[dayInt % 8][i - 1].flex = 0;
     })
 
+    // 用于课程第一个 cell 的 flex 值，予以撑开所占节数
+    s.flex = s.sessionArray.length
     // 将与该课程上课节数有关的第一个 cell 替换为 该课程
-    schedule[dayInt % 8][sessionArray[0] - 1] = s
+    schedule[dayInt % 8][s.sessionArray[0] - 1] = s
 
     return schedule
-  }
-
-  static genStartToEnd(text, separator: string = '-') {
-    const textArray = text.split(',')
-    if (textArray.length === 1) {
-      return text
-    }
-    return textArray[0] + separator + textArray[textArray.length - 1]
   }
 }
 
