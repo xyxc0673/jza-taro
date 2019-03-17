@@ -2,7 +2,7 @@
 	"miniprogramRoot": "dist/",
 	"projectname": "jza-taro",
 	"description": "A new JLUZH assistant for taro",
-	"appid": "",
+	"appid": "touristappid",
 	"setting": {
 		"urlCheck": true,
 		"es6": false,
