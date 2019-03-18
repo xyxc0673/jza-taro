@@ -53,8 +53,6 @@ class App extends Component {
 
   componentDidHide () {}
 
-  componentCatchError () {}
-
   render () {
     return (
       <Index/>

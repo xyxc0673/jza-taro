@@ -14,7 +14,7 @@ import Schedule from '../../services/schedule';
 import config from '../../utils/config';
 
 import IAccount from '../../interfaces/account'
-import ISetting from '../../interfaces/setting'
+import { ISetting } from '../../interfaces/setting'
 
 interface ISchedule {
   courseName: string,
@@ -86,10 +86,10 @@ export default class Index extends Component<{}, IState> {
   }
 
   componentWillMount () {
-    this.init()
   }
   
   componentDidMount () {
+    this.init()
     Taro.eventCenter.on('indexRemount', async () => {
       console.log('Page Index Remount')
       this.setState({balance: 0, schedule: []}, () => {
@@ -263,7 +263,7 @@ export default class Index extends Component<{}, IState> {
     const noticePanel = showNotice ? (
       <Panel title='通知'>
         <View className="notice">
-          <Text className="">{notice}</Text>
+          <Text className="" decode={false}>{notice}</Text>
         </View>
       </Panel>
     ): null

@@ -38,7 +38,7 @@ export default class About extends Component {
         </View>
         <View className='intro'>
           <View className='intro-item'>[吉珠小助手]小程序为吉林大学珠海学院学生提供教务系统、校园卡、图书馆查询等服务。</View>
-          <View className='intro-item'>如果你在使用的过程中遇到了问题或者有什么想法，欢迎通过关于页面的反馈选项告诉我。</View>
+          <View className='intro-item'>如果你在使用的过程中遇到了问题或者有什么想法，欢迎通过设置页面的反馈选项告诉我。</View>
         </View>
         <Panel title='更新日志' marginBottom={0}>
           <View className='list'>

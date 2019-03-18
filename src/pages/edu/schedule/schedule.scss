@@ -119,17 +119,20 @@
         }
       }
 
-      .course-name {
+      text {
         word-wrap: break-word;
-        font-size: 23px;
-        font-weight: bold;
 
         display: -webkit-box;
         overflow: hidden;
 
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
-        /* 源自微吉风 多行溢出省略号 http://t.cn/zWUS0VF */
+          /* 源自微吉风 多行溢出省略号 http://t.cn/zWUS0VF */
+      }
+
+      .course-name {
+        font-size: 23px;
+        font-weight: bold;
       }
     }
   }

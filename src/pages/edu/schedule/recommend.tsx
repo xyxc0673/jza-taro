@@ -414,6 +414,11 @@ export default class Sample extends Component {
       return
     }
 
+    if (response.data.data.schedule.length === 0) {
+      Taro.showToast({title: '该课表数据为空', icon: 'none'})
+      return
+    }
+
     return response.data.data.schedule
   }
 
@@ -485,7 +490,7 @@ export default class Sample extends Component {
               </Picker>
             </View>
             <View className='form-input'>
-              <Label>课表</Label>
+              <Label>学期</Label>
               <Picker mode='multiSelector' range={yearSemesterRange} rangeKey='name' value={yearSemesterValue} onChange={this.handleYearSemesterChange}>
               <View className='picker-text'>{yearSemesterText}</View>
             </Picker>
