@@ -181,15 +181,38 @@ export default class Core extends Component {
       this.$router.params.from = ''
     }
 
-    newState['schedule'] = Schedule.InitSchedule(newSchedule, week, -1, from === "recommend")
+    const setting = Taro.getStorageSync('setting')
+    const schedule = Schedule.InitSchedule(newSchedule, week, -1, from === "recommend")
+    const dayDate = Schedule.getDayDate(week)
+
+    Object.assign(newState, this.handleDisplayWeekend(schedule, dayDate, setting))
+
 
     newState['week'] = week
     newState['day'] = new Date().getDay(),
     newState['date'] = `${new Date().getMonth() + 1}-${new Date().getDate()}`
-    newState['dayDate'] = Schedule.getDayDate(week)
-    newState['setting'] = Taro.getStorageSync('setting')
+    newState['setting'] = setting
 
     this.setState(newState)
+  }
+
+  handleDisplayWeekend (schedule, dayDate, setting: ISetting) {
+    const sundaySpliceStart = setting.displaSaturdayCourse ? 7 : 6
+
+    if (!setting.displaSaturdayCourse) {
+      schedule.splice(6, 1)
+      dayDate.splice(5, 1)
+    }
+    
+    if (!setting.displaSundayCourse) {
+      schedule.splice(sundaySpliceStart, 1)
+      dayDate.splice(sundaySpliceStart - 1, 1)
+    }
+
+    return {
+      schedule,
+      dayDate
+    }
   }
 
   handleInputChange (key, e) {

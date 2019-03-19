@@ -144,6 +144,14 @@ export default class Card extends Component {
           <View className='list-title'>我的课表</View>
           <View className='list-container'>
             <View className='list-item'>
+              <View className='list-item__title'>显示周六</View>
+              <Switch checked={setting.displaSaturdayCourse || false} color={switchColor} onChange={this.handleNormalChange.bind(this, 'displaSaturdayCourse', '显示周六')} />
+            </View>
+            <View className='list-item'>
+              <View className='list-item__title'>显示周日</View>
+              <Switch checked={setting.displaSundayCourse || false} color={switchColor} onChange={this.handleNormalChange.bind(this, 'displaSundayCourse', '显示周日')} />
+            </View>
+            <View className='list-item'>
               <View className='list-item__title'>显示非本周课程</View>
               <Switch checked={setting.displaNotCurrentWeekCourse || false} color={switchColor} onChange={this.handleNormalChange.bind(this, 'displaNotCurrentWeekCourse', '显示非本周课程')} />
             </View>
