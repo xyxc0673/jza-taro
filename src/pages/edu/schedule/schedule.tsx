@@ -185,7 +185,7 @@ export default class Core extends Component {
     const schedule = Schedule.InitSchedule(newSchedule, week, -1, from === "recommend")
     const dayDate = Schedule.getDayDate(week)
 
-    Object.assign(newState, this.handleDisplayWeekend(schedule, dayDate, setting))
+    Object.assign(newState, this.handleDisplayWeekend(schedule, dayDate, setting, from))
 
 
     newState['week'] = week
@@ -196,7 +196,14 @@ export default class Core extends Component {
     this.setState(newState)
   }
 
-  handleDisplayWeekend (schedule, dayDate, setting: ISetting) {
+  handleDisplayWeekend (schedule, dayDate, setting: ISetting, from) {
+    if (from === 'recommend') {
+      return {
+        schedule,
+        dayDate
+      }
+    }
+
     const sundaySpliceStart = setting.displaSaturdayCourse ? 7 : 6
 
     if (!setting.displaSaturdayCourse) {
