@@ -77,7 +77,7 @@ export default class Index extends Component<{}, IState> {
     }
 
     const studentIDValidation = (studentID): Boolean => {
-      return utils.isObj(studentID) && studentID.length == 8
+      return utils.isObj(studentID) && studentID.length > 5
     }
 
     const jwPasswordValidation = (password): Boolean => {
@@ -89,13 +89,13 @@ export default class Index extends Component<{}, IState> {
     }
 
     if (!studentIDValidation(studentID)) {
-      return utils._showModal({content: 'Student ID shoule be 8 numbers'})
+      return utils._showModal({content: '请检查账号'})
     }
 
     const passwordCheck = jwPasswordValidation(jwPassword) || cardPasswordValidation(cardPassword)
 
     if (!passwordCheck) {
-      return utils._showModal({content: 'Please check password'})
+      return utils._showModal({content: '请检查密码'})
     }
 
     let params = {
@@ -184,7 +184,7 @@ export default class Index extends Component<{}, IState> {
         <Form className='form' onSubmit={this.onSubmit}>
           <View className='form-input'>
             <Label>学号</Label>
-            <Input id='studentID' type='number' value={this.state.account.studentID} onInput={this.onInput} placeholder='请输入学号' placeholderClass='form-input__placeholder'></Input>
+            <Input id='studentID' value={this.state.account.studentID} onInput={this.onInput} placeholder='请输入学号' placeholderClass='form-input__placeholder'></Input>
           </View>
           <View className='form-input'>
             <Label>教务密码</Label>

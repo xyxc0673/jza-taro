@@ -47,14 +47,16 @@ class Account {
   static calSchoolYears (id?: string): Array<number> {
     const account = this.Get()
 
-    id = id || account.studentID
+    const _id = id || account.studentID
 
-    if (!id) {
+    if (!_id) {
       return []
     }
 
-    const major = parseInt(id.slice(0, 2))
-    const startYear = parseInt(id.slice(2, 4))
+    const final_id = _id.substr(0, 1).toUpperCase() !== 'Z' ? _id : `_${_id}`
+    
+    const major = parseInt(final_id.slice(0, 2))
+    const startYear = parseInt(final_id.slice(2, 4))
 
     const schoolYears = [
       startYear+0,
@@ -66,11 +68,6 @@ class Account {
     // 建筑学院
     if (major === 11) {
       schoolYears.push(startYear+4)
-    }
-
-    // 继续教育学院
-    if (major === 21) {
-      schoolYears.splice(3, 1)
     }
 
     return schoolYears.map((item) => {return 2000+item})
