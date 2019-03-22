@@ -41,6 +41,7 @@ const proxy = async (params): Promise<any> => {
         return
       }
       utils._showModal({title: response.data.msg, content: response.data.data})
+      return
     }
 
     if (response.data.code == 1) {

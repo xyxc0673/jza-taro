@@ -362,13 +362,13 @@ export default class Sample extends Component {
   async getMajor (college, grade) {
     const response = await request.jwRecommendMajor({college, grade})
 
-    const isValid = await this.checkLoginState(response)
-    if (!isValid) {
-      this.setState({collegeSelectedKey: '-1', collegeText: '请选择学院', collegeValue: ''})
+    if (!response || response.data.code === -1) {
       return
     }
 
-    if (!response || response.data.code === -1) {
+    const isValid = await this.checkLoginState(response)
+    if (!isValid) {
+      this.setState({collegeSelectedKey: '-1', collegeText: '请选择学院', collegeValue: ''})
       return
     }
 
@@ -384,12 +384,12 @@ export default class Sample extends Component {
   async getClass (college, grade, major) {
     const response = await request.jwRecommendClass({college, grade, major})
 
-    const isValid = this.checkLoginState(response)
-    if (!isValid) {
+    if (!response || response.data.code === -1) {
       return
     }
 
-    if (!response || response.data.code === -1) {
+    const isValid = this.checkLoginState(response)
+    if (!isValid) {
       return
     }
 
@@ -406,11 +406,11 @@ export default class Sample extends Component {
   async getSchedule (year, semester, grade, major, _class) {
     const response = await request.jwRecommendSchedule({year, semester, grade, major, _class})
 
-    if (!this.checkLoginState(response)) {
+    if (!response || response.data.code === -1) {
       return
     }
-    
-    if (!response || response.data.code === -1) {
+
+    if (!this.checkLoginState(response)) {
       return
     }
 

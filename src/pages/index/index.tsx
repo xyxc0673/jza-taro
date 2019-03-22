@@ -77,7 +77,7 @@ export default class Index extends Component<{}, IState> {
     schedule: [] as Array<ISchedule>,
     showSchedule: false,
 
-    notice: '谢谢你使用吉珠小助手。\n欢迎通过 设置-反馈 提交建议和问题，谢谢！\n另外，通知卡片可以在 设置-界面 里关闭。',
+    notice: '',
     showNotice: false,
 
     showHelloWorld: false,

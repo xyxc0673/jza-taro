@@ -11,7 +11,7 @@ $float-layout-timer: 0.5s;
   left: 0;
   visibility: hidden;
   z-index: 810;
-  transition: all $float-layout-timer ease;
+  transition: visibility $float-layout-timer ease;
   background: rgba(0, 0, 0, 0.5);
 
   &.active {

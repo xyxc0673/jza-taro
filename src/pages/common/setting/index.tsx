@@ -153,7 +153,7 @@ export default class Setting extends Component {
             <View className='list-item' hoverStayTime={200} hoverClass='list-item__hover' onClick={this.handleClearClick.bind(this, 'lib')}>图书馆 <Text id='lib' className='symbol'>{accountState.lib == true ? '√': '×'}</Text></View>
           </View>
         </Panel>
-        <Panel title='数据' marginBottom={0}>
+        <Panel title='数据' marginBottom={150}>
           <View className='list with-symbol'>
             <View className='list-item' hoverClass='list-item__hover' onClick={this.handleDataClear}>
             <View>
