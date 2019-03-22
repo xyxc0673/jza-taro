@@ -29,6 +29,9 @@ class Update {
       case '0.3.9(190301)':
         this.updateSettingStruct()
         break
+      case '0.4.1(190316)':
+        this.updateDefaultSetting()
+        break
     }
 
   // 升级后更新本地储存的版本号
@@ -46,6 +49,14 @@ class Update {
     setting.todayScheduleDisplayTeacher = true
     setting.displaNotCurrentWeekCourse =  displaNotCurrentWeekCourse || false
     console.log(setting)
+    Taro.setStorageSync('setting', setting)
+  }
+
+  static updateDefaultSetting () {
+    const setting: ISetting = Taro.getStorageSync('setting')
+
+    Object.assign(setting, { displaSaturdayCourse: true, displaSundayCourse: true })
+
     Taro.setStorageSync('setting', setting)
   }
 }

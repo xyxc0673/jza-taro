@@ -1,6 +1,7 @@
 import Taro from '@tarojs/taro'
 import utils from './utils'
 import Update from './update'
+import { ISetting } from '../interfaces/setting';
 
 export default function init () {
   const firstUse = Taro.getStorageSync('firstUse')
@@ -30,9 +31,16 @@ export default function init () {
       }
     ]
 
+    const setting = {
+      displaSaturdayCourse: true,
+      displaSundayCourse: true,
+      todayScheduleDisplayTeacher: true,
+    } as ISetting
+
     console.log('初始化小程序')
+    
     utils.setStorage({
-      'setting': { todayScheduleDisplayTeacher: true },
+      'setting': setting,
       'firstUse': false,
       'schedule': [],
       'customSchedule': [],
