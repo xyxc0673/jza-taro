@@ -245,13 +245,6 @@ export default class Index extends Component<{IState}, {}> {
             <Panel title='信息' none={false} marginBottom={0} padding="20rpx 20rpx 20rpx">
               <Text className='info'>{this.state.bookDetail.author} / {this.state.bookDetail.publisher} / {this.state.bookDetail.publishYear} / isbn: {this.state.bookDetail.isbn} / 索书号: {this.state.bookDetail.callNo}</Text>
             </Panel>
-
-            <Panel title='简介' padding="20rpx 20rpx 20rpx" marginBottom={0}>
-              {this.state.bookDetail.summary === ''
-                ? <View className="none-text">豆瓣上暂时没有该书刊的信息😥</View>
-                : <ScrollView scrollY className='summary'>{this.state.bookDetail.summary}</ScrollView>
-              }
-            </Panel>
             <Panel title='馆藏' none={false} padding="20rpx 20rpx 20rpx" marginBottom={0}>
               <View className='collection-item title'>
                 <Text className='collection-item__first'>位置</Text>
