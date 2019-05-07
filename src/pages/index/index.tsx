@@ -220,14 +220,8 @@ export default class Index extends Component<{}, IState> {
     this.setState(newState)
   }
 
-  handlePanelClick (type, fromRightTip: boolean) {
-    if (fromRightTip) {
-      Taro.showModal({ title: '提示', content: '首页卡片将要改版，现在直接点击卡片有同样效果哦。', showCancel: false})
-      return
-    }
-
+  handlePanelClick (type) {
     const cardBinded = Account.checkBindState('card')
-
 
     const actions = {
       schedule: '/pages/edu/schedule/schedule',
@@ -269,7 +263,7 @@ export default class Index extends Component<{}, IState> {
     ): null
 
     const schedulePanel = showSchedule ? (
-      <Panel title='今日课表' none={schedule.length === 0} nonText='今天没有课哦😄' rightTip='课程表' onRightTipClick={this.handlePanelClick.bind(this, 'schedule', true)} onClick={this.handlePanelClick.bind(this, 'schedule', false)}>
+      <Panel title='今日课表' none={schedule.length === 0} nonText='今天没有课哦😄' onClick={this.handlePanelClick.bind(this, 'schedule', false)}>
         <View className='card-schedule'>
           {
             schedule.map((item, index) => {
@@ -295,7 +289,7 @@ export default class Index extends Component<{}, IState> {
     ) : null
 
     const balancePanel = showBalance ? (
-      <Panel title='校园卡余额' none={!cardVerified? true: false} nonText='还未绑定校园卡账号哦😏' rightTip={`${this.state.cardVerified ? '消费记录': ''}`}  onRightTipClick={this.handlePanelClick.bind(this, 'transaction', true)} onClick={this.handlePanelClick.bind(this, 'transaction', false)}>
+      <Panel title='校园卡余额' none={!cardVerified? true: false} nonText='还未绑定校园卡账号哦😏' onClick={this.handlePanelClick.bind(this, 'transaction', false)}>
         <View className='card-balance'>
           <Text className='card-balance__text'>{showBalanceLoading ? '' : `￥${balance}`}</Text>
         </View>
