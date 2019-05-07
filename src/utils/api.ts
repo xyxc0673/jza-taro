@@ -33,7 +33,7 @@ const api = apiReset({
 })
 
 function apiReset<T>(object: T): T {
-  const domain = config.dev ? config.apiBaseUrl['dev']: config.apiBaseUrl['prod']
+  const domain = config.apiBaseUrl[config.devType]
   Object.keys(object).forEach(key => {
     object[key] = `${domain}${object[key]}`
   })

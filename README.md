@@ -11,6 +11,9 @@
 ![小程序二维码](/images/qrcode.jpg)
 
 ## 开发
+> 吉珠小助手的后台 mock 地址为：  
+> https://easy-mock.com/mock/5c149dff1ee30f317685ba2d  
+> 为了获得较为完善的开发体验，可以在 config.ts 中填入该地址
 
 开发环境为 Node.js v10.13.0 和 NPM v6.4.1
 
