@@ -37,7 +37,10 @@ class Update {
   // 升级后更新本地储存的版本号
     console.log('检测到更新或者本地无版本号')
     Taro.setStorageSync('version', data.version)
-    Taro.showModal({title: '新特性', content: data.newFuture, showCancel: false})
+    
+    if (data.newFuture) {
+      Taro.showModal({title: '新特性', content: data.newFuture, showCancel: false})
+    }
 
     this.checkUpdateOnline()
   }

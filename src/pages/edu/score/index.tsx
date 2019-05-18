@@ -181,7 +181,7 @@ export default class Score extends Component {
                           <Text className='score'>{item.score}</Text>
                         </View>
                         <View className='column'>
-                          <Text>{item.courseType} / {item.credit}</Text>
+                          <Text>{`${item.courseType} / ${item.credit}`}</Text>
                           <Text>{item.point}</Text>
                         </View>
                       </View>
