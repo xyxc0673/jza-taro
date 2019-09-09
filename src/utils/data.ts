@@ -102,19 +102,23 @@ const collegeRange = [
 const gradeRange = [
   {
     key: '2015',
-    name: '2015 级',
+    name: '2015级',
   },
   {
     key: '2016',
-    name: '2016 级',
+    name: '2016级',
   },
   {
     key: '2017',
-    name: '2017 级',
+    name: '2017级',
   },
   {
     key: '2018',
-    name: '2018 级',
+    name: '2018级',
+  },
+  {
+    key: '2019',
+    name: '2019级',
   },
 ]
 

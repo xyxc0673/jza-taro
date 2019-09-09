@@ -104,7 +104,7 @@ export default class Sample extends Component {
 
     const yearSemesterState = this.processYearSemesterChange(yearSemesterRange, yearSemesterValue[0], yearSemesterValue[1])
 
-    const grade = gradeRange[gradeValue]
+    const grade = gradeRange[gradeRange.length - 1]
 
     const gradeSelectedKey = grade.key
 
