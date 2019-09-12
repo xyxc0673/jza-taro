@@ -1,12 +1,11 @@
-const version = '0.4.3(190508)'
+const version = '0.4.4(190909)'
 
 const changeLog = [
-  '优化 细节调整',
-  '移除 首页部分卡片右上角提示',
-  '移除 书籍检索页面书籍简介（已失效）',
+  '新增 设置关于页面增加交流QQ群',
+  '调整 班级课表可查询2019级以及默认选中最新年级',
 ]
 
-const newFuture = ''
+const newFuture = '班级课表已经可以查询2019级啦！另外，关于页面增加了交流QQ群哦！'
 
 const collegeRange = [
   {
