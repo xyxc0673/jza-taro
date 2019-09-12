@@ -1,24 +1,32 @@
 import Taro, {Component, Config} from '@tarojs/taro'
-import {View, Image} from '@tarojs/components'
+import {View, Image, Text} from '@tarojs/components'
 
 import './about.scss'
 
 import Panel from '../../../components/panel'
 
 import data from '../../../utils/data'
+import request from '../../../utils/request';
 
-export default class About extends Component {
+interface IState {
+  qqGroup: string
+}
+
+
+export default class About extends Component<{}, IState> {
   config: Config = {
     navigationBarTitleText: '关于'
   }
   
   state = {
-    
+    qqGroup: ''
   }
 
   componentWillMount () { }
 
-  componentDidMount () { }
+  componentDidMount () {
+    this.fetchQQGroup()
+  }
 
   componentWillUnmount () { }
 
@@ -30,7 +38,17 @@ export default class About extends Component {
     Taro.setClipboardData({data: text})
   }
 
+  async fetchQQGroup() {
+    const res = await request.qqGroup()
+    if (!res.data.data.number) {
+      return
+    }
+    this.setState({ qqGroup: res.data.data.number })
+  }
+
   render () {
+    const { qqGroup } = this.state
+
     return (
       <View>
         <View className='logo'>
@@ -62,13 +80,18 @@ export default class About extends Component {
             <View className='list-item'>课表</View>
           </View>
         </Panel>
-        <Panel title='鸣谢' marginBottom={100}>
+        <Panel title='鸣谢' marginBottom={0}>
           <View className='list'>
             <View className='list-item'>@車前子：提供帮助以解决课表显示不正确的问题</View>
             <View className='list-item'>@史努比：提供帮助以开发借阅历史分页显示功能</View>
           </View>
         </Panel>
-
+        {qqGroup && (
+          <Panel title='交流' marginBottom={100}>
+            <Text className='welcome-text'>欢迎加入交流 QQ 群：</Text>
+            <View className='copy-text' onClick={this.handleCopyTextClick.bind(this, qqGroup)}>{qqGroup}</View>
+          </Panel>
+        )}
         <View className='footer'>
           <View>吉珠小助手 · Made With Time</View>
         </View>

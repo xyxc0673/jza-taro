@@ -2,6 +2,7 @@ import config from  './config'
 
 const api = apiReset({
   notice: '/notice',
+  qqGroup: '/qqGroup',
 
   jwVerify: '/jw/verify',
   jwScore: '/jw/score',

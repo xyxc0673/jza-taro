@@ -73,6 +73,14 @@ const notice = (params) => {
   return proxy(params)
 }
 
+const qqGroup = (params = {}) => {
+  params = {
+    url: api.qqGroup,
+    quiet_mode: true,
+  }
+  return proxy(params)
+}
+
 const authProxy = async (params) => {
   params.header = params.header || {}
   
@@ -322,6 +330,7 @@ const libReaderCheckoutRecord = async ({page, quiet_mode}) => {
 
 export default {
   notice,
+  qqGroup,
 
   jwAuth,
   jwVerify,
